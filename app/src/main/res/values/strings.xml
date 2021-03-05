@@ -1,3 +1,17 @@
 <resources>
-    <string name="app_name">Android_Zenly</string>
+    <string name="app_name">Zenly Clone</string>
+    <string name="SignUpButton">SIGN UP &amp; ACCEPT</string>
+    <string name="bottomText">By Tapping on "Sign Up &amp; Accept",
+        you agree to the Temps of Services and Pravicy Policy.
+
+    </string>
+    <string name="nameQuestion">HI!<br /> SO WHAT IS YOUR NAME ?</string>
+    <string name="dobQuestion">Hello</string>
+    <string name="monthTextView">Month</string>
+    <string name="dateTextView">Day</string>
+    <string name="yearTextView">Year</string>
+    <string name="phone_text_view">HEY, I NEED YOUR PHONE NUMBER TO IDENTIFY YOU.</string>
+    <string name="OTPQuestion">NOW ENTER YOUR CODE I SEND YOU</string>
+    <string name="title_activity_maps">Map</string>
+
 </resources>

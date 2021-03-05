@@ -1,8 +1,10 @@
-package com.study.android_zenly;
+package UI.login;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+
+import com.study.android_zenly.R;
 
 public class MainActivity extends AppCompatActivity {
 
