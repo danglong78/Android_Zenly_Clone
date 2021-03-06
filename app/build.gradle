@@ -5,7 +5,6 @@ plugins {
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.3"
-
     defaultConfig {
         applicationId "com.study.android_zenly"
         minSdkVersion 29
@@ -15,7 +14,13 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-
+    sourceSets {
+        main {
+            res.srcDirs = ['src/main/res',
+                           'src/main/res/layouts/login_UI'
+            ]
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false

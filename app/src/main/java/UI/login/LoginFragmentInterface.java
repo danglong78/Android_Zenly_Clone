@@ -7,8 +7,9 @@ import android.view.View;
 public interface LoginFragmentInterface {
     void initView(View view);
     void saveCheckPoint();
-    Bundle createBundle();
+    Bundle createBundle(boolean isSkip);
     void saveInformation();
     void loadInformation();
+    void showDialog();
 
 }

@@ -13,5 +13,7 @@
     <string name="phone_text_view">HEY, I NEED YOUR PHONE NUMBER TO IDENTIFY YOU.</string>
     <string name="OTPQuestion">NOW ENTER YOUR CODE I SEND YOU</string>
     <string name="title_activity_maps">Map</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

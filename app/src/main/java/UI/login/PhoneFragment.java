@@ -1,7 +1,10 @@
 package UI.login;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -13,7 +16,9 @@ import androidx.navigation.Navigation;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hbb20.CountryCodePicker;
@@ -63,8 +68,14 @@ public class PhoneFragment extends Fragment implements LoginFragmentInterface{
         view.findViewById(R.id.buttonPhone).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Bundle bundle = createBundle();
-                navController.navigate(R.id.action_phoneFragment_to_confirmOtpFragment,bundle);
+                if(!verifyPhone(ccp.getFullNumber()))
+                {
+                    showDialog();
+                }
+                else {
+                saveInformation();
+                navController.navigate(R.id.action_phoneFragment_to_confirmOtpFragment);
+                }
             }
         });
     }
@@ -73,14 +84,14 @@ public class PhoneFragment extends Fragment implements LoginFragmentInterface{
     public void saveCheckPoint() {
         SharedPreferences prefs = getActivity().getSharedPreferences("user_infor", Context.MODE_PRIVATE);
         SharedPreferences.Editor myEditor = prefs.edit();
-        myEditor.putInt("step",R.id.action_introduceFragment_to_phoneFragment);
+        myEditor.putInt("step",R.id.phoneFragment);
         myEditor.apply();
     }
 
     @Override
-    public Bundle createBundle() {
+    public Bundle createBundle(boolean isSkip) {
         Bundle bundle = new Bundle();
-        bundle.putString("phoneNumber",ccp.getFullNumberWithPlus());
+        bundle.putBoolean("skip", isSkip);
         return bundle;
     }
 
@@ -90,6 +101,7 @@ public class PhoneFragment extends Fragment implements LoginFragmentInterface{
         SharedPreferences.Editor myEditor = prefs.edit();
         String temp = ccp.getSelectedCountryNameCode();
         myEditor.putString("countrycode", temp);
+        myEditor.putString("codePhone",ccp.getSelectedCountryCodeWithPlus());
         myEditor.putString("phone",editTextCarrierNumber.getText().toString());
         myEditor.apply();
     }
@@ -97,11 +109,44 @@ public class PhoneFragment extends Fragment implements LoginFragmentInterface{
     @Override
     public void loadInformation() {
         SharedPreferences prefs = getActivity().getSharedPreferences("user_infor", Context.MODE_PRIVATE);
-        if ( (prefs != null) && (prefs.contains("name")) ) {
+        if ( (prefs != null) && prefs.contains("phone")&& prefs.contains("countrycode") ) {
             String temp = prefs.getString("countrycode","");
             ccp.setDefaultCountryUsingNameCode(temp);
             ccp.resetToDefaultCountry();
             editTextCarrierNumber.setText(prefs.getString("phone",""));
         }
     }
+
+    @Override
+    public void showDialog() {
+        AlertDialog.Builder myAlertBuilder = new
+                AlertDialog.Builder(getActivity());
+        View layoutView = getLayoutInflater().inflate(R.layout.custom_dialog_layout, null);
+        Button dialogButton = layoutView.findViewById(R.id.btnDialog);
+        TextView dialogTitle= layoutView.findViewById(R.id.dialog_title);
+        TextView dialogContent= layoutView.findViewById(R.id.dialog_content);
+        dialogTitle.setText("INVALID PHONE");
+        dialogContent.setText("Please input your phone correctly.");
+        myAlertBuilder.setView(layoutView);
+        AlertDialog alert= myAlertBuilder.create();
+        alert.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+        alert.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        alert.show();
+        dialogButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alert.dismiss();
+            }
+        });
+    }
+    private boolean verifyPhone(String phone)
+    {
+        if(editTextCarrierNumber.getText().toString().equals("")) {
+            return false;
+        }
+        String regex="^[+]?[0-9]{10,13}$";
+        String phoneNumber= ccp.getFullNumber();
+        return phoneNumber.length() >= 10 && phoneNumber.length() <= 13 && phoneNumber.matches(regex) != false;
+    }
+
 }

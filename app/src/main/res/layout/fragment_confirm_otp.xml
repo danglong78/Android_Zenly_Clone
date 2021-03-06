@@ -20,6 +20,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
+        android:id="@+id/phoneDescribe"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -28,7 +29,7 @@
         app:layout_constraintTop_toBottomOf="@+id/name_question" />
 
     <EditText
-        android:id="@+id/nameInput"
+        android:id="@+id/codeInput"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@color/cyan"
@@ -66,6 +67,32 @@
         app:iconTint="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/countdownText"
+        android:layout_width="170dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:text=""
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/buttonNext" />
+
+    <ProgressBar
+        android:id="@+id/progressBarConfirmOTP"
+        style="@style/Widget.AppCompat.ProgressBar"
+        android:layout_width="59dp"
+        android:layout_height="38dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:background="@drawable/button_corner"
+        android:paddingVertical="4dp"
+        android:indeterminateTint="#FFFFFF"
+        app:cornerRadius="15dp"
+        />
 
 
 

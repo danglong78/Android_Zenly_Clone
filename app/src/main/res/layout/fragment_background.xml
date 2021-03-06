@@ -1,0 +1,121 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/cyan"
+    android:paddingHorizontal="10dp"
+    android:paddingTop="10dp"
+    tools:context="UI.RequestPermission.BackgroundFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+    <TextView
+        android:id="@+id/TitleTextView"
+        android:layout_width="350dp"
+        android:layout_height="wrap_content"
+        android:textSize="24sp"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:text="FOR ZENLY TO WORK, CHANGE YOUR LOCATION SETTINGS"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="380dp"
+        android:layout_height="wrap_content"
+        android:text="CHANGE THE LOCATION PERMISSION TO ALLOW ALL THE TIME"
+        android:textColor="@color/cyan_900"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/TitleTextView" />
+
+
+    <Button
+        android:id="@+id/SettingsButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="36dp"
+        android:textColor="@color/white"
+        android:text="OPEN SETTINGS"
+        android:textStyle="bold"
+        app:cornerRadius="15dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/bulletOne"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_marginStart="70dp"
+        android:layout_marginTop="50dp"
+        android:background="@drawable/circular_textview"
+        android:gravity="center"
+        android:text="1"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+    <TextView
+        android:id="@+id/stepOneText"
+        android:layout_width="240dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:text="Tap the button at the bottom of this screen to open settings."
+        android:textColor="@color/white"
+        android:textSize="17sp"
+        app:layout_constraintStart_toEndOf="@+id/bulletOne"
+        app:layout_constraintTop_toTopOf="@+id/bulletOne" />
+
+    <TextView
+        android:id="@+id/bulletTwo"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_marginTop="50dp"
+        android:background="@drawable/circular_textview"
+        android:gravity="center"
+        android:text="2"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/bulletOne"
+        app:layout_constraintTop_toBottomOf="@+id/bulletOne" />
+    <TextView
+        android:id="@+id/stepTwoText"
+        android:layout_width="240dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:text="Select Allow all the time"
+        android:textColor="@color/white"
+        android:textSize="17sp"
+        app:layout_constraintStart_toEndOf="@+id/bulletTwo"
+        app:layout_constraintTop_toTopOf="@+id/bulletTwo"/>
+    <TextView
+        android:id="@+id/bulletThree"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_marginTop="50dp"
+        android:background="@drawable/circular_textview"
+        android:gravity="center"
+        android:text="3"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/bulletTwo"
+        app:layout_constraintTop_toBottomOf="@+id/bulletTwo" />
+    <TextView
+        android:id="@+id/stepThreeText"
+        android:layout_width="240dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:text="Tap back button to come back to Zenly"
+        android:textColor="@color/white"
+        android:textSize="17sp"
+        app:layout_constraintStart_toEndOf="@+id/bulletThree"
+        app:layout_constraintTop_toTopOf="@+id/bulletThree"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

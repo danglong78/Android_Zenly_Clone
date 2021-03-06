@@ -32,10 +32,12 @@ public class IntroduceFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         navController= Navigation.findNavController(view);
 
-        SharedPreferences prefs = getActivity().getSharedPreferences("user_infor", Context.MODE_PRIVATE);
-        if ( (prefs != null) && (prefs.contains("step"))) {
-            navController.navigate(prefs.getInt("step",-1));
-        }
+//        SharedPreferences prefs = getActivity().getSharedPreferences("user_infor", Context.MODE_PRIVATE);
+//        if ( (prefs != null) && (prefs.contains("step"))) {
+//            int step=prefs.getInt("step",-1);
+//            if(step!=-1)
+//                navController.navigate(R.id.action_introduceFragment_to_nameFragment);
+//        }
         view.findViewById(R.id.SignUpButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
