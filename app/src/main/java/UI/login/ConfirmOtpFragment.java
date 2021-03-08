@@ -2,18 +2,10 @@ package UI.login;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-
 import android.os.CountDownTimer;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -24,10 +16,21 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.PhoneAuthCredential;
+import com.google.firebase.auth.PhoneAuthProvider;
 import com.study.android_zenly.R;
-
-import UI.RequestPermission.RequestPermissionActivity;
 
 
 public class ConfirmOtpFragment extends Fragment {
@@ -37,6 +40,7 @@ public class ConfirmOtpFragment extends Fragment {
     Button btn;
     EditText codeInput;
     ProgressBar progressBar;
+    String verificationId;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -49,6 +53,7 @@ public class ConfirmOtpFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         navController= Navigation.findNavController(view);
         codeInput = (EditText) view.findViewById(R.id.codeInput);
+        verificationId = getArguments().getString("verificationId");
         progressBar = (ProgressBar) view.findViewById(R.id.progressBarConfirmOTP);
         describe = (TextView)view.findViewById(R.id.phoneDescribe);
         SharedPreferences prefs = getActivity().getSharedPreferences("user_infor", Context.MODE_PRIVATE);
@@ -70,10 +75,37 @@ public class ConfirmOtpFragment extends Fragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if(s.length()==4){
+                if(s.length()==6){
                     progressBar.setVisibility(View.VISIBLE);
                     btn.setVisibility(View.GONE);
-                    startActivity(new Intent(getActivity(), RequestPermissionActivity.class));
+                    if (verificationId != null) {
+                        PhoneAuthCredential phoneAuthCredential = PhoneAuthProvider.getCredential(verificationId, s.toString());
+                        FirebaseAuth.getInstance().signInWithCredential(phoneAuthCredential)
+                                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<AuthResult> task) {
+                                        if (task.isSuccessful()) {
+                                            SharedPreferences prefs = getActivity().getSharedPreferences("user_infor", Context.MODE_PRIVATE);
+                                            SharedPreferences.Editor myEditor = prefs.edit();
+                                            myEditor.putBoolean("isAuthenticated", true);
+                                            myEditor.commit();
+
+//                    startActivity(new Intent(getActivity(), RequestPermissionActivity.class));
+                                            navController.navigate(R.id.action_global_homeFragment);
+                                        } else {
+                                            Toast.makeText(getActivity(), "Your verify code wrong!!!", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
+
+                    }
+//                    SharedPreferences prefs = getActivity().getSharedPreferences("user_infor", Context.MODE_PRIVATE);
+//                    SharedPreferences.Editor myEditor = prefs.edit();
+//                    myEditor.putBoolean("isAuthenticated", true);
+//                    myEditor.commit();
+//
+////                    startActivity(new Intent(getActivity(), RequestPermissionActivity.class));
+//                    navController.navigate(R.id.action_global_homeFragment);
                 }
             }
         });
@@ -82,7 +114,15 @@ public class ConfirmOtpFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if(codeInput.getText().toString().length()==4)
-                    startActivity(new Intent(getActivity(), RequestPermissionActivity.class));
+                {
+                   SharedPreferences prefs = getActivity().getSharedPreferences("user_infor", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor myEditor = prefs.edit();
+                    myEditor.putBoolean("isAuthenticated", true);
+                    myEditor.commit();
+//                    startActivity(new Intent(getActivity(), RequestPermissionActivity.class));
+
+                    navController.navigate(R.id.action_global_homeFragment);
+                }
                 else
                     showDialog();
             }

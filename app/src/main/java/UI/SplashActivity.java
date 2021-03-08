@@ -13,7 +13,8 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import com.study.android_zenly.R;
 
-import UI.login.MainActivity;
+import UI.MainActivity.MainActivity;
+import UI.login.LoginActivity;
 
 public class SplashActivity extends AppCompatActivity {
     ImageView iceCream;

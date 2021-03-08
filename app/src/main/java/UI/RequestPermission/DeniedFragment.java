@@ -64,6 +64,7 @@ public class DeniedFragment extends Fragment {
                 Toast.makeText(getActivity(),
                         "Location permission is approved success",
                         Toast.LENGTH_LONG).show();
+                navController.navigate(R.id.action_global_homeFragment);
             }
             else
                 {
@@ -74,12 +75,6 @@ public class DeniedFragment extends Fragment {
 
     }
     private Boolean hasPermission(String permission) {
-
-        // Background permissions didn't exit prior to Q, so it's approved by default.
-        if (permission == Manifest.permission.ACCESS_BACKGROUND_LOCATION &&
-                android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.Q) {
-            return true;
-        }
 
         return ActivityCompat.checkSelfPermission(getActivity(), permission) ==
                 PackageManager.PERMISSION_GRANTED;

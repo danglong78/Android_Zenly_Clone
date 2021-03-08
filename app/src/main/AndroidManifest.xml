@@ -12,7 +12,9 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/Theme.Android_Zenly">
-        <activity android:name="UI.RequestPermission.RequestPermissionActivity"></activity>
+        <activity android:name="UI.MainActivity.MainActivity"
+            android:windowSoftInputMode="adjustResize|stateAlwaysVisible"/>
+        <activity android:name="UI.RequestPermission.RequestPermissionActivity" />
         <activity android:name="UI.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,8 +23,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="UI.login.MainActivity"
-            android:windowSoftInputMode="adjustResize|stateAlwaysVisible"></activity>
+            android:name="UI.login.LoginActivity"
+            android:windowSoftInputMode="adjustResize|stateAlwaysVisible" />
     </application>
 
 </manifest>

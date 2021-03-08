@@ -1,4 +1,4 @@
-package UI.login;
+   package UI.login;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -21,8 +21,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.FirebaseException;
+import com.google.firebase.auth.PhoneAuthCredential;
+import com.google.firebase.auth.PhoneAuthProvider;
 import com.hbb20.CountryCodePicker;
 import com.study.android_zenly.R;
+
+import java.util.concurrent.TimeUnit;
 
 
 public class PhoneFragment extends Fragment implements LoginFragmentInterface{
@@ -74,7 +79,29 @@ public class PhoneFragment extends Fragment implements LoginFragmentInterface{
                 }
                 else {
                 saveInformation();
-                navController.navigate(R.id.action_phoneFragment_to_confirmOtpFragment);
+                    Bundle bundle = new Bundle();
+                    PhoneAuthProvider.getInstance().verifyPhoneNumber(
+                            ccp.getFullNumberWithPlus()
+                            ,60
+                            , TimeUnit.SECONDS
+                            ,requireActivity()
+                            ,new PhoneAuthProvider.OnVerificationStateChangedCallbacks(){
+                                @Override
+                                public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
+                                    Toast.makeText(getActivity(), "On Complete", Toast.LENGTH_SHORT).show();
+                                }
+
+                                @Override
+                                public void onVerificationFailed(@NonNull FirebaseException e) {
+                                    Toast.makeText(getActivity(), "On Fail", Toast.LENGTH_SHORT).show();
+                                }
+
+                                @Override
+                                public void onCodeSent(@NonNull String verificationId, @NonNull PhoneAuthProvider.ForceResendingToken forceResendingToken) {
+                                    bundle.putString("verificationId",verificationId);
+                                    navController.navigate(R.id.action_phoneFragment_to_confirmOtpFragment,bundle);
+                                }
+                            });
                 }
             }
         });

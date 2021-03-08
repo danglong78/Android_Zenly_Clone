@@ -115,7 +115,7 @@ public class DobFragment extends Fragment implements LoginFragmentInterface {
             int day = prefs.getInt("day",1);
             int month = prefs.getInt("month",1);
             int year = prefs.getInt("year",1);
-            datePicker.init(day,month,year,null);
+            datePicker.init(year,month,day,null);
         }
         if ( (prefs != null) && prefs.contains("name") ) {
             String name = prefs.getString("name","");

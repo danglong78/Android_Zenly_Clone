@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "140352567136",
+    "project_id": "androidzenly",
+    "storage_bucket": "androidzenly.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:140352567136:android:b34cbcce08ca3101b6d005",
+        "android_client_info": {
+          "package_name": "com.study.android_zenly"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "140352567136-g6til5a8pgfv487q24g1ai3p2v0d8qrh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.study.android_zenly",
+            "certificate_hash": "7a80d59c9bd291fc2d03f14e9c5d0e27d1a72fdc"
+          }
+        },
+        {
+          "client_id": "140352567136-msg3m2mr7ujdt7g6c7auec81483eu71d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA6oclAbLdL78dYMi1u8MVUW-6xiaTTqLQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "140352567136-msg3m2mr7ujdt7g6c7auec81483eu71d.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
