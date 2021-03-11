@@ -1,70 +1,102 @@
-<androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/cyan"
-    app:layoutDescription="@xml/fragment_home_scene2"
+    android:id="@+id/homeFragment"
     tools:context="UI.MainActivity.HomeFragment">
 
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:text="Button"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+    <include layout="@layout/fragment_home_motionlayout"/>
 
-    <Button
-        android:id="@+id/button3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginBottom="16dp"
-        android:text="Button"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+    <com.google.android.material.navigation.NavigationView
+    android:id="@+id/navigation_drawer_bottom"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/pink"
+    app:layout_behavior="@string/bottom_sheet_behavior"
+    app:behavior_hideable="true"
+    app:behavior_peekHeight="1dp"
+    app:behavior_fitToContents="false"/>
 
-    <Button
-        android:id="@+id/button4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:text="Button"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/button2"
-        app:layout_constraintStart_toEndOf="@+id/button3" />
+<!--    <androidx.drawerlayout.widget.DrawerLayout-->
+<!--        android:id="@+id/drawerlayout"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent">-->
 
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="TextView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/leftfragment"
-        android:layout_width="10dp"
-        android:layout_height="match_parent"
-        android:background="@color/purple_200"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+<!--        <fragment-->
+<!--            android:name="UI.MainActivity.MapsFragment"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            tools:context="UI.MainActivity.MapsFragment" />-->
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/rightfragment"
-        android:layout_width="10dp"
-        android:layout_height="match_parent"
-        android:background="@color/teal_200"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
-</androidx.constraintlayout.motion.widget.MotionLayout>
+
+<!--        &lt;!&ndash; First navigation drawer &ndash;&gt;-->
+
+<!--        <com.google.android.material.navigation.NavigationView-->
+<!--            android:id="@+id/navigation_view_left"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:layout_gravity="start"-->
+<!--            android:layout_marginEnd="-65dp"-->
+<!--            android:background="@color/purple_200"-->
+<!--            android:fitsSystemWindows="true" />-->
+
+
+<!--        &lt;!&ndash; Second navigation drawer &ndash;&gt;-->
+<!--        <com.google.android.material.navigation.NavigationView-->
+<!--            android:id="@+id/navigation_view_right"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:layout_gravity="end"-->
+<!--            android:layout_marginStart="-65dp"-->
+<!--            android:background="@color/teal_200"-->
+<!--            android:fitsSystemWindows="true" />-->
+
+
+<!--    </androidx.drawerlayout.widget.DrawerLayout>-->
+
+<!--    <Button-->
+<!--        android:id="@+id/chatButton"-->
+<!--        android:layout_width="40dp"-->
+<!--        android:layout_height="50dp"-->
+<!--        android:layout_marginStart="24dp"-->
+<!--        android:gravity="center"-->
+<!--        android:paddingStart="8dp"-->
+<!--        android:paddingTop="8dp"-->
+<!--        app:cornerRadius="18dp"-->
+<!--        app:icon="@drawable/ic_baseline_chat_24"-->
+<!--        app:layout_constraintBottom_toBottomOf="@+id/friendButton"-->
+<!--        app:layout_constraintStart_toStartOf="parent" />-->
+
+<!--    <Button-->
+<!--        android:id="@+id/userButton"-->
+<!--        android:layout_width="40dp"-->
+<!--        android:layout_height="50dp"-->
+<!--        android:gravity="center"-->
+<!--        android:paddingStart="8dp"-->
+<!--        android:paddingTop="8dp"-->
+<!--        app:cornerRadius="18dp"-->
+<!--        app:icon="@drawable/ic_baseline_chat_24"-->
+<!--        android:layout_marginEnd="24dp"-->
+<!--        app:layout_constraintBottom_toBottomOf="@+id/friendButton"-->
+<!--        app:layout_constraintEnd_toEndOf="parent" />-->
+
+<!--    <Button-->
+<!--        android:id="@+id/friendButton"-->
+<!--        android:layout_width="40dp"-->
+<!--        android:layout_height="50dp"-->
+<!--        android:gravity="center"-->
+<!--        android:paddingStart="8dp"-->
+<!--        android:paddingTop="8dp"-->
+<!--        app:cornerRadius="18dp"-->
+<!--        app:icon="@drawable/ic_baseline_chat_24"-->
+<!--        android:layout_marginBottom="32dp"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toStartOf="@+id/userButton"-->
+<!--        app:layout_constraintStart_toEndOf="@+id/chatButton" />-->
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

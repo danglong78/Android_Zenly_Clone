@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.motion.widget.MotionLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/motion_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layoutDescription="@xml/fragment_home_scene"
+    >
+
+    <include layout="@layout/fragment_home_drawerlayout"/>
+    <Button
+        android:id="@+id/chatButton"
+        android:layout_width="48dp"
+        android:layout_height="55dp"
+        android:gravity="center"
+        android:paddingStart="10dp"
+        android:paddingTop="8dp"
+        android:layout_marginStart="24dp"
+        app:cornerRadius="18dp"
+        app:icon="@drawable/ic_baseline_chat_24"
+        app:iconTint="@color/cyan_900"
+        android:backgroundTint="@color/white"
+        app:layout_constraintBottom_toBottomOf="@+id/friendButton"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/userButton"
+        android:layout_width="48dp"
+        android:layout_height="55dp"
+        android:gravity="center"
+        android:paddingStart="10dp"
+        android:paddingTop="6dp"
+        app:cornerRadius="18dp"
+        app:icon="@drawable/ic_baseline_account_circle_24"
+        app:iconTint="@color/cyan_900"
+        android:backgroundTint="@color/white"
+        android:layout_marginEnd="24dp"
+        app:layout_constraintBottom_toBottomOf="@+id/friendButton"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/friendButton"
+
+        android:gravity="center"
+        android:layout_width="48dp"
+        android:layout_height="55dp"
+        android:paddingStart="10dp"
+        android:paddingTop="6dp"
+        app:cornerRadius="18dp"
+        app:icon="@drawable/ic_earth"
+        app:iconTint="@color/cyan_900"
+        android:backgroundTint="@color/white"
+        android:layout_marginBottom="32dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/userButton"
+        app:layout_constraintStart_toEndOf="@+id/chatButton" />
+</androidx.constraintlayout.motion.widget.MotionLayout>

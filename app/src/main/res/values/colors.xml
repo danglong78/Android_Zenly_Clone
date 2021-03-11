@@ -13,5 +13,6 @@
     <color name="pink2">#EEF845AE</color>
     <color name="cyan_700">#FF006FBF</color>
     <color name="cyan_500">#00a4ec</color>
-    <color name="cyan_900">#004CBF</color>
+    <color name="cyan_900">#002280</color>
+    <color name="teal">#00ffff</color>
 </resources>
