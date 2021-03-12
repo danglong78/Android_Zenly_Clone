@@ -32,7 +32,10 @@ public class ChatListAdapter  extends RecyclerView.Adapter<ChatListAdapter.ViewH
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.getTextView().setText(list.get(position));
+        holder.getUserNameTextView().setText(list.get(position));
+        holder.getLastMessageTextView().setText("Hello");
+        holder.getTimeText().setText("Today");
+
 
     }
 
@@ -42,14 +45,25 @@ public class ChatListAdapter  extends RecyclerView.Adapter<ChatListAdapter.ViewH
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        private final TextView textView;
+        private final TextView userNameText,lastMessageText,timeText;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            textView = (TextView) itemView.findViewById(R.id.textView);
+            userNameText = (TextView) itemView.findViewById(R.id.userNameText);
+            lastMessageText = (TextView) itemView.findViewById(R.id.lastMessageText);
+            timeText = (TextView) itemView.findViewById(R.id.timeText);
         }
-        public TextView getTextView() {
-            return textView;
+        public TextView getUserNameTextView() {
+            return userNameText;
         }
+        public TextView getLastMessageTextView() {
+            return lastMessageText;
+        }
+
+        public TextView getTimeText() {
+            return timeText;
+        }
+
+
 
     }
 

@@ -11,6 +11,28 @@
         motion:motionInterpolator="linear">
 
     </Transition>
+    <Transition
+        android:id="@+id/userButtonAnimation"
+        motion:constraintSetStart="@+id/start"
+        motion:constraintSetEnd="@+id/right"
+        motion:duration="250"
+        motion:motionInterpolator="linear"/>
+    <Transition
+        android:id="@+id/chatButtonAnimationToUserButonAnimation"
+        motion:constraintSetEnd="@+id/right"
+        motion:constraintSetStart="@id/left"
+        motion:duration="250"
+        motion:motionInterpolator="linear">
+
+    </Transition>
+    <Transition
+        android:id="@+id/userButtonAnimationToChatButtonAnimation"
+        motion:constraintSetEnd="@+id/left"
+        motion:constraintSetStart="@id/right"
+        motion:duration="250"
+        motion:motionInterpolator="linear">
+
+    </Transition>
 
     <ConstraintSet android:id="@+id/start">
     </ConstraintSet>
@@ -36,6 +58,24 @@
             android:layout_height="55dp"
             motion:layout_constraintBottom_toBottomOf="@+id/friendButton"
             android:layout_marginEnd="40dp" />
+        <Constraint
+            android:id="@+id/friendButton"
+            motion:layout_constraintEnd_toStartOf="@+id/userButton"
+            motion:layout_constraintStart_toEndOf="@+id/chatButton"
+            android:layout_width="48dp"
+            android:layout_height="55dp"
+            motion:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="32dp"
+            android:visibility="invisible" />
+        <Constraint
+            android:id="@+id/mapButton"
+            motion:layout_constraintEnd_toEndOf="@+id/friendButton"
+            android:layout_width="48dp"
+            android:layout_height="55dp"
+            android:layout_marginBottom="20dp"
+            motion:layout_constraintBottom_toTopOf="@+id/friendButton"
+            motion:layout_constraintStart_toStartOf="@+id/friendButton"
+            android:translationY="75dp" />
     </ConstraintSet>
     <ConstraintSet android:id="@+id/right" >
         <Constraint
@@ -58,12 +98,24 @@
             motion:layout_constraintBottom_toBottomOf="@+id/friendButton"
             android:layout_marginStart="40dp"
             motion:layout_constraintStart_toStartOf="parent" />
+        <Constraint
+            android:id="@+id/friendButton"
+            motion:layout_constraintEnd_toStartOf="@+id/userButton"
+            motion:layout_constraintStart_toEndOf="@+id/chatButton"
+            android:layout_width="48dp"
+            android:layout_height="55dp"
+            motion:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="32dp"
+            android:visibility="invisible" />
+        <Constraint
+            android:id="@+id/mapButton"
+            motion:layout_constraintEnd_toEndOf="@+id/friendButton"
+            android:layout_width="48dp"
+            android:layout_height="55dp"
+            android:layout_marginBottom="20dp"
+            motion:layout_constraintBottom_toTopOf="@+id/friendButton"
+            motion:layout_constraintStart_toStartOf="@+id/friendButton"
+            android:translationY="75dp" />
     </ConstraintSet>
-    <Transition
-        android:id="@+id/userButtonAnimation"
 
-        motion:constraintSetStart="@+id/start"
-        motion:constraintSetEnd="@+id/right"
-        motion:duration="250"
-        motion:motionInterpolator="linear"/>
 </MotionScene>

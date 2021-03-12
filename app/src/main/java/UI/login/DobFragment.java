@@ -162,8 +162,7 @@ public class DobFragment extends Fragment implements LoginFragmentInterface {
                 else{
                     if(m==month)
                     {
-                        if(d>day)
-                            return false;
+                        return d <= day;
                     }
                 }
             }

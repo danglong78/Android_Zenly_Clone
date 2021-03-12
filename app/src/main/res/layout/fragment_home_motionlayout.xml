@@ -42,18 +42,34 @@
 
     <Button
         android:id="@+id/friendButton"
-
         android:gravity="center"
+        android:layout_width="48dp"
+        android:layout_height="55dp"
+        android:paddingStart="6dp"
+        android:paddingTop="6dp"
+        app:cornerRadius="18dp"
+
+        app:icon="@drawable/ic_baseline_add_24"
+        app:iconSize="35sp"
+        android:layout_marginBottom="32dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/userButton"
+        app:layout_constraintStart_toEndOf="@+id/chatButton" />
+
+    <Button
+        android:id="@+id/mapButton"
         android:layout_width="48dp"
         android:layout_height="55dp"
         android:paddingStart="10dp"
         android:paddingTop="6dp"
         app:cornerRadius="18dp"
         app:icon="@drawable/ic_earth"
-        app:iconTint="@color/cyan_900"
         android:backgroundTint="@color/white"
-        android:layout_marginBottom="32dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/userButton"
-        app:layout_constraintStart_toEndOf="@+id/chatButton" />
+        app:iconTint="@color/cyan_900"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintBottom_toTopOf="@+id/friendButton"
+        app:layout_constraintStart_toStartOf="@+id/friendButton"
+        app:layout_constraintEnd_toEndOf="@+id/friendButton"
+
+        />
 </androidx.constraintlayout.motion.widget.MotionLayout>

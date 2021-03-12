@@ -119,7 +119,6 @@ public class ConfirmOtpFragment extends Fragment {
                     SharedPreferences.Editor myEditor = prefs.edit();
                     myEditor.putBoolean("isAuthenticated", true);
                     myEditor.commit();
-//                    startActivity(new Intent(getActivity(), RequestPermissionActivity.class));
 
                     navController.navigate(R.id.action_global_homeFragment);
                 }

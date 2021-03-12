@@ -29,12 +29,14 @@
         android:id="@+id/button"
         android:layout_width="70dp"
         android:layout_height="40dp"
+
         android:backgroundTint="@color/cyan_900"
         android:text="NEW"
         android:textColor="@color/teal"
         android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/textView4" />
+        app:cornerRadius="15dp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/textView4"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/nav_drawer_recycler_view"
@@ -45,11 +47,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/searchView" />
 
-    <SearchView
+    <EditText
         android:id="@+id/searchView"
         android:layout_width="match_parent"
-        android:layout_height="30dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
+        android:textColorHint="#4F5875"
+        android:hint="SEARCH"
+        android:textStyle="bold"
+        android:textAlignment="center"
+        android:background="@drawable/search_bar_background"
+        app:cornerRadius="20dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
