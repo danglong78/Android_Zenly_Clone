@@ -4,7 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/cyan"
-    tools:context="UI.login.ConfirmOtpFragment">
+    tools:context="UI.login.ConfirmOtpFragment"
+    android:fitsSystemWindows="true"
+    >
 
     <TextView
         android:id="@+id/name_question"

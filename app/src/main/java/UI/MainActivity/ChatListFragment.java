@@ -32,10 +32,18 @@ public class ChatListFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         RecyclerView nav_drawer_recycler_view = view.findViewById(R.id.nav_drawer_recycler_view);
+        view.setPadding(0,getStatusBarHeight()+20,0,0);
         ChatListAdapter adapter = new ChatListAdapter();
         nav_drawer_recycler_view.setAdapter(adapter);
         nav_drawer_recycler_view.setLayoutManager(new LinearLayoutManager(getActivity()));
 
     }
-
+    private int getStatusBarHeight() {
+        int result = 0;
+        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            result = getResources().getDimensionPixelSize(resourceId);
+        }
+        return result;
+    }
 }

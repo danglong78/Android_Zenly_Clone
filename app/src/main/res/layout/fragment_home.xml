@@ -17,7 +17,9 @@
     app:layout_behavior="@string/bottom_sheet_behavior"
     app:behavior_hideable="true"
     app:behavior_peekHeight="1dp"
-    app:behavior_fitToContents="false"/>
+    app:behavior_fitToContents="false">
+
+    </com.google.android.material.navigation.NavigationView>
 
 <!--    <androidx.drawerlayout.widget.DrawerLayout-->
 <!--        android:id="@+id/drawerlayout"-->

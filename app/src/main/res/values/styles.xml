@@ -13,6 +13,8 @@
         <item name="colorPrimary">@color/white</item>
         <item name="colorPrimaryDark">@color/pink</item>
         <item name="colorAccent">@color/teal_200</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:textStyle">bold</item>
     </style>
     <style name="DialogAnimation">
         <item name="android:windowEnterAnimation">@anim/dialog_animation_enter</item>

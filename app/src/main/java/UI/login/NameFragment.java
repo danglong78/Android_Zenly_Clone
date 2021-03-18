@@ -48,6 +48,15 @@ public class NameFragment extends Fragment implements LoginFragmentInterface{
 //                navController.navigate(R.id.action_nameFragment_to_dobFragment,createBundle(true));
 //        }
         initView(view);
+        view.setPadding(0,getStatusBarHeight()+30,0,0);
+    }
+    private int getStatusBarHeight() {
+        int result = 0;
+        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            result = getResources().getDimensionPixelSize(resourceId);
+        }
+        return result;
     }
 
     @Override

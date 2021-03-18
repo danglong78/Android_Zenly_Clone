@@ -5,7 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/cyan"
-    tools:context="UI.login.PhoneFragment">
+    tools:context="UI.login.PhoneFragment"
+    android:fitsSystemWindows="true"
+    >
 
     <TextView
         android:id="@+id/name_question"

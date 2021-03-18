@@ -51,6 +51,15 @@ public class BackgroundFragment extends Fragment {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         });
+        view.setPadding(0,getStatusBarHeight()+30,0,0);
+    }
+    private int getStatusBarHeight() {
+        int result = 0;
+        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            result = getResources().getDimensionPixelSize(resourceId);
+        }
+        return result;
     }
     @Override
     public void onResume() {

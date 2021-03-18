@@ -40,7 +40,7 @@
         style="@android:style/Widget.Material.DatePicker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="#DAFFFFFF"
+
         android:calendarViewShown="false"
         android:datePickerMode="spinner"
         android:theme="@style/datepicker"

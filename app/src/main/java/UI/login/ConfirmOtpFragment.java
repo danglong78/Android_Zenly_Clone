@@ -51,6 +51,7 @@ public class ConfirmOtpFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        view.setPadding(0,getStatusBarHeight()+30,0,0);
         navController= Navigation.findNavController(view);
         codeInput = (EditText) view.findViewById(R.id.codeInput);
         verificationId = getArguments().getString("verificationId");
@@ -157,5 +158,13 @@ public class ConfirmOtpFragment extends Fragment {
                 alert.dismiss();
             }
         });
+    }
+    private int getStatusBarHeight() {
+        int result = 0;
+        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            result = getResources().getDimensionPixelSize(resourceId);
+        }
+        return result;
     }
 }
