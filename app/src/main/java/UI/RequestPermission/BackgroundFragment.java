@@ -24,6 +24,8 @@ import com.study.android_zenly.R;
 
 
 public class BackgroundFragment extends Fragment {
+    private static final int REQUEST_FINE_BACKGROUND_PERMISSIONS_REQUEST_CODE = 34;
+    private static final String TAG = "PermissionRequestFrag";
 
     NavController navController;
 
@@ -50,6 +52,7 @@ public class BackgroundFragment extends Fragment {
             intent.setData(uri);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
+
         });
         view.setPadding(0,getStatusBarHeight()+30,0,0);
     }

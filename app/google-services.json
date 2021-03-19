@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "140352567136",
+    "firebase_url": "https://androidzenly-default-rtdb.firebaseio.com",
     "project_id": "androidzenly",
     "storage_bucket": "androidzenly.appspot.com"
   },
@@ -14,11 +15,35 @@
       },
       "oauth_client": [
         {
+          "client_id": "140352567136-3n5t2trv4ilafr2ovuagp21didjsoppp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.study.android_zenly",
+            "certificate_hash": "b969206194d78d34a9337f99571ea57dac341acc"
+          }
+        },
+        {
           "client_id": "140352567136-g6til5a8pgfv487q24g1ai3p2v0d8qrh.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.study.android_zenly",
             "certificate_hash": "7a80d59c9bd291fc2d03f14e9c5d0e27d1a72fdc"
+          }
+        },
+        {
+          "client_id": "140352567136-i9d1rm6r8iu5fqqutl25ucdg0isqhpsa.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.study.android_zenly",
+            "certificate_hash": "87943ccf14671c3a5b7fac0e6c419cc4015baa75"
+          }
+        },
+        {
+          "client_id": "140352567136-tm39vlgdqrdrr0o5rb5teg45ls88e8sf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.study.android_zenly",
+            "certificate_hash": "a4be7cfedc5d439cbff2230bd268d0cce87eca10"
           }
         },
         {

@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/homeFragment"
-    tools:context="UI.MainActivity.HomeFragment">
+    tools:context="UI.MainActivity.HomeFragment"
+    >
 
     <include layout="@layout/fragment_home_motionlayout"/>
 
@@ -13,92 +14,16 @@
     android:id="@+id/navigation_drawer_bottom"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/pink"
     app:layout_behavior="@string/bottom_sheet_behavior"
     app:behavior_hideable="true"
     app:behavior_peekHeight="1dp"
-    app:behavior_fitToContents="false">
-
+    app:behavior_fitToContents="true">
+        <fragment
+            android:name="UI.MainActivity.AddFriendFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context="UI.MainActivity.AddFriendFragment" />
     </com.google.android.material.navigation.NavigationView>
 
-<!--    <androidx.drawerlayout.widget.DrawerLayout-->
-<!--        android:id="@+id/drawerlayout"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent">-->
 
-
-
-<!--        <fragment-->
-<!--            android:name="UI.MainActivity.MapsFragment"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="match_parent"-->
-<!--            tools:context="UI.MainActivity.MapsFragment" />-->
-
-
-
-
-<!--        &lt;!&ndash; First navigation drawer &ndash;&gt;-->
-
-<!--        <com.google.android.material.navigation.NavigationView-->
-<!--            android:id="@+id/navigation_view_left"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="match_parent"-->
-<!--            android:layout_gravity="start"-->
-<!--            android:layout_marginEnd="-65dp"-->
-<!--            android:background="@color/purple_200"-->
-<!--            android:fitsSystemWindows="true" />-->
-
-
-<!--        &lt;!&ndash; Second navigation drawer &ndash;&gt;-->
-<!--        <com.google.android.material.navigation.NavigationView-->
-<!--            android:id="@+id/navigation_view_right"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="match_parent"-->
-<!--            android:layout_gravity="end"-->
-<!--            android:layout_marginStart="-65dp"-->
-<!--            android:background="@color/teal_200"-->
-<!--            android:fitsSystemWindows="true" />-->
-
-
-<!--    </androidx.drawerlayout.widget.DrawerLayout>-->
-
-<!--    <Button-->
-<!--        android:id="@+id/chatButton"-->
-<!--        android:layout_width="40dp"-->
-<!--        android:layout_height="50dp"-->
-<!--        android:layout_marginStart="24dp"-->
-<!--        android:gravity="center"-->
-<!--        android:paddingStart="8dp"-->
-<!--        android:paddingTop="8dp"-->
-<!--        app:cornerRadius="18dp"-->
-<!--        app:icon="@drawable/ic_baseline_chat_24"-->
-<!--        app:layout_constraintBottom_toBottomOf="@+id/friendButton"-->
-<!--        app:layout_constraintStart_toStartOf="parent" />-->
-
-<!--    <Button-->
-<!--        android:id="@+id/userButton"-->
-<!--        android:layout_width="40dp"-->
-<!--        android:layout_height="50dp"-->
-<!--        android:gravity="center"-->
-<!--        android:paddingStart="8dp"-->
-<!--        android:paddingTop="8dp"-->
-<!--        app:cornerRadius="18dp"-->
-<!--        app:icon="@drawable/ic_baseline_chat_24"-->
-<!--        android:layout_marginEnd="24dp"-->
-<!--        app:layout_constraintBottom_toBottomOf="@+id/friendButton"-->
-<!--        app:layout_constraintEnd_toEndOf="parent" />-->
-
-<!--    <Button-->
-<!--        android:id="@+id/friendButton"-->
-<!--        android:layout_width="40dp"-->
-<!--        android:layout_height="50dp"-->
-<!--        android:gravity="center"-->
-<!--        android:paddingStart="8dp"-->
-<!--        android:paddingTop="8dp"-->
-<!--        app:cornerRadius="18dp"-->
-<!--        app:icon="@drawable/ic_baseline_chat_24"-->
-<!--        android:layout_marginBottom="32dp"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintEnd_toStartOf="@+id/userButton"-->
-<!--        app:layout_constraintStart_toEndOf="@+id/chatButton" />-->
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

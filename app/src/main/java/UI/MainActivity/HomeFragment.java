@@ -54,7 +54,6 @@ public class HomeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        view.setPadding(0,getStatusBarHeight()+30,0,0);
 
         bindingView(view);
         observeLoginAndLocationPermissions(view);
@@ -168,12 +167,5 @@ public class HomeFragment extends Fragment {
             }
         });
     }
-    private int getStatusBarHeight() {
-        int result = 0;
-        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
-        if (resourceId > 0) {
-            result = getResources().getDimensionPixelSize(resourceId);
-        }
-        return result;
-    }
+
 }
