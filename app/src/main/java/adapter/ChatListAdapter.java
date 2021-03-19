@@ -45,7 +45,7 @@ public class ChatListAdapter  extends RecyclerView.Adapter<ChatListAdapter.ViewH
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        private final TextView userNameText,lastMessageText,timeText;
+        private TextView userNameText,lastMessageText,timeText;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             userNameText = (TextView) itemView.findViewById(R.id.userNameText);

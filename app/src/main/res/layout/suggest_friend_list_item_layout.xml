@@ -7,19 +7,18 @@
     android:orientation="horizontal"
     android:focusable="true"
     android:clickable="true"
-    android:foreground="?android:attr/selectableItemBackground"
     android:padding="8dp">
 
-        <androidx.cardview.widget.CardView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:cardCornerRadius="20dp">
+    <androidx.cardview.widget.CardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="20dp">
 
-            <ImageView
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:src="@drawable/icon" />
-        </androidx.cardview.widget.CardView>
+        <ImageView
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/icon" />
+    </androidx.cardview.widget.CardView>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -29,30 +28,35 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="10dp"
-            android:textSize="18sp"
-            android:textStyle="bold"
+            android:textSize="16sp"
             android:textColor="@color/cyan_900"
-            android:text="123"
+            android:textStyle="bold"
+            android:text="Name"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
+
+        <Button
+            android:id="@+id/addBtn"
+            android:layout_width="60dp"
+            android:layout_height="35dp"
+            android:text="ADD"
+            android:textSize="12sp"
+            app:cornerRadius="30dp"
+            android:textAlignment="center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/deleteIcon"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginEnd="15dp"/>
+
         <TextView
-            android:id="@+id/lastMessageText"
-            android:layout_height="wrap_content"
+            android:id="@+id/deleteIcon"
             android:layout_width="wrap_content"
-            android:paddingStart="10dp"
-            android:textColor="#4F5875"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/userNameText"
-            android:text="123"/>
-        <TextView
-            android:id="@+id/timeText"
             android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:layout_marginEnd="10dp"
+            android:drawableLeft="@drawable/ic_outline_cancel_24"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:text="123"/>
+            android:layout_marginEnd="5dp"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

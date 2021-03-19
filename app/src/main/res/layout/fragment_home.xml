@@ -19,10 +19,10 @@
     app:behavior_peekHeight="1dp"
     app:behavior_fitToContents="true">
         <fragment
-            android:name="UI.MainActivity.AddFriendFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context="UI.MainActivity.AddFriendFragment" />
+            android:name="UI.MainActivity.AddFriendFragment"
+            tools:context="UI.MainActivity.AddFriendFragment"/>
     </com.google.android.material.navigation.NavigationView>
 
 

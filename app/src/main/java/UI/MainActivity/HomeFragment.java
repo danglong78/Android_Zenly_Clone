@@ -64,7 +64,8 @@ public class HomeFragment extends Fragment {
     {
         bottomSheetBehavior = BottomSheetBehavior.from(view.findViewById(R.id.navigation_drawer_bottom));
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-
+        bottomSheetBehavior.setFitToContents(false);
+        bottomSheetBehavior.setHalfExpandedRatio( 0.6f);
 
         friendBtn = view.findViewById(R.id.friendButton);
         friendBtn.setOnClickListener(v->{
