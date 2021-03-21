@@ -9,7 +9,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import data.LoginRepository;
+import data.repositories.LoginRepository;
 
 public class RequestLocationViewModel extends ViewModel {
     MutableLiveData<Boolean> hasPermission = new MutableLiveData<Boolean>();

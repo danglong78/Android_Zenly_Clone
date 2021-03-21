@@ -21,7 +21,6 @@ public class FriendSuggestListAdapter  extends RecyclerView.Adapter<FriendSugges
         list.add("Huynh Lam Hoang Dai");
         list.add("Ho Dai Tri");
         list.add("Tran Thanh Tam");
-
     }
 
     @NonNull

@@ -1,4 +1,4 @@
-package data;
+package data.repositories;
 
 import android.content.Context;
 import android.content.SharedPreferences;

@@ -24,20 +24,28 @@ import android.widget.Button;
 
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.study.android_zenly.R;
 
 import viewModel.LoginViewModel;
 import viewModel.RequestLocationViewModel;
+import viewModel.UserViewModel;
 
 public class HomeFragment extends Fragment {
     NavController navController;
+    FirebaseFirestore mDb;
+
     LoginViewModel loginviewModel;
     RequestLocationViewModel requestLocationViewModel;
+    UserViewModel userViewModel;
+
     Button chatBtn, userBtn,mapBtn,friendBtn;
     DrawerLayout drawerLayout;
     MotionLayout motionLayout;
     BottomSheetBehavior bottomSheetBehavior;
     int motionLayoutstate = 0;
+
+
 
 
     @Override
