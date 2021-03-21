@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
@@ -29,7 +30,6 @@ import data.repositories.UserRepository;
 public class UserViewModel extends AndroidViewModel {
     private final String TAG = "UserViewModel";
 
-
     UserRepository repository;
     MutableLiveData<User> mUser;
     CollectionReference friendsRef;
@@ -40,13 +40,13 @@ public class UserViewModel extends AndroidViewModel {
 
     public UserViewModel(@NonNull Application application) {
         super(application);
-        String uid = FirebaseAuth.getInstance().getUid();
 
-        mUser = repository.getUserWithUID(uid);
+
+        mUser = repository.getHostUser(application);
         repository = UserRepository.getInstance();
-        friendList = repository.getUserFriends(uid);
+        friendList = repository.getUserFriends(mUser.getValue().getUID());
         friendList.setValue(friendListTemp);
-        friendsRef = repository.getFriendsCollectionRef(uid);
+        friendsRef = repository.getFriendsCollectionRef(mUser.getValue().getUID());
 
         friendsRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override

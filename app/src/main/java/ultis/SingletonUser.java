@@ -1,7 +1,7 @@
 package ultis;
 import android.app.Application;
 
-import data.User;
+import data.models.User;
 
 public class SingletonUser extends Application {
     private User user = null;

@@ -1,14 +1,20 @@
 package data.models;
 
 import android.graphics.Bitmap;
+
+import com.google.firebase.firestore.Exclude;
 import com.google.firebase.firestore.GeoPoint;
 
 public class User {
+    @Exclude
     private Bitmap avatar;
+
     private String name;
     private String UID;
     private String avatarURL;
+    private String dob;
     private GeoPoint location;
+
 
     public User(Bitmap avatar, String name, String UID, String avatarURL, GeoPoint location) {
         this.avatar = avatar;

@@ -1,6 +1,8 @@
 package data.repositories;
 
 import android.app.Application;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -44,6 +46,15 @@ public class UserRepository {
         return mInstance;
     }
 
+    public MutableLiveData<User> getHostUser(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences("user_infor", Context.MODE_PRIVATE);
+        String uuid = "";
+        if ( (prefs != null) && (prefs.contains("uid")) ) {
+            uuid = prefs.getString("uid", "");
+        }
+        return getUserWithUID(uuid);
+    }
+
     public MutableLiveData<User> getUserWithUID(String UID) {
         DocumentReference userRef = mDb.collection(USER_COLLECTION).document(FirebaseAuth.getInstance().getUid());
         MutableLiveData<User> user = null;
@@ -80,5 +91,9 @@ public class UserRepository {
 
     public CollectionReference getFriendsCollectionRef(String UID) {
         return mDb.collection(USER_COLLECTION).document(FirebaseAuth.getInstance().getUid()).collection(FRIENDS_COLLECTION);
+    }
+
+    public DocumentReference getUserReference(String UID) {
+        return mDb.collection(USER_COLLECTION).document(UID);
     }
 }

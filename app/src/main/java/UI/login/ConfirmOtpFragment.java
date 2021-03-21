@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,14 +27,21 @@ import androidx.navigation.Navigation;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
+import com.google.firebase.firestore.DocumentReference;
 import com.study.android_zenly.R;
+
+import data.models.User;
+import data.repositories.UserRepository;
 
 
 public class ConfirmOtpFragment extends Fragment {
+    private final String TAG = "ConfirmmOtpFragment";
+
 
     NavController navController;
     TextView countdownText,describe;
@@ -89,7 +97,27 @@ public class ConfirmOtpFragment extends Fragment {
                                             SharedPreferences prefs = getActivity().getSharedPreferences("user_infor", Context.MODE_PRIVATE);
                                             SharedPreferences.Editor myEditor = prefs.edit();
                                             myEditor.putBoolean("isAuthenticated", true);
+                                            myEditor.putString("uid", FirebaseAuth.getInstance().getUid());
                                             myEditor.commit();
+
+                                            User newUser = new User();
+
+                                            newUser.setName(prefs.getString("name", ""));
+                                            newUser.setUID(FirebaseAuth.getInstance().getUid());
+                                            DocumentReference newUserRef = UserRepository.getInstance().getUserReference(FirebaseAuth.getInstance().getUid());
+
+
+                                            newUserRef.set(newUser).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    if (task.isSuccessful()) {
+                                                        Log.d(TAG, "onComplete: newUserRef: success");
+                                                    }
+                                                    else {
+                                                        Log.d(TAG, "onComplete: failed " + task.getException());
+                                                    }
+                                                }
+                                            });
 
 //                    startActivity(new Intent(getActivity(), RequestPermissionActivity.class));
                                             navController.navigate(R.id.action_global_homeFragment);
@@ -119,7 +147,27 @@ public class ConfirmOtpFragment extends Fragment {
                    SharedPreferences prefs = getActivity().getSharedPreferences("user_infor", Context.MODE_PRIVATE);
                     SharedPreferences.Editor myEditor = prefs.edit();
                     myEditor.putBoolean("isAuthenticated", true);
+                    myEditor.putString("uid", FirebaseAuth.getInstance().getUid());
                     myEditor.commit();
+
+                    User newUser = new User();
+
+                    newUser.setName(prefs.getString("name", ""));
+                    newUser.setUID(FirebaseAuth.getInstance().getUid());
+                    DocumentReference newUserRef = UserRepository.getInstance().getUserReference(FirebaseAuth.getInstance().getUid());
+
+
+                    newUserRef.set(newUser).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Log.d(TAG, "onComplete: newUserRef: success");
+                            }
+                            else {
+                                Log.d(TAG, "onComplete: failed " + task.getException());
+                            }
+                        }
+                    });
 
                     navController.navigate(R.id.action_global_homeFragment);
                 }
