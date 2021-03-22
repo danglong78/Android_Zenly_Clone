@@ -29,12 +29,17 @@
         <fragment
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:name="UI.MainActivity.ChatListFragment"
-            tools:context="UI.MainActivity.ChatListFragment"/>
+            android:id="@+id/chat_nav_host_fragment"
+            android:name="androidx.navigation.fragment.NavHostFragment"
+            app:defaultNavHost="true"
+            app:navGraph="@navigation/chat_nav"/>
 
 
-
-
+<!--        android:name="UI.MainActivity.ChatListFragment"-->
+<!--        tools:context="UI.MainActivity.ChatListFragment"-->
+<!--        android:name="androidx.navigation.fragment.NavHostFragment"-->
+<!--        app:defaultNavHost="true"-->
+<!--        app:navGraph="@navigation/chat_nav"-->
 
     </com.google.android.material.navigation.NavigationView>
 

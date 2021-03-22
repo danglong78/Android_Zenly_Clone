@@ -5,6 +5,8 @@ import android.graphics.Bitmap;
 import com.google.firebase.firestore.Exclude;
 import com.google.firebase.firestore.GeoPoint;
 
+import java.util.Arrays;
+
 public class User {
     @Exclude
     private Bitmap avatar;
@@ -15,14 +17,25 @@ public class User {
     private String dob;
     private GeoPoint location;
     private String phone;
+    private String[] conversation;
 
 
-    public User(Bitmap avatar, String name, String UID, String avatarURL, GeoPoint location) {
+    public User(Bitmap avatar, String name, String UID, String avatarURL, String dob, GeoPoint location, String[] conversation) {
         this.avatar = avatar;
         this.name = name;
         this.UID = UID;
         this.avatarURL = avatarURL;
+        this.dob = dob;
         this.location = location;
+        this.conversation = conversation;
+    }
+
+    public String[] getConversation() {
+        return conversation;
+    }
+
+    public void setConversation(String[] conversation) {
+        this.conversation = conversation;
     }
 
     public User() {}
@@ -72,9 +85,13 @@ public class User {
     @Override
     public String toString() {
         return "User{" +
-                ", UID ='" + this.UID + '\'' +
-                ", name ='" + this.name + '\'' +
-                ", avatar ='" + avatar + '\'' +
+                "avatar=" + avatar +
+                ", name='" + name + '\'' +
+                ", UID='" + UID + '\'' +
+                ", avatarURL='" + avatarURL + '\'' +
+                ", dob='" + dob + '\'' +
+                ", location=" + location +
+                ", conversation=" + Arrays.toString(conversation) +
                 '}';
     }
 }

@@ -48,16 +48,8 @@ public class PhoneFragment extends Fragment implements LoginFragmentInterface{
         super.onViewCreated(view, savedInstanceState);
         navController= Navigation.findNavController(view);
         initView(view);
-        view.setPadding(0,getStatusBarHeight()+30,0,0);
     }
-    private int getStatusBarHeight() {
-        int result = 0;
-        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
-        if (resourceId > 0) {
-            result = getResources().getDimensionPixelSize(resourceId);
-        }
-        return result;
-    }
+
 
 
     @Override
