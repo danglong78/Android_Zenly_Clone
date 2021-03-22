@@ -58,6 +58,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-firestore'
 
     implementation 'com.google.firebase:firebase-storage'
+    implementation "androidx.browser:browser:1.2.0"
 }
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'

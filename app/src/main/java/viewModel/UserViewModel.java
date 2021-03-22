@@ -56,12 +56,10 @@ public class UserViewModel extends AndroidViewModel {
                     return;
                 }
 
-                if(queryDocumentSnapshots != null) {
+                if (queryDocumentSnapshots != null) {
                     if (friendListTemp.isEmpty()) {
                         friendListTemp = queryDocumentSnapshots.toObjects(User.class);
-                    }
-
-                    else {
+                    } else {
                         for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
 
                             User friend = doc.toObject(User.class);

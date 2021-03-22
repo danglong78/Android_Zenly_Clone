@@ -105,7 +105,7 @@ public class ConfirmOtpFragment extends Fragment {
                                             newUser.setName(prefs.getString("name", ""));
                                             newUser.setUID(FirebaseAuth.getInstance().getUid());
                                             DocumentReference newUserRef = UserRepository.getInstance().getUserReference(FirebaseAuth.getInstance().getUid());
-
+                                            newUser.setPhone(prefs.getString("phone", ""));
 
                                             newUserRef.set(newUser).addOnCompleteListener(new OnCompleteListener<Void>() {
                                                 @Override

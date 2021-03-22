@@ -14,6 +14,7 @@ public class User {
     private String avatarURL;
     private String dob;
     private GeoPoint location;
+    private String phone;
 
 
     public User(Bitmap avatar, String name, String UID, String avatarURL, GeoPoint location) {
@@ -65,6 +66,8 @@ public class User {
     public void setName(String name) {
         this.name = name;
     }
+
+    public void setPhone(String phone) {this.phone = phone; }
 
     @Override
     public String toString() {
