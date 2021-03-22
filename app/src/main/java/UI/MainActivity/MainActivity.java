@@ -1,19 +1,58 @@
 package UI.MainActivity;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.motion.widget.MotionLayout;
+import androidx.fragment.app.FragmentManager;
+import androidx.navigation.fragment.NavHostFragment;
 
 import android.os.Bundle;
 
 
 import com.study.android_zenly.R;
 
-public class MainActivity extends AppCompatActivity {
+import ultis.FragmentTag;
 
+public class MainActivity extends AppCompatActivity implements MainCallBacks{
+    private FragmentTag tag;
+    private MotionLayout motionLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        tag=FragmentTag.OTHERS;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        switch(tag){
+
+        case CHAT:
+        {
+            motionLayout.setTransition(R.id.hideLeft,R.id.left);
+            motionLayout.setProgress(1);
+            tag=FragmentTag.OTHERS;
+            break;
+        }
+            case SETTINGS:
+            {
+//                motionLayout.setTransition(R.id.hideRight,R.id.right);
+                motionLayout.setProgress(1);
+                break;
+            }
+            case OTHERS:
+            {
+
+                break;
+            }
+
+        }
+    }
+
+    @Override
+    public void setFragmentTag(FragmentTag tag,MotionLayout motion) {
+        this.tag= tag;
+        motionLayout=motion;
+    }
 }

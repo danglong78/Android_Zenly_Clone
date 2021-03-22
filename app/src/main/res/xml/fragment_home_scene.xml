@@ -117,5 +117,51 @@
             motion:layout_constraintStart_toStartOf="@+id/friendButton"
             android:translationY="75dp" />
     </ConstraintSet>
+    <ConstraintSet
+        android:id="@+id/hideLeft"
+        motion:deriveConstraintsFrom="@+id/left" >
+        <Constraint
+            android:id="@+id/userButton"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="48dp"
+            android:layout_height="55dp"
+            android:paddingStart="10dp"
+            android:paddingTop="8dp"
+            android:gravity="center"
+            motion:layout_constraintBottom_toBottomOf="@+id/friendButton"
+            android:layout_marginEnd="40dp"
+            android:rotation="-24"
+            android:scaleX="1.1"
+            android:scaleY="1.1"
+            android:visibility="invisible"/>
+        <Constraint
+            android:visibility="invisible"
+            android:id="@+id/chatButton"
+            android:layout_width="48dp"
+            android:layout_height="55dp"
+            motion:layout_constraintBottom_toBottomOf="@+id/friendButton"
+            android:layout_marginStart="40dp"
+            motion:layout_constraintStart_toStartOf="parent" />
+        <Constraint
+
+            android:id="@+id/friendButton"
+            motion:layout_constraintEnd_toStartOf="@+id/userButton"
+            motion:layout_constraintStart_toEndOf="@+id/chatButton"
+            android:layout_width="48dp"
+            android:layout_height="55dp"
+            motion:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="32dp"
+            android:visibility="invisible" />
+        <Constraint
+            android:visibility="invisible"
+            android:id="@+id/mapButton"
+            motion:layout_constraintEnd_toEndOf="@+id/friendButton"
+            android:layout_width="48dp"
+            android:layout_height="55dp"
+            android:layout_marginBottom="20dp"
+            motion:layout_constraintBottom_toTopOf="@+id/friendButton"
+            motion:layout_constraintStart_toStartOf="@+id/friendButton"
+            android:translationY="75dp" />
+    </ConstraintSet>
 
 </MotionScene>
