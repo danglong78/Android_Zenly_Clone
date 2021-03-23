@@ -56,8 +56,8 @@ public class UserRepository {
     }
 
     public MutableLiveData<User> getUserWithUID(String UID) {
-        DocumentReference userRef = mDb.collection(USER_COLLECTION).document(FirebaseAuth.getInstance().getUid());
-        MutableLiveData<User> user = null;
+        DocumentReference userRef = mDb.collection(USER_COLLECTION).document(UID);
+        MutableLiveData<User> user = new MutableLiveData<User>();
         userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
 
             @Override
@@ -72,8 +72,8 @@ public class UserRepository {
     }
 
     public MutableLiveData<List<User>> getUserFriends(String UID) {
-        CollectionReference friendsRef = mDb.collection(USER_COLLECTION).document(FirebaseAuth.getInstance().getUid()).collection(FRIENDS_COLLECTION);
-        MutableLiveData<List<User>> friendList = null;
+        CollectionReference friendsRef = mDb.collection(USER_COLLECTION).document(UID).collection(FRIENDS_COLLECTION);
+        MutableLiveData<List<User>> friendList = new MutableLiveData<List<User>>();
 
         friendsRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
@@ -90,10 +90,12 @@ public class UserRepository {
     }
 
     public CollectionReference getFriendsCollectionRef(String UID) {
-        return mDb.collection(USER_COLLECTION).document(FirebaseAuth.getInstance().getUid()).collection(FRIENDS_COLLECTION);
+        return mDb.collection(USER_COLLECTION).document(UID).collection(FRIENDS_COLLECTION);
     }
 
     public DocumentReference getUserReference(String UID) {
         return mDb.collection(USER_COLLECTION).document(UID);
     }
+
+
 }

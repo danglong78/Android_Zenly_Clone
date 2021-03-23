@@ -71,7 +71,7 @@ public class User {
         return "User{" +
                 ", UID ='" + this.UID + '\'' +
                 ", name ='" + this.name + '\'' +
-                ", avatar ='" + avatar + '\'' +
+                ", avatar ='" + this.avatarURL + '\'' +
                 '}';
     }
 }

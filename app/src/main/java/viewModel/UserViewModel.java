@@ -1,14 +1,17 @@
 package viewModel;
 
 import android.app.Application;
+import android.content.Context;
 import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -27,56 +30,67 @@ import java.util.Map;
 import data.models.User;
 import data.repositories.UserRepository;
 
-public class UserViewModel extends AndroidViewModel {
+public class UserViewModel extends ViewModel {
     private final String TAG = "UserViewModel";
 
     UserRepository repository;
-    MutableLiveData<User> mUser;
+    MutableLiveData<User> mUser = new MutableLiveData<User>();
     CollectionReference friendsRef;
 
     private List<User> friendListTemp = new ArrayList<>();
     public MutableLiveData<List<User>> friendList;
 
 
-    public UserViewModel(@NonNull Application application) {
-        super(application);
-
-
-        mUser = repository.getHostUser(application);
+    public void init(Context context, LifecycleOwner lifecycleOwner) {
         repository = UserRepository.getInstance();
-        friendList = repository.getUserFriends(mUser.getValue().getUID());
-        friendList.setValue(friendListTemp);
-        friendsRef = repository.getFriendsCollectionRef(mUser.getValue().getUID());
 
-        friendsRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@javax.annotation.Nullable QuerySnapshot queryDocumentSnapshots, @javax.annotation.Nullable FirebaseFirestoreException e) {
-                if (e != null) {
-                    Log.e(TAG, "onEvent: Listen failed.", e);
-                    return;
-                }
+        mUser = repository.getHostUser(context);
+//        mUser.observe(lifecycleOwner, new Observer<User>() {
+//            @Override
+//            public void onChanged(User user) {
+//                friendList = repository.getUserFriends(mUser.getValue().getUID());
+//                friendList.setValue(friendListTemp);
+//                friendsRef = repository.getFriendsCollectionRef(mUser.getValue().getUID());
+//
+//                friendsRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
+//                    @Override
+//                    public void onEvent(@javax.annotation.Nullable QuerySnapshot queryDocumentSnapshots, @javax.annotation.Nullable FirebaseFirestoreException e) {
+//                        if (e != null) {
+//                            Log.e(TAG, "onEvent: Listen failed.", e);
+//                            return;
+//                        }
+//
+//                        if(queryDocumentSnapshots != null) {
+//                            if (friendListTemp.isEmpty()) {
+//                                friendListTemp = queryDocumentSnapshots.toObjects(User.class);
+//                            }
+//
+//                            else {
+//                                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+//
+//                                    User friend = doc.toObject(User.class);
+//                                    if (!friendListTemp.contains(friend)) {
+//                                        friendListTemp.add(friend);
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
+//                });
+//
+//                mUser.removeObserver(this);
+//            }
+//        });
 
-                if(queryDocumentSnapshots != null) {
-                    if (friendListTemp.isEmpty()) {
-                        friendListTemp = queryDocumentSnapshots.toObjects(User.class);
-                    }
 
-                    else {
-                        for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-
-                            User friend = doc.toObject(User.class);
-                            if (!friendListTemp.contains(friend)) {
-                                friendListTemp.add(friend);
-                            }
-                        }
-                    }
-                }
-            }
-        });
     }
 
     public LiveData<User> getHostUser() {
         return mUser;
+    }
+
+    public DocumentReference getUserReference(String UID) {
+        return repository.getUserReference(UID);
     }
 
     public LiveData<List<User>> getFriendList() {
