@@ -34,6 +34,11 @@ public class FriendSuggestListAdapter  extends RecyclerView.Adapter<FriendSugges
         list.add(new User(null,"Huynh Lam Hoang Dai","123","0e974e36-8978-11eb-8dcd-0242ac130003.jpg",null,null,null));
     }
 
+    public FriendSuggestListAdapter(Context context, ArrayList<User> list){
+        this.list = list;
+        this.context = context;
+    }
+
     @NonNull
     @Override
     public FriendSuggestListAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -45,15 +50,15 @@ public class FriendSuggestListAdapter  extends RecyclerView.Adapter<FriendSugges
 
     @Override
     public void onBindViewHolder(@NonNull FriendSuggestListAdapter.ViewHolder holder, int position) {
-        holder.getUserNameTextView().setText(list.get(position).getName());
-        ref= storage.getReference().child("avatars").child(list.get(position).getAvatarURL());
-        ref.getDownloadUrl().addOnSuccessListener(uri->{
-            String imageURL= uri.toString();
-            Glide.with(context)
-                    .load(imageURL)
-                    .into(holder.getAvatar());
-
-        });
+//        holder.getUserNameTextView().setText(list.get(position).getName());
+//        ref= storage.getReference().child("avatars").child(list.get(position).getAvatarURL());
+//        ref.getDownloadUrl().addOnSuccessListener(uri->{
+//            String imageURL= uri.toString();
+//            Glide.with(context)
+//                    .load(imageURL)
+//                    .into(holder.getAvatar());
+//
+//        });
     }
 
     @Override

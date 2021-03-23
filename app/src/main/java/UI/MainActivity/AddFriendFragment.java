@@ -11,17 +11,23 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.study.android_zenly.R;
 
+import java.util.ArrayList;
+
 import adapter.FriendSuggestListAdapter;
 import adapter.RecentFriendListAdapter;
+import data.models.User;
 import viewModel.FriendSuggestViewModel;
 
 public class AddFriendFragment extends Fragment implements AddFriendsFragmentCallback{
+
+    private final String TAG = "AddFriendFragment";
 
     private FriendSuggestViewModel mViewModel;
     private MotionLayout motionLayout;
@@ -39,8 +45,14 @@ public class AddFriendFragment extends Fragment implements AddFriendsFragmentCal
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        mViewModel = new FriendSuggestViewModel();
+        mViewModel.init(getActivity());
+
         RecyclerView friendSuggestRecyclerView = view.findViewById(R.id.suggest_friend_recycler_view);
-        FriendSuggestListAdapter adapter = new FriendSuggestListAdapter(getActivity());
+
+        Log.d(TAG, "onViewCreated: " + mViewModel.getSuggestFriendList().getValue());
+
+        FriendSuggestListAdapter adapter = new FriendSuggestListAdapter(getActivity(), (ArrayList<User>) mViewModel.getSuggestFriendList().getValue());
         friendSuggestRecyclerView.setAdapter(adapter);
         friendSuggestRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
@@ -58,6 +70,8 @@ public class AddFriendFragment extends Fragment implements AddFriendsFragmentCal
         super.onActivityCreated(savedInstanceState);
 //        mViewModel = new ViewModelProvider(this).get(FriendSuggestViewModel.class);
         // TODO: Use the ViewModel
+        Log.d(TAG, "onActivityCreated: Run roi nha");
+
     }
 
     @Override

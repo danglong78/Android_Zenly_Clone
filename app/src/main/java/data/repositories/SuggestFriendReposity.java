@@ -66,6 +66,8 @@ public class SuggestFriendReposity {
                         String phoneNo = pCur.getString(pCur.getColumnIndex(
                                 ContactsContract.CommonDataKinds.Phone.NUMBER));
 
+                        phoneNo = "+84" + phoneNo.substring(1);
+
                         phones.add(phoneNo);
                         Log.i(TAG, "Phone: " + phoneNo);
 
@@ -83,7 +85,9 @@ public class SuggestFriendReposity {
 
     public MutableLiveData<List<User>> getSuggestFriendList(Context context) {
         ArrayList<String> phones = getPhoneNumbersFromContact(context);
-        MutableLiveData<List<User>> suggestFriendList = null;
+        MutableLiveData<List<User>> suggestFriendList = new MutableLiveData<List<User>>();
+        suggestFriendList.setValue(new ArrayList<User>());
+
 
         for (String phone : phones) {
             mDb.collection(USER_COLLECTION)
@@ -106,10 +110,12 @@ public class SuggestFriendReposity {
                                 }
                             }
 
-                            suggestFriendList.postValue(newSuggestFriendList);
+                            suggestFriendList.getValue().addAll(newSuggestFriendList);
                         }
                     });
         }
+
+        Log.d(TAG, "getSuggestFriendList: " + suggestFriendList.getValue());
 
         return suggestFriendList;
         }
