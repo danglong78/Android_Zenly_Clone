@@ -37,6 +37,7 @@ public class FriendSuggestListAdapter  extends RecyclerView.Adapter<FriendSugges
 
     public FriendSuggestListAdapter(Context context, ArrayList<User> list){
         this.list = list;
+        storage = FirebaseStorage.getInstance();
         this.context = context;
     }
 
@@ -52,14 +53,17 @@ public class FriendSuggestListAdapter  extends RecyclerView.Adapter<FriendSugges
     @Override
     public void onBindViewHolder(@NonNull FriendSuggestListAdapter.ViewHolder holder, int position) {
         holder.getUserNameTextView().setText(list.get(position).getName());
-//        ref= storage.getReference().child("avatars").child(list.get(position).getAvatarURL());
-//        ref.getDownloadUrl().addOnSuccessListener(uri->{
-//            String imageURL= uri.toString();
-//            Glide.with(context)
-//                    .load(imageURL)
-//                    .into(holder.getAvatar());
-//
-//        });
+
+        ref= storage.getReference().child("avatars").child(list.get(position).getAvatarURL());
+        if(ref!=null) {
+            ref.getDownloadUrl().addOnSuccessListener(uri -> {
+                String imageURL = uri.toString();
+                Glide.with(context)
+                        .load(imageURL)
+                        .into(holder.getAvatar());
+
+            });
+        }
     }
 
     @Override

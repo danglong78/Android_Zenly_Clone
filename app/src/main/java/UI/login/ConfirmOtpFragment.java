@@ -34,6 +34,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.GeoPoint;
 import com.study.android_zenly.R;
 
 import java.util.concurrent.TimeUnit;
@@ -129,6 +130,7 @@ public class ConfirmOtpFragment extends Fragment {
                     btn.setVisibility(View.INVISIBLE);
                     if (verificationId != null) {
                         PhoneAuthCredential phoneAuthCredential = PhoneAuthProvider.getCredential(verificationId, s.toString());
+
                         FirebaseAuth.getInstance().signInWithCredential(phoneAuthCredential)
                                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                                     @Override
@@ -144,6 +146,8 @@ public class ConfirmOtpFragment extends Fragment {
 
                                             newUser.setName(prefs.getString("name", ""));
                                             newUser.setUID(FirebaseAuth.getInstance().getUid());
+                                            newUser.setAvatarURL(new String());
+                                            newUser.setLocation(new GeoPoint(1,1));
                                             DocumentReference newUserRef = UserRepository.getInstance().getUserReference(FirebaseAuth.getInstance().getUid());
                                             newUser.setPhone(prefs.getString("phone", ""));
 
@@ -159,7 +163,6 @@ public class ConfirmOtpFragment extends Fragment {
                                                 }
                                             });
 
-//                    startActivity(new Intent(getActivity(), RequestPermissionActivity.class));
                                             navController.navigate(R.id.action_global_homeFragment);
                                         } else {
                                             Toast.makeText(getActivity(), "Your verify code wrong!!!", Toast.LENGTH_SHORT).show();
@@ -187,6 +190,8 @@ public class ConfirmOtpFragment extends Fragment {
             public void onClick(View v) {
                 if(codeInput.getText().toString().length()==6)
                 {
+                    progressBar.setVisibility(View.VISIBLE);
+                    btn.setVisibility(View.INVISIBLE);
                    SharedPreferences prefs = getActivity().getSharedPreferences("user_infor", Context.MODE_PRIVATE);
                     SharedPreferences.Editor myEditor = prefs.edit();
                     myEditor.putBoolean("isAuthenticated", true);
@@ -216,6 +221,9 @@ public class ConfirmOtpFragment extends Fragment {
                 }
                 else
                     showDialog();
+                codeInput.setText("");
+                progressBar.setVisibility(View.INVISIBLE);
+                btn.setVisibility(View.VISIBLE);
             }
         });
         CountDownTimer countdown= new CountDownTimer(120000, 1000) {

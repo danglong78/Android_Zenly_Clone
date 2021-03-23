@@ -109,34 +109,43 @@ public class HomeFragment extends Fragment {
         setEventListener();
         observeLoginAndLocationPermissions(view);
 
-        userViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
-        userViewModel.init(getActivity(), getViewLifecycleOwner());
-        // wait for hostUser result from Firebase (should use timeout instead)
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        mapViewModel = new ViewModelProvider(requireActivity()).get(MapViewModel.class);
-        mapViewModel.init(getActivity());
-        if (userViewModel.getHostUser() != null) {
-            getLastLocation();
-            requestLocationUpdate();
-        }
 
 
-        userViewModel.getHostUser().observe(getViewLifecycleOwner(), new Observer<User>() {
-            @Override
-            public void onChanged(User user) {
-                Log.d(TAG, "onChanged: " + user.toString());
-                addMapMarkers();
 
-                userViewModel.getHostUser().removeObserver(this);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if(loginviewModel.getAuthentication().getValue() ) {
+            userViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
+            userViewModel.init(getActivity(), getViewLifecycleOwner());
+            // wait for hostUser result from Firebase (should use timeout instead)
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-        });
+
+            mapViewModel = new ViewModelProvider(requireActivity()).get(MapViewModel.class);
+            mapViewModel.init(getActivity());
+            if (userViewModel.getHostUser() != null) {
+                getLastLocation();
+                requestLocationUpdate();
+            }
 
 
+            userViewModel.getHostUser().observe(getViewLifecycleOwner(), new Observer<User>() {
+                @Override
+                public void onChanged(User user) {
+                    Log.d(TAG, "onChanged: " + user.toString());
+
+                    addMapMarkers();
+
+                    userViewModel.getHostUser().removeObserver(this);
+                }
+            });
+        }
     }
 
     private void requestLocationUpdate() {
@@ -234,6 +243,7 @@ public class HomeFragment extends Fragment {
 
                     HashMap data = new HashMap<String, Object>();
                     data.put("location", geoPoint);
+                    Log.d("USERID", user.getUID());
                     userViewModel.getUserReference(user.getUID()).update(data);
 
                     mapViewModel.moveTo(new LatLng(location.getLatitude(), location.getLongitude()));
@@ -375,6 +385,7 @@ public class HomeFragment extends Fragment {
         loginviewModel = new ViewModelProvider(requireActivity()).get(LoginViewModel.class);
         loginviewModel.init(getActivity());
         loginviewModel.getAuthentication().observe(getViewLifecycleOwner(), (Observer<Boolean>) isAuthenticated -> {
+
             if (isAuthenticated) {
 
                 requestLocationViewModel = new ViewModelProvider(getActivity()).get(RequestLocationViewModel.class);
@@ -382,14 +393,19 @@ public class HomeFragment extends Fragment {
                 requestLocationViewModel.getHasPermission().observe(getViewLifecycleOwner(), (Observer<Boolean>) hasPermission -> {
                     if (hasPermission) {
 
+
                     } else {
                         navController.navigate(R.id.action_homeFragment_to_request_location_nav);
+
+                        HomeFragment.this.onDestroy();
+
 
                     }
                 });
             } else {
+
                 navController.navigate(R.id.action_homeFragment_to_login_nav);
-                ;
+                HomeFragment.this.onDestroy();
             }
         });
     }

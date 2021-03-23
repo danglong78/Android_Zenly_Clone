@@ -31,7 +31,7 @@ public class ChatListAdapter  extends RecyclerView.Adapter<ChatListAdapter.ViewH
         list = new ArrayList<>();
         this.onChatListListener= onChatListListener;
         this.context = context;
-        storage = FirebaseStorage.getInstance();
+        storage= FirebaseStorage.getInstance();
         list.add(new User(null,"Dang Minh Hoang Long","123","0e9748c8-8978-11eb-8dcd-0242ac130003.png",null,null,null));
         list.add(new User(null,"Ho Dai Tri","123","0e974b5c-8978-11eb-8dcd-0242ac130003.png",null,null,null));
         list.add(new User(null,"Tran Thanh Tam","123","0e974d50-8978-11eb-8dcd-0242ac130003.png",null,null,null));
@@ -52,13 +52,16 @@ public class ChatListAdapter  extends RecyclerView.Adapter<ChatListAdapter.ViewH
         holder.getLastMessageTextView().setText("Hello");
         holder.getTimeText().setText("Today");
         ref= storage.getReference().child("avatars").child(list.get(position).getAvatarURL());
-        ref.getDownloadUrl().addOnSuccessListener(uri->{
-           String imageURL= uri.toString();
-            Glide.with(context)
-                    .load(imageURL)
-                    .into(holder.getAvatar());
+        if(ref!=null) {
+            ref.getDownloadUrl().addOnSuccessListener(uri->{
+                String imageURL= uri.toString();
+                Glide.with(context)
+                        .load(imageURL)
+                        .into(holder.getAvatar());
 
-        });
+            });
+        }
+
 
 
     }

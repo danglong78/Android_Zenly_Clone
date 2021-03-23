@@ -1,9 +1,12 @@
 package UI.MainActivity;
 
 import androidx.constraintlayout.motion.widget.MotionLayout;
+import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -26,11 +29,12 @@ import adapter.FriendSuggestListAdapter;
 import adapter.RecentFriendListAdapter;
 import data.models.User;
 import viewModel.FriendSuggestViewModel;
+import viewModel.LoginViewModel;
 
 public class AddFriendFragment extends Fragment implements AddFriendsFragmentCallback{
 
     private final String TAG = "AddFriendFragment";
-
+    private final int CONTACT_REQUEST_ID = 10;
     private FriendSuggestViewModel mViewModel;
     private MotionLayout motionLayout;
     public static AddFriendFragment newInstance() {
@@ -47,33 +51,43 @@ public class AddFriendFragment extends Fragment implements AddFriendsFragmentCal
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mViewModel = new FriendSuggestViewModel();
-        mViewModel.init(getActivity());
+        LoginViewModel loginviewModel = new ViewModelProvider(requireActivity()).get(LoginViewModel.class);
+        loginviewModel.init(getActivity());
+        if(loginviewModel.getAuthentication().getValue()) {
+            mViewModel = new FriendSuggestViewModel();
+            if( ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_CONTACTS)==
+                    PackageManager.PERMISSION_GRANTED)
+            {
+                mViewModel.init(getActivity());
 
-        RecyclerView friendSuggestRecyclerView = view.findViewById(R.id.suggest_friend_recycler_view);
-
-        Log.d(TAG, "onViewCreated: " + mViewModel.getSuggestFriendList().getValue());
-
-        FriendSuggestListAdapter adapter = new FriendSuggestListAdapter(getActivity(), (ArrayList<User>) mViewModel.getSuggestFriendList().getValue());
-        friendSuggestRecyclerView.setAdapter(adapter);
-        friendSuggestRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-        RecyclerView recentFriendRecyclerView = view.findViewById(R.id.recent_friend_recycler_view);
-        RecentFriendListAdapter recentFriendAdapter = new RecentFriendListAdapter();
-        recentFriendRecyclerView.setAdapter(recentFriendAdapter);
-        recentFriendRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(),LinearLayoutManager.HORIZONTAL,false));
-
-        motionLayout=view.findViewById(R.id.friend_motion_layout);
-        motionLayout.setTransition(R.id.start,R.id.end);
-
-        mViewModel.getSuggestFriendList().observe(getViewLifecycleOwner(), new Observer<List<User>>() {
-
-            @Override
-            public void onChanged(List<User> users) {
-                Log.d(TAG, "onChanged: users.size() " + users.size());
-                adapter.notifyDataSetChanged();
             }
-        });
+            else{requestPermissions(new String[]{Manifest.permission.READ_CONTACTS},CONTACT_REQUEST_ID);}
+
+            RecyclerView friendSuggestRecyclerView = view.findViewById(R.id.suggest_friend_recycler_view);
+
+            Log.d(TAG, "onViewCreated: " + mViewModel.getSuggestFriendList().getValue());
+
+            FriendSuggestListAdapter adapter = new FriendSuggestListAdapter(getActivity(), (ArrayList<User>) mViewModel.getSuggestFriendList().getValue());
+            friendSuggestRecyclerView.setAdapter(adapter);
+            friendSuggestRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+            RecyclerView recentFriendRecyclerView = view.findViewById(R.id.recent_friend_recycler_view);
+            RecentFriendListAdapter recentFriendAdapter = new RecentFriendListAdapter();
+            recentFriendRecyclerView.setAdapter(recentFriendAdapter);
+            recentFriendRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+
+            motionLayout = view.findViewById(R.id.friend_motion_layout);
+            motionLayout.setTransition(R.id.start, R.id.end);
+
+            mViewModel.getSuggestFriendList().observe(getViewLifecycleOwner(), new Observer<List<User>>() {
+
+                @Override
+                public void onChanged(List<User> users) {
+                    Log.d(TAG, "onChanged: users.size() " + users.size());
+                    adapter.notifyDataSetChanged();
+                }
+            });
+        }
     }
 
     @Override

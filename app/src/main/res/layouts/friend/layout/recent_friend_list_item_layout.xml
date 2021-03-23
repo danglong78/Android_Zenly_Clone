@@ -16,11 +16,11 @@
         android:layout_width="70dp"
         app:cardCornerRadius="35dp">
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
             android:scaleType="centerCrop"
             android:layout_gravity="center"
-            app:srcCompat="@drawable/flag_russian_federation"
+            app:srcCompat="@drawable/ic_baseline_account_circle_24"
             />
     </androidx.cardview.widget.CardView>
 
