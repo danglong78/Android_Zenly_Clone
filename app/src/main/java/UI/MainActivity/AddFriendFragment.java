@@ -19,6 +19,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.study.android_zenly.R;
 
@@ -28,6 +29,7 @@ import java.util.List;
 import adapter.FriendSuggestListAdapter;
 import adapter.RecentFriendListAdapter;
 import data.models.User;
+import ultis.FragmentTag;
 import viewModel.FriendSuggestViewModel;
 import viewModel.LoginViewModel;
 
@@ -37,6 +39,8 @@ public class AddFriendFragment extends Fragment implements AddFriendsFragmentCal
     private final int CONTACT_REQUEST_ID = 10;
     private FriendSuggestViewModel mViewModel;
     private MotionLayout motionLayout;
+    TextView searchText;
+
     public static AddFriendFragment newInstance() {
         return new AddFriendFragment();
     }
@@ -87,6 +91,15 @@ public class AddFriendFragment extends Fragment implements AddFriendsFragmentCal
                     adapter.notifyDataSetChanged();
                 }
             });
+            TextView searchText;
+            searchText= view.findViewById(R.id.searchView);
+            searchText.setOnClickListener(v->{
+
+                MainActivity activity = (MainActivity) getActivity();
+//                navController.navigate(R.id.action_chatListFragment_to_searchChatFragment);
+
+            });
+
         }
     }
 

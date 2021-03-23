@@ -6,6 +6,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.navigation.fragment.NavHostFragment;
 
 import android.os.Bundle;
+import android.view.inputmethod.InputMethodManager;
 
 
 import com.study.android_zenly.R;
@@ -32,6 +33,12 @@ public class MainActivity extends AppCompatActivity implements MainCallBacks{
         {
             motionLayout.setTransition(R.id.hideLeft,R.id.left);
             motionLayout.setProgress(1);
+            InputMethodManager inputMethodManager =
+                    (InputMethodManager) getSystemService(
+                            INPUT_METHOD_SERVICE);
+            if(getCurrentFocus()!=null)
+            {inputMethodManager.hideSoftInputFromWindow(
+                    getCurrentFocus().getWindowToken(), 0);}
             tag=FragmentTag.OTHERS;
             break;
         }

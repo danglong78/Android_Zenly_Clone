@@ -54,22 +54,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/recent_friend_recycler_view" />
 
-    <EditText
-        android:id="@+id/searchView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+    <TextView
+        android:text="SEARCH"
+        android:gravity="center"
+        android:background="@drawable/chat_input_background"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:background="@drawable/search_bar_background"
-        android:hint="SEARCH"
-        android:textAlignment="center"
-        android:textColorHint="#4F5875"
-        android:textStyle="bold"
-        app:cornerRadius="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView4" />
+        app:layout_constraintTop_toBottomOf="@+id/textView4"
+        android:layout_height="60dp"
+        android:textStyle="bold"
+        android:textColor="@color/cyan_900"
+        android:textSize="18sp"
+        android:layout_width="match_parent"
+        android:id="@+id/searchView"/>
 
     <LinearLayout
         android:id="@+id/guideline"
@@ -79,7 +77,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
 
-        android:background="@color/white">
+        android:background="@color/white"
+        android:orientation="horizontal">
 
     </LinearLayout>
 
