@@ -323,12 +323,14 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onDrawerOpened(@NonNull View drawerView) {
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
             }
 
             @Override
             public void onDrawerClosed(@NonNull View drawerView) {
                 if (motionLayoutstate != 0)
                     motionLayoutstate = 0;
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
             }
 
             @Override

@@ -68,6 +68,7 @@ dependencies {
 
     // Utilities for Maps SDK for Android (requires Google Play Services)
     implementation 'com.google.maps.android:android-maps-utils:2.2.1'
+    implementation 'com.google.android:flexbox:0.2.5'
 }
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'

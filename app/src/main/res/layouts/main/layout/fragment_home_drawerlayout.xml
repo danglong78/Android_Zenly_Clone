@@ -24,8 +24,10 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:layout_marginEnd="-65dp"
-        android:background="@color/purple_200"
-        android:fitsSystemWindows="true" >
+        android:fitsSystemWindows="true"
+
+        android:background="@color/white"
+         >
         <fragment
             android:layout_width="match_parent"
             android:layout_height="match_parent"

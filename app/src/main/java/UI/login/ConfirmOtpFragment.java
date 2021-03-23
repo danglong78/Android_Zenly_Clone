@@ -28,12 +28,15 @@ import androidx.navigation.Navigation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.firestore.DocumentReference;
 import com.study.android_zenly.R;
+
+import java.util.concurrent.TimeUnit;
 
 import data.models.User;
 import data.repositories.UserRepository;
@@ -45,7 +48,7 @@ public class ConfirmOtpFragment extends Fragment {
 
     NavController navController;
     TextView countdownText,describe;
-    Button btn;
+    Button btn,sendAgainButton;
     EditText codeInput;
     ProgressBar progressBar;
     String verificationId;
@@ -60,6 +63,7 @@ public class ConfirmOtpFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         navController= Navigation.findNavController(view);
+        sendAgainButton = view.findViewById(R.id.sendAgainBtn);
         codeInput = (EditText) view.findViewById(R.id.codeInput);
         verificationId = getArguments().getString("verificationId");
         progressBar = (ProgressBar) view.findViewById(R.id.progressBarConfirmOTP);
@@ -68,6 +72,43 @@ public class ConfirmOtpFragment extends Fragment {
         if(prefs!=null && prefs.contains("phone")&& prefs.contains("codePhone")) {
             describe.setText("I SENT TO "+prefs.getString("codePhone","")+prefs.getString("phone",""));
         }
+        sendAgainButton.setOnClickListener(v->{
+            PhoneAuthProvider.getInstance().verifyPhoneNumber(
+                    prefs.getString("phone","")
+                    ,60
+                    , TimeUnit.SECONDS
+                    ,requireActivity()
+                    ,new PhoneAuthProvider.OnVerificationStateChangedCallbacks(){
+                        @Override
+                        public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
+                            Toast.makeText(getActivity(), "On Complete", Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onVerificationFailed(@NonNull FirebaseException e) {
+                            Toast.makeText(getActivity(), "On Fail", Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onCodeSent(@NonNull String verificationId, @NonNull PhoneAuthProvider.ForceResendingToken forceResendingToken) {
+                            ConfirmOtpFragment.this.verificationId=verificationId;
+                        }
+                    });
+            countdownText.setVisibility(View.VISIBLE);
+            CountDownTimer countdown= new CountDownTimer(120000, 1000) {
+
+                public void onTick(long millisUntilFinished) {
+                    countdownText.setText("You can ask for the new code in " + millisUntilFinished / 1000+" seconds");
+                }
+
+                public void onFinish() {
+                    countdownText.setVisibility(View.INVISIBLE);
+                    sendAgainButton.setVisibility(View.VISIBLE);
+
+                }
+            }.start();
+        });
+
         progressBar.setVisibility(View.GONE);
         btn = (Button) view.findViewById(R.id.buttonConfirmSMS);
         codeInput.addTextChangedListener(new TextWatcher() {
@@ -85,7 +126,7 @@ public class ConfirmOtpFragment extends Fragment {
             public void afterTextChanged(Editable s) {
                 if(s.length()==6){
                     progressBar.setVisibility(View.VISIBLE);
-                    btn.setVisibility(View.GONE);
+                    btn.setVisibility(View.INVISIBLE);
                     if (verificationId != null) {
                         PhoneAuthCredential phoneAuthCredential = PhoneAuthProvider.getCredential(verificationId, s.toString());
                         FirebaseAuth.getInstance().signInWithCredential(phoneAuthCredential)
@@ -134,6 +175,9 @@ public class ConfirmOtpFragment extends Fragment {
 //
 ////                    startActivity(new Intent(getActivity(), RequestPermissionActivity.class));
 //                    navController.navigate(R.id.action_global_homeFragment);
+                    codeInput.setText("");
+                    progressBar.setVisibility(View.INVISIBLE);
+                    btn.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -141,7 +185,7 @@ public class ConfirmOtpFragment extends Fragment {
         view.findViewById(R.id.buttonConfirmSMS).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(codeInput.getText().toString().length()==4)
+                if(codeInput.getText().toString().length()==6)
                 {
                    SharedPreferences prefs = getActivity().getSharedPreferences("user_infor", Context.MODE_PRIVATE);
                     SharedPreferences.Editor myEditor = prefs.edit();
@@ -174,14 +218,16 @@ public class ConfirmOtpFragment extends Fragment {
                     showDialog();
             }
         });
-        CountDownTimer countdown= new CountDownTimer(30000, 1000) {
+        CountDownTimer countdown= new CountDownTimer(120000, 1000) {
 
             public void onTick(long millisUntilFinished) {
                 countdownText.setText("You can ask for the new code in " + millisUntilFinished / 1000+" seconds");
             }
 
             public void onFinish() {
-                countdownText.setAlpha(0f);
+                countdownText.setVisibility(View.INVISIBLE);
+                sendAgainButton.setVisibility(View.VISIBLE);
+
             }
         }.start();
     }

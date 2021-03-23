@@ -36,7 +36,7 @@
 
         <activity
             android:name="UI.MainActivity.MainActivity"
-            android:windowSoftInputMode="adjustResize|stateAlwaysVisible" />
+            android:windowSoftInputMode="adjustResize" />
         <activity android:name="UI.RequestPermission.RequestPermissionActivity" />
         <activity android:name="UI.SplashActivity">
             <intent-filter>
@@ -47,7 +47,7 @@
         </activity>
         <activity
             android:name="UI.login.LoginActivity"
-            android:windowSoftInputMode="adjustResize|stateAlwaysVisible" />
+            android:windowSoftInputMode="adjustResize" />
     </application>
 
 </manifest>

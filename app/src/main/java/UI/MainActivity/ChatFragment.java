@@ -3,6 +3,8 @@ package UI.MainActivity;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +12,7 @@ import android.view.ViewGroup;
 
 import com.study.android_zenly.R;
 
+import adapter.ChatAdapter;
 import ultis.FragmentTag;
 
 
@@ -25,7 +28,10 @@ public class ChatFragment extends Fragment {
     }
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        view.bringToFront();
+        ChatAdapter adapter = new ChatAdapter("123");
+        RecyclerView recyclerView= view.findViewById(R.id.message_list_recyclerview);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(),LinearLayoutManager.VERTICAL,true));
     }
 
 }

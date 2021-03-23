@@ -81,6 +81,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/buttonNext" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="SEND AGAIN"
+        android:id="@+id/sendAgainBtn"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginBottom="16dp"
+        app:cornerRadius="20sp"
+        android:visibility="invisible"/>
+
     <ProgressBar
         android:id="@+id/progressBarConfirmOTP"
         style="@style/Widget.AppCompat.ProgressBar"

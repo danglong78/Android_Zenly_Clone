@@ -10,6 +10,8 @@
     app:layoutDescription="@xml/fragment_chat_list_scene"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintStart_toStartOf="parent"
+    android:fitsSystemWindows="true"
+
     tools:context="UI.MainActivity.ChatListFragment">
 
 
