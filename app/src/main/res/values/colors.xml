@@ -15,4 +15,5 @@
     <color name="cyan_500">#00a4ec</color>
     <color name="cyan_900">#002280</color>
     <color name="teal">#00ffff</color>
+    <color name="background_chat_input">#eaebf4</color>
 </resources>

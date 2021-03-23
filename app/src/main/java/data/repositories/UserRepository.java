@@ -22,8 +22,10 @@ import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import data.models.Conversation;
 import data.models.User;
 
 public class UserRepository {
@@ -97,5 +99,15 @@ public class UserRepository {
         return mDb.collection(USER_COLLECTION).document(UID);
     }
 
-
+    public MutableLiveData<List<Conversation>> getListConversations(){
+        User user = getUserWithUID(FirebaseAuth.getInstance().getUid()).getValue();
+        ConversationRepository convRepo = new ConversationRepository();
+        List<Conversation> list = new ArrayList<Conversation>();
+        for(String id : user.getConversation()){
+            list.add(convRepo.getConversation(id).getValue());
+        }
+        MutableLiveData<List<Conversation>> res = null;
+        res.postValue(list);
+        return res;
+    }
 }

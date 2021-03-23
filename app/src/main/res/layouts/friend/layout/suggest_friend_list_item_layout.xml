@@ -15,8 +15,10 @@
         app:cardCornerRadius="20dp">
 
         <ImageView
+            android:id="@+id/avatar"
             android:layout_width="60dp"
             android:layout_height="60dp"
+            android:scaleType="centerCrop"
             android:src="@drawable/icon" />
     </androidx.cardview.widget.CardView>
     <androidx.constraintlayout.widget.ConstraintLayout

@@ -48,7 +48,6 @@ public class DobFragment extends Fragment implements LoginFragmentInterface {
 //                navController.navigate(R.id.action_dobFragment_to_phoneFragment,createBundle(true));
 //        }
         initView( view);
-        view.setPadding(0,getStatusBarHeight()+30,0,0);
 
     }
     @Override
@@ -171,12 +170,5 @@ public class DobFragment extends Fragment implements LoginFragmentInterface {
         }
         return true;
     }
-    private int getStatusBarHeight() {
-        int result = 0;
-        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
-        if (resourceId > 0) {
-            result = getResources().getDimensionPixelSize(resourceId);
-        }
-        return result;
-    }
+
 }

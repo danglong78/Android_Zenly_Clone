@@ -16,6 +16,9 @@
         <action
             android:id="@+id/action_homeFragment_to_request_location_nav"
             app:destination="@id/request_location_nav" />
+        <action
+            android:id="@+id/action_homeFragment_to_chatFragment"
+            app:destination="@id/chatFragment" />
     </fragment>
     <navigation
         android:id="@+id/login_nav"
@@ -134,6 +137,11 @@
         app:destination="@id/homeFragment"
         app:popUpTo="@id/homeFragment"
         app:popUpToInclusive="false" />
+    <fragment
+        android:id="@+id/chatFragment"
+        android:name="UI.MainActivity.ChatFragment"
+        android:label="fragment_chat"
+        tools:layout="@layout/fragment_chat" />
 
 
 </navigation>

@@ -14,6 +14,7 @@ import androidx.constraintlayout.motion.widget.MotionLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -73,6 +74,8 @@ public class HomeFragment extends Fragment {
     MotionLayout motionLayout;
     BottomSheetBehavior bottomSheetBehavior;
     int motionLayoutstate = 0;
+    MotionLayout friendMotionLayout;
+
 
 
     @Override
@@ -102,6 +105,7 @@ public class HomeFragment extends Fragment {
         Log.d(TAG, "onViewCreated: order test");
 
         bindingView(view);
+        setEventListener();
         observeLoginAndLocationPermissions(view);
 
         userViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
@@ -237,15 +241,43 @@ public class HomeFragment extends Fragment {
 
     private void bindingView(View view)
     {
+        AddFriendFragment chatListFragment = (AddFriendFragment) getChildFragmentManager().findFragmentById(R.id.addFriendFragment);
         bottomSheetBehavior = BottomSheetBehavior.from(view.findViewById(R.id.navigation_drawer_bottom));
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         bottomSheetBehavior.setFitToContents(false);
         bottomSheetBehavior.setHalfExpandedRatio( 0.6f);
 
+        bottomSheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                if(newState == BottomSheetBehavior.STATE_HALF_EXPANDED)
+                    chatListFragment.setProgress(0);
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+                if(slideOffset >0.6f)
+                {
+                    chatListFragment.setProgress(slideOffset);
+                }
+            }
+        });
+
+        chatBtn = (Button) view.findViewById(R.id.chatButton);
+
+        userBtn = (Button) view.findViewById(R.id.userButton);
+
+        mapBtn= view.findViewById(R.id.mapButton);
+
         friendBtn = view.findViewById(R.id.friendButton);
+
+
+    }
+    private void setEventListener() {
         friendBtn.setOnClickListener(v->{
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HALF_EXPANDED);
         });
+
 
         drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
@@ -284,7 +316,7 @@ public class HomeFragment extends Fragment {
 
             }
         });
-        chatBtn = (Button) view.findViewById(R.id.chatButton);
+
         chatBtn.setOnClickListener(v -> {
             if (drawerLayout.isDrawerOpen(Gravity.LEFT)) {
                 drawerLayout.closeDrawer(Gravity.LEFT);
@@ -298,9 +330,6 @@ public class HomeFragment extends Fragment {
             }
             drawerLayout.openDrawer(Gravity.LEFT);
         });
-        chatBtn.bringToFront();
-        userBtn = (Button) view.findViewById(R.id.userButton);
-        userBtn.bringToFront();
         userBtn.setOnClickListener(v -> {
             if (drawerLayout.isDrawerOpen(Gravity.RIGHT)) {
                 drawerLayout.closeDrawer(Gravity.RIGHT);
@@ -314,12 +343,9 @@ public class HomeFragment extends Fragment {
 
             drawerLayout.openDrawer(Gravity.RIGHT);
         });
-        mapBtn= view.findViewById(R.id.mapButton);
         mapBtn.setOnClickListener(v -> {
-           drawerLayout.closeDrawers();
-        });
-
-    }
+            drawerLayout.closeDrawers();
+        });}
     private void observeLoginAndLocationPermissions(View view) {
         navController = Navigation.findNavController(view);
         loginviewModel = new ViewModelProvider(requireActivity()).get(LoginViewModel.class);

@@ -1,5 +1,6 @@
 package UI.MainActivity;
 
+import androidx.constraintlayout.motion.widget.MotionLayout;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Bundle;
@@ -17,12 +18,13 @@ import android.view.ViewGroup;
 import com.study.android_zenly.R;
 
 import adapter.FriendSuggestListAdapter;
+import adapter.RecentFriendListAdapter;
 import viewModel.FriendSuggestViewModel;
 
-public class AddFriendFragment extends Fragment {
+public class AddFriendFragment extends Fragment implements AddFriendsFragmentCallback{
 
     private FriendSuggestViewModel mViewModel;
-
+    private MotionLayout motionLayout;
     public static AddFriendFragment newInstance() {
         return new AddFriendFragment();
     }
@@ -36,10 +38,19 @@ public class AddFriendFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        RecyclerView recyclerView = view.findViewById(R.id.suggest_friend_recycler_view);
-        FriendSuggestListAdapter adapter = new FriendSuggestListAdapter();
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        RecyclerView friendSuggestRecyclerView = view.findViewById(R.id.suggest_friend_recycler_view);
+        FriendSuggestListAdapter adapter = new FriendSuggestListAdapter(getActivity());
+        friendSuggestRecyclerView.setAdapter(adapter);
+        friendSuggestRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        RecyclerView recentFriendRecyclerView = view.findViewById(R.id.recent_friend_recycler_view);
+        RecentFriendListAdapter recentFriendAdapter = new RecentFriendListAdapter();
+        recentFriendRecyclerView.setAdapter(recentFriendAdapter);
+        recentFriendRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(),LinearLayoutManager.HORIZONTAL,false));
+
+        motionLayout=view.findViewById(R.id.friend_motion_layout);
+        motionLayout.setTransition(R.id.start,R.id.end);
     }
 
     @Override
@@ -49,4 +60,8 @@ public class AddFriendFragment extends Fragment {
         // TODO: Use the ViewModel
     }
 
+    @Override
+    public void setProgress(float progress) {
+        motionLayout.setProgress(progress);
+    }
 }
