@@ -1,6 +1,7 @@
 package UI.MainActivity;
 
 import androidx.constraintlayout.motion.widget.MotionLayout;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Bundle;
@@ -19,6 +20,7 @@ import android.view.ViewGroup;
 import com.study.android_zenly.R;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import adapter.FriendSuggestListAdapter;
 import adapter.RecentFriendListAdapter;
@@ -63,6 +65,15 @@ public class AddFriendFragment extends Fragment implements AddFriendsFragmentCal
 
         motionLayout=view.findViewById(R.id.friend_motion_layout);
         motionLayout.setTransition(R.id.start,R.id.end);
+
+        mViewModel.getSuggestFriendList().observe(getViewLifecycleOwner(), new Observer<List<User>>() {
+
+            @Override
+            public void onChanged(List<User> users) {
+                Log.d(TAG, "onChanged: users.size() " + users.size());
+                adapter.notifyDataSetChanged();
+            }
+        });
     }
 
     @Override

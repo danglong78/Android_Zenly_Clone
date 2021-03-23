@@ -111,6 +111,7 @@ public class SuggestFriendReposity {
                             }
 
                             suggestFriendList.getValue().addAll(newSuggestFriendList);
+                            suggestFriendList.postValue(suggestFriendList.getValue());
                         }
                     });
         }

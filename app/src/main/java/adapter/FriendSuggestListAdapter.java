@@ -1,6 +1,7 @@
 package adapter;
 
 import android.content.Context;
+import android.database.DataSetObserver;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,7 +51,7 @@ public class FriendSuggestListAdapter  extends RecyclerView.Adapter<FriendSugges
 
     @Override
     public void onBindViewHolder(@NonNull FriendSuggestListAdapter.ViewHolder holder, int position) {
-//        holder.getUserNameTextView().setText(list.get(position).getName());
+        holder.getUserNameTextView().setText(list.get(position).getName());
 //        ref= storage.getReference().child("avatars").child(list.get(position).getAvatarURL());
 //        ref.getDownloadUrl().addOnSuccessListener(uri->{
 //            String imageURL= uri.toString();

@@ -46,11 +46,13 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
+import com.google.maps.android.clustering.ClusterManager;
 import com.study.android_zenly.R;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import data.models.ClusterMarker;
 import data.models.User;
 import viewModel.LoginViewModel;
 import viewModel.MapViewModel;
@@ -75,7 +77,6 @@ public class HomeFragment extends Fragment {
     BottomSheetBehavior bottomSheetBehavior;
     int motionLayoutstate = 0;
     MotionLayout friendMotionLayout;
-
 
 
     @Override
@@ -118,20 +119,22 @@ public class HomeFragment extends Fragment {
         }
 
         mapViewModel = new ViewModelProvider(requireActivity()).get(MapViewModel.class);
+        mapViewModel.init(getActivity());
         if (userViewModel.getHostUser() != null) {
             getLastLocation();
             requestLocationUpdate();
         }
 
 
-//        userViewModel.getHostUser().observe(getViewLifecycleOwner(), new Observer<User>() {
-//            @Override
-//            public void onChanged(User user) {
-//                Log.d(TAG, "onChanged: " + user.toString());
-//
-//                userViewModel.getHostUser().removeObserver(this);
-//            }
-//        });
+        userViewModel.getHostUser().observe(getViewLifecycleOwner(), new Observer<User>() {
+            @Override
+            public void onChanged(User user) {
+                Log.d(TAG, "onChanged: " + user.toString());
+                addMapMarkers();
+
+                userViewModel.getHostUser().removeObserver(this);
+            }
+        });
 
 
     }
@@ -185,7 +188,7 @@ public class HomeFragment extends Fragment {
                 }
                 Log.d(TAG, "onLocationResult: length " + locationResult.getLocations().size());
                 Location location = locationResult.getLocations().get(0);
-                mapViewModel.moveTo(new LatLng(location.getLatitude(),location.getLongitude()));
+                mapViewModel.moveTo(new LatLng(location.getLatitude(), location.getLongitude()));
                 Log.d(TAG, "onLocationResult: " + location);
             }
         };
@@ -239,25 +242,42 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    private void bindingView(View view)
-    {
+    private void addMapMarkers() {
+        User hostUser = userViewModel.getHostUser().getValue();
+        Log.d(TAG, "addMapMarkers: " + hostUser);
+        ClusterManager clusterManager = mapViewModel.getClusterManager();
+
+        ClusterMarker newClusterMarker = new ClusterMarker(
+                new LatLng(hostUser.getLocation().getLatitude(), hostUser.getLocation().getLongitude()),
+                hostUser.getName(),
+                "You are now here",
+                hostUser,
+                hostUser.getAvatarURL()
+        );
+
+        clusterManager.addItem(newClusterMarker);
+//            mClusterMarkers.add(newClusterMarker);
+        clusterManager.cluster();
+    }
+
+    private void bindingView(View view) {
+
         AddFriendFragment chatListFragment = (AddFriendFragment) getChildFragmentManager().findFragmentById(R.id.addFriendFragment);
         bottomSheetBehavior = BottomSheetBehavior.from(view.findViewById(R.id.navigation_drawer_bottom));
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         bottomSheetBehavior.setFitToContents(false);
-        bottomSheetBehavior.setHalfExpandedRatio( 0.6f);
+        bottomSheetBehavior.setHalfExpandedRatio(0.6f);
 
         bottomSheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
-                if(newState == BottomSheetBehavior.STATE_HALF_EXPANDED)
+                if (newState == BottomSheetBehavior.STATE_HALF_EXPANDED)
                     chatListFragment.setProgress(0);
             }
 
             @Override
             public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-                if(slideOffset >0.6f)
-                {
+                if (slideOffset > 0.6f) {
                     chatListFragment.setProgress(slideOffset);
                 }
             }
@@ -267,14 +287,15 @@ public class HomeFragment extends Fragment {
 
         userBtn = (Button) view.findViewById(R.id.userButton);
 
-        mapBtn= view.findViewById(R.id.mapButton);
+        mapBtn = view.findViewById(R.id.mapButton);
 
         friendBtn = view.findViewById(R.id.friendButton);
 
 
     }
+
     private void setEventListener() {
-        friendBtn.setOnClickListener(v->{
+        friendBtn.setOnClickListener(v -> {
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HALF_EXPANDED);
         });
 
@@ -284,7 +305,6 @@ public class HomeFragment extends Fragment {
             public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
                 if (motionLayoutstate == 0) {
                     if (drawerView.getId() == R.id.navigation_view_left) {
-
                         motionLayout.setTransition(R.id.chatButtonAnimation);
                     } else {
                         motionLayout.setTransition(R.id.userButtonAnimation);
@@ -345,7 +365,9 @@ public class HomeFragment extends Fragment {
         });
         mapBtn.setOnClickListener(v -> {
             drawerLayout.closeDrawers();
-        });}
+        });
+    }
+
     private void observeLoginAndLocationPermissions(View view) {
         navController = Navigation.findNavController(view);
         loginviewModel = new ViewModelProvider(requireActivity()).get(LoginViewModel.class);

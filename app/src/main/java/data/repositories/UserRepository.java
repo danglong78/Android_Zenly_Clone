@@ -13,6 +13,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -75,7 +76,7 @@ public class UserRepository {
 
     public MutableLiveData<List<User>> getUserFriends(String UID) {
         CollectionReference friendsRef = mDb.collection(USER_COLLECTION).document(UID).collection(FRIENDS_COLLECTION);
-        MutableLiveData<List<User>> friendList = new MutableLiveData<List<User>>();
+        MutableLiveData<List<User>> friendList = new MutableLiveData<List<User>>(new ArrayList<User>());
 
         friendsRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
@@ -84,8 +85,20 @@ public class UserRepository {
                     Log.e(TAG, "onEvent: Listen failed.", e);
                     return;
                 }
-                List<User> friendListTemp = queryDocumentSnapshots.toObjects(User.class);
-                friendList.postValue(friendListTemp);
+
+                List<User> newFriendList = new ArrayList<>();
+
+                for (DocumentChange doc : queryDocumentSnapshots.getDocumentChanges()) {
+                    if(doc.getType() == DocumentChange.Type.ADDED) {
+                        newFriendList.add(doc.getDocument().toObject(User.class));
+                    }
+                    else if (doc.getType() == DocumentChange.Type.REMOVED) {
+                        friendList.getValue().remove(doc.getDocument().toObject(User.class));
+                    }
+                }
+
+                friendList.getValue().addAll(newFriendList);
+                friendList.postValue(friendList.getValue());
             }
         });
         return friendList;

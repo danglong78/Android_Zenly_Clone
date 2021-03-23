@@ -65,6 +65,9 @@ dependencies {
     implementation 'com.firebaseui:firebase-ui-storage:6.4.0'
     implementation 'com.google.firebase:firebase-storage'
     implementation "androidx.browser:browser:1.2.0"
+
+    // Utilities for Maps SDK for Android (requires Google Play Services)
+    implementation 'com.google.maps.android:android-maps-utils:2.2.1'
 }
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
