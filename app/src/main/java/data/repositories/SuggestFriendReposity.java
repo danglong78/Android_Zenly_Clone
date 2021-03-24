@@ -46,6 +46,7 @@ public class SuggestFriendReposity {
     private ArrayList<String> getPhoneNumbersFromContact(Context context) {
         ArrayList<String> phones = new ArrayList<>();
 
+
         ContentResolver cr = context.getContentResolver();
         Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
                 null, null, null, null);

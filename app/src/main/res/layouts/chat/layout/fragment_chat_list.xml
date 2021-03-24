@@ -1,4 +1,4 @@
-<androidx.constraintlayout.motion.widget.MotionLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -7,7 +7,6 @@
     android:layout_height="match_parent"
     android:background="@android:color/white"
     android:paddingHorizontal="10dp"
-    app:layoutDescription="@xml/fragment_chat_list_scene"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     android:fitsSystemWindows="true"
@@ -52,22 +51,22 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/searchView" />
 
-    <EditText
-        android:id="@+id/searchView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+    <TextView
+        android:text="SEARCH"
+        android:gravity="center"
+        android:background="@drawable/chat_input_background"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:background="@drawable/search_bar_background"
-        android:hint="SEARCH"
-        android:textAlignment="center"
-        android:textColorHint="#4F5875"
-        android:textStyle="bold"
-        app:cornerRadius="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView4" />
+        app:layout_constraintTop_toBottomOf="@+id/textView4"
+        android:layout_height="60dp"
+        android:textStyle="bold"
+        android:textColor="@color/cyan_900"
+        android:textSize="18sp"
+        android:layout_width="match_parent"
+        android:id="@+id/searchView"/>
 
 
-</androidx.constraintlayout.motion.widget.MotionLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

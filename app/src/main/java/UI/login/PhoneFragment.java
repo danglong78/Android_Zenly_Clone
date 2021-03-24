@@ -1,5 +1,6 @@
    package UI.login;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -16,6 +17,7 @@ import androidx.navigation.Navigation;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -101,6 +103,11 @@ public class PhoneFragment extends Fragment implements LoginFragmentInterface{
                                 @Override
                                 public void onCodeSent(@NonNull String verificationId, @NonNull PhoneAuthProvider.ForceResendingToken forceResendingToken) {
                                     bundle.putString("verificationId",verificationId);
+                                    InputMethodManager inputMethodManager =
+                                            (InputMethodManager) getActivity().getSystemService(
+                                                    Activity.INPUT_METHOD_SERVICE);
+                                    inputMethodManager.hideSoftInputFromWindow(
+                                            getActivity().getCurrentFocus().getWindowToken(), 0);
                                     navController.navigate(R.id.action_phoneFragment_to_confirmOtpFragment,bundle);
                                 }
                             });

@@ -80,6 +80,7 @@ public class UserRepository {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if(task.isSuccessful()){
                     Log.d(TAG, "onComplete: successfully set the user client.");
+                    Log.d(TAG,task.getResult().toObject(User.class).getUID());
                     user.postValue(task.getResult().toObject(User.class));
                 }
             }
