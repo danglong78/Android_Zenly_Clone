@@ -23,6 +23,8 @@ import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 import com.google.maps.android.ui.IconGenerator;
 
+import java.util.Set;
+
 import data.models.ClusterMarker;
 
 public class ClusterManagerRenderer extends DefaultClusterRenderer<ClusterMarker>
@@ -47,47 +49,26 @@ public class ClusterManagerRenderer extends DefaultClusterRenderer<ClusterMarker
         iconGenerator.setContentView(imageView);
     }
 
-    /**
-     * Rendering of the individual ClusterItems
-     * @param item
-     * @param markerOptions
-     */
-//    @Override
-//    protected void onBeforeClusterItemRendered(ClusterMarker item, MarkerOptions markerOptions) {
-//        Log.d(TAG, "onBeforeClusterItemRendered: ");
-//
-//        StorageReference ref= FirebaseStorage.getInstance().getReference().child("avatars").child(item.getImageURL());
-//        Log.d(TAG, "onBeforeClusterItemRendered: path " + ref.getDownloadUrl());
-//
-//        final long ONE_MEGABYTE = 1024 * 1024;
-//        ref.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-//            @Override
-//            public void onSuccess(byte[] bytes) {
-//                imageView.setImageBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
-//
-//                Log.d(TAG, "onSuccess: imageView " + imageView.getDrawable());
-//
-//                Bitmap icon = iconGenerator.makeIcon();
-//                markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(item.getTitle());
-//            }
-//        }).addOnFailureListener(new OnFailureListener() {
-//            @Override
-//            public void onFailure(@NonNull Exception exception) {
-//                // Handle any errors
-//                Log.d(TAG, "onFailure: ");
-//            }
-//        });
-//
-//
-////        imageView.setImageResource(item.getIconPicture());
-//    }
+    @Override
+    protected void onClusterUpdated(@NonNull Cluster<ClusterMarker> cluster, @NonNull Marker marker) {
+        super.onClusterUpdated(cluster, marker);
+
+        Log.d(TAG, "onClusterUpdated: " + cluster.getPosition());
+    }
+
+    @Override
+    protected void onBeforeClusterRendered(@NonNull Cluster<ClusterMarker> cluster, @NonNull MarkerOptions markerOptions) {
+        super.onBeforeClusterRendered(cluster, markerOptions);
+        Log.d(TAG, "onBeforeClusterRendered: " + cluster.getPosition());
+    }
 
     @Override
     protected void onClusterItemRendered(@NonNull ClusterMarker clusterItem, @NonNull Marker marker) {
+        Log.d(TAG, "onClusterItemRendered: " + clusterItem.getPosition());
+
         super.onClusterItemRendered(clusterItem, marker);
 
         StorageReference ref= FirebaseStorage.getInstance().getReference().child("avatars").child(clusterItem.getImageURL());
-        Log.d(TAG, "onClusterItemRendered: path " + ref.getDownloadUrl());
 
         final long ONE_MEGABYTE = 1024 * 1024;
         ref.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
@@ -95,9 +76,9 @@ public class ClusterManagerRenderer extends DefaultClusterRenderer<ClusterMarker
             public void onSuccess(byte[] bytes) {
                 imageView.setImageBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
 
-                Log.d(TAG, "onSuccess: imageView " + imageView.getDrawable());
 
                 Bitmap icon = iconGenerator.makeIcon();
+
                 marker.setIcon(BitmapDescriptorFactory.fromBitmap(icon));
                 marker.setTitle(clusterItem.getTitle());
             }
@@ -114,5 +95,13 @@ public class ClusterManagerRenderer extends DefaultClusterRenderer<ClusterMarker
     @Override
     protected boolean shouldRenderAsCluster(Cluster cluster) {
         return false;
+    }
+
+    public void updateClusterMarker(ClusterMarker clusterMarker) {
+        Marker marker = getMarker(clusterMarker);
+        Log.d(TAG, "updateClusterMarker: " + marker);
+        if (marker != null) {
+            marker.setPosition(clusterMarker.getPosition());
+        }
     }
 }

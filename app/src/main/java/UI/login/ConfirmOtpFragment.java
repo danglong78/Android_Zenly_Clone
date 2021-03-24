@@ -40,12 +40,12 @@ import com.study.android_zenly.R;
 import java.util.concurrent.TimeUnit;
 
 import data.models.User;
+import data.models.UserLocation;
 import data.repositories.UserRepository;
 
 
 public class ConfirmOtpFragment extends Fragment {
     private final String TAG = "ConfirmmOtpFragment";
-
 
     NavController navController;
     TextView countdownText,describe;
@@ -142,14 +142,35 @@ public class ConfirmOtpFragment extends Fragment {
                                             myEditor.putString("uid", FirebaseAuth.getInstance().getUid());
                                             myEditor.commit();
 
-                                            User newUser = new User();
 
+                                            UserLocation newUserLocation = new UserLocation();
+                                            newUserLocation.setLocation(new GeoPoint(1,1));
+                                            newUserLocation.setUserUID(FirebaseAuth.getInstance().getUid());
+                                            newUserLocation.setImageURL("0e974d50-8978-11eb-8dcd-0242ac130003.png");
+                                            newUserLocation.setName(prefs.getString("name", ""));
+                                            newUserLocation.setSnippet(prefs.getString("name", "") + " is HERE");
+
+                                            DocumentReference newUserLocationRef = UserRepository.getInstance().getUserLocationReference(FirebaseAuth.getInstance().getUid());
+
+                                            newUserLocationRef.set(newUserLocation).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    if (task.isSuccessful()) {
+                                                        Log.d(TAG, "onComplete: newUserLocationRef: success");
+                                                    }
+                                                    else {
+                                                        Log.d(TAG, "onComplete: newUserLocationRef failed " + task.getException());
+                                                    }
+                                                }
+                                            });
+
+
+                                            User newUser = new User();
                                             newUser.setName(prefs.getString("name", ""));
                                             newUser.setUID(FirebaseAuth.getInstance().getUid());
-                                            newUser.setAvatarURL(new String());
-                                            newUser.setLocation(new GeoPoint(1,1));
-                                            DocumentReference newUserRef = UserRepository.getInstance().getUserReference(FirebaseAuth.getInstance().getUid());
+                                            newUser.setAvatarURL("0e974d50-8978-11eb-8dcd-0242ac130003.png");
                                             newUser.setPhone(prefs.getString("phone", ""));
+                                            DocumentReference newUserRef = UserRepository.getInstance().getUserReference(FirebaseAuth.getInstance().getUid());
 
                                             newUserRef.set(newUser).addOnCompleteListener(new OnCompleteListener<Void>() {
                                                 @Override
@@ -158,7 +179,7 @@ public class ConfirmOtpFragment extends Fragment {
                                                         Log.d(TAG, "onComplete: newUserRef: success");
                                                     }
                                                     else {
-                                                        Log.d(TAG, "onComplete: failed " + task.getException());
+                                                        Log.d(TAG, "onComplete: newUserRef failed " + task.getException());
                                                     }
                                                 }
                                             });

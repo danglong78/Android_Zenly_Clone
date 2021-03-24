@@ -1,16 +1,25 @@
 package viewModel;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
+import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.Looper;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
+import com.google.android.gms.common.api.ResolvableApiException;
+import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
@@ -18,31 +27,45 @@ import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.maps.android.clustering.ClusterManager;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import data.models.ClusterMarker;
 import data.models.User;
+import data.models.UserLocation;
+import data.repositories.UserRepository;
 import ultis.ClusterManagerRenderer;
 
 public class MapViewModel extends ViewModel {
     private final String TAG = "MapViewModel";
+    private static final int REQUEST_CHECK_SETTINGS = 10001;
+
+    MutableLiveData<UserLocation> mUserLocation = new MutableLiveData<UserLocation>();
+    DocumentReference mHostUserLocationRef;
 
     private GoogleMap mMap;
-    private Marker hostMarker = null;
+    private ClusterMarker mHostMarker = null;
     private LocationRequest locationRequest;
     private ClusterManagerRenderer mClusterManagerRenderer;
     private ClusterManager mClusterManager;
-    private Context activity;
+    private List<ClusterMarker> mClusterMarkers = new ArrayList<ClusterMarker>();
 
+    private Context activity;
+    private MutableLiveData<Boolean> isInited = new MutableLiveData<Boolean>();
+
+
+    public void setActivity(Context activity) {
+        this.activity = activity;
+    }
 
     public void setMap(GoogleMap mMap) {
         this.mMap = mMap;
@@ -56,67 +79,197 @@ public class MapViewModel extends ViewModel {
         mClusterManager.setRenderer(mClusterManagerRenderer);
     }
 
-    public String getTAG() {
-        return TAG;
+    public void init(LifecycleOwner lifecycleOwner) {
+
+        mUserLocation = UserRepository.getInstance().getHostUserLocation(activity);
+
+        mUserLocation.observe(lifecycleOwner, new Observer<UserLocation>() {
+            @Override
+            public void onChanged(UserLocation userLocation) {
+                Log.d(TAG, "onChanged: user location is inited");
+
+                mHostMarker = new ClusterMarker(
+                        new LatLng(userLocation.getLocation().getLatitude(), userLocation.getLocation().getLongitude()),
+                        userLocation.getName(),
+                        "You are now here",
+                        userLocation,
+                        userLocation.getImageURL()
+                );
+                mClusterManager.addItem(mHostMarker);
+                mClusterManager.cluster();
+
+                mHostUserLocationRef = UserRepository.getInstance().getUserLocationReference(userLocation.getUserUID());
+
+                requestLocationUpdate(activity);
+
+                mUserLocation.removeObserver(this);
+            }
+        });
     }
 
-    public GoogleMap getMap() {
-        return mMap;
+    public MutableLiveData<Boolean> getIsInited() {
+        return isInited;
     }
 
-    public Marker getHostMarker() {
-        return hostMarker;
+    private void getLastLocation(Context activity, User hostUser, DocumentReference hostUserLocationRef) {
+        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        LocationServices.getFusedLocationProviderClient(activity).getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
+            @Override
+            public void onComplete(@NonNull Task<Location> task) {
+                if (task.isSuccessful()) {
+                    Location location = task.getResult();
+                    Log.d(TAG, "onComplete: task.getResult: " + location);
+                    GeoPoint geoPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
+
+                    User user = hostUser;
+                    HashMap data = new HashMap<String, Object>();
+                    data.put("location", geoPoint);
+                    hostUserLocationRef.update(data);
+
+                    moveTo(new LatLng(location.getLatitude(), location.getLongitude()));
+
+                }
+            }
+        });
     }
 
-    public void setHostMarker(Marker hostMarker) {
-        this.hostMarker = hostMarker;
+    public void requestLocationUpdate(Context activity) {
+        LocationRequest locationRequest = LocationRequest.create();
+        locationRequest.setInterval(1500);
+        locationRequest.setFastestInterval(1000);
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+                .addLocationRequest(locationRequest);
+
+        SettingsClient client = LocationServices.getSettingsClient(activity);
+        Task<LocationSettingsResponse> task = client.checkLocationSettings(builder.build());
+
+        task.addOnSuccessListener((Activity) activity, new OnSuccessListener<LocationSettingsResponse>() {
+            @Override
+            public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
+                // All location settings are satisfied. The client can initialize
+                // location requests here.
+                // ...
+            }
+        });
+
+        task.addOnFailureListener((Activity) activity, new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                if (e instanceof ResolvableApiException) {
+                    // Location settings are not satisfied, but this can be fixed
+                    // by showing the user a dialog.
+                    try {
+                        // Show the dialog by calling startResolutionForResult(),
+                        // and check the result in onActivityResult().
+                        ResolvableApiException resolvable = (ResolvableApiException) e;
+                        resolvable.startResolutionForResult((Activity) activity,
+                                REQUEST_CHECK_SETTINGS);
+                    } catch (IntentSender.SendIntentException sendEx) {
+                        // Ignore the error.
+                    }
+                }
+            }
+        });
+
+        LocationCallback locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                if (locationResult == null) {
+                    return;
+                }
+                Log.d(TAG, "onLocationResult: length " + locationResult.getLocations().size());
+                Location location = locationResult.getLocations().get(0);
+                mHostMarker.setPosition(new LatLng(location.getLatitude(), location.getLongitude()));
+                updateHostMarker();
+                moveTo(new LatLng(location.getLatitude(), location.getLongitude()));
+
+                GeoPoint geoPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
+                HashMap data = new HashMap<String, Object>();
+                data.put("location", geoPoint);
+                mHostUserLocationRef.update(data);
+
+                Log.d(TAG, "onLocationResult: " + location);
+            }
+        };
+
+        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+
+        // Start location updates
+        LocationServices.getFusedLocationProviderClient(activity).requestLocationUpdates(locationRequest,
+                locationCallback,
+                Looper.getMainLooper());
     }
 
-    public LocationRequest getLocationRequest() {
-        return locationRequest;
+    public void addMarker(UserLocation userLocation) {
+        ClusterMarker newClusterMarker = new ClusterMarker(
+                new LatLng(userLocation.getLocation().getLatitude(), userLocation.getLocation().getLongitude()),
+                userLocation.getName(),
+                "You are now here",
+                userLocation,
+                userLocation.getImageURL()
+        );
+
+        mClusterManager.addItem(newClusterMarker);
+        mClusterManager.cluster();
     }
 
-    public void setLocationRequest(LocationRequest locationRequest) {
-        this.locationRequest = locationRequest;
+    public void addMarkerList(List<UserLocation> userLocations) {
+        for (UserLocation userLocation : userLocations) {
+            ClusterMarker newClusterMarker = new ClusterMarker(
+                    new LatLng(userLocation.getLocation().getLatitude(), userLocation.getLocation().getLongitude()),
+                    userLocation.getName(),
+                    "You are now here",
+                    userLocation,
+                    userLocation.getImageURL()
+            );
+            mClusterMarkers.add(newClusterMarker);
+            mClusterManager.addItem(newClusterMarker);
+        }
+
+        mClusterManager.cluster();
     }
 
-    public ClusterManagerRenderer getClusterManagerRenderer() {
-        return mClusterManagerRenderer;
+    public void updateHostMarker() {
+        Log.d(TAG, "updateHostMarker: "  + mClusterManager.updateItem(mHostMarker));
+        mClusterManagerRenderer.updateClusterMarker(mHostMarker);
+        mClusterManager.cluster();
     }
 
-    public void setClusterManagerRenderer(ClusterManagerRenderer mClusterManagerRenderer) {
-        this.mClusterManagerRenderer = mClusterManagerRenderer;
-    }
-
-    public ClusterManager getClusterManager() {
-        return mClusterManager;
-    }
-
-    public void setClusterManager(ClusterManager mClusterManager) {
-        this.mClusterManager = mClusterManager;
-    }
-
-    public Context getActivity() {
-        return activity;
-    }
-
-    public void setActivity(Context activity) {
-        this.activity = activity;
-    }
-
-    public void init(Context activity) {
-        this.activity = activity;
+    public void updateMarker(String uid) {
+        for (ClusterMarker marker : mClusterMarkers) {
+            if (marker.getUserLocation().getUserUID().equals(uid)) {
+                mClusterManager.updateItem(marker);
+                mClusterManagerRenderer.updateClusterMarker(marker);
+                mClusterManager.cluster();
+                break;
+            }
+        }
     }
 
     public void moveTo(LatLng location) {
         Log.d(TAG, "moveTo: " + location);
         Log.d(TAG, "moveTo: " + mMap);
 
-//        if (hostMarker != null) {
-//            hostMarker.remove();
-//        }
-//        hostMarker = mMap.addMarker(new MarkerOptions().position(location).title("You are now here").visible(true));
-//        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 18));
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 18));
     }
 }

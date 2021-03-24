@@ -60,9 +60,7 @@ import viewModel.RequestLocationViewModel;
 import viewModel.UserViewModel;
 
 public class HomeFragment extends Fragment {
-    private static final int REQUEST_CHECK_SETTINGS = 10001;
     private final String TAG = "HomeFragment";
-
 
     NavController navController;
 
@@ -109,9 +107,6 @@ public class HomeFragment extends Fragment {
         setEventListener();
         observeLoginAndLocationPermissions(view);
 
-
-
-
     }
 
     @Override
@@ -120,154 +115,21 @@ public class HomeFragment extends Fragment {
         if(loginviewModel.getAuthentication().getValue() ) {
             userViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
             userViewModel.init(getActivity(), getViewLifecycleOwner());
-            // wait for hostUser result from Firebase (should use timeout instead)
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
 
             mapViewModel = new ViewModelProvider(requireActivity()).get(MapViewModel.class);
-            mapViewModel.init(getActivity());
-            if (userViewModel.getHostUser() != null) {
-                getLastLocation();
-                requestLocationUpdate();
-            }
+            mapViewModel.setActivity(getActivity());
 
-
-            userViewModel.getHostUser().observe(getViewLifecycleOwner(), new Observer<User>() {
+            userViewModel.getIsInited().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
                 @Override
-                public void onChanged(User user) {
-                    Log.d(TAG, "onChanged: " + user.toString());
+                public void onChanged(Boolean isInited) {
+                    if (isInited) {
 
-                    addMapMarkers();
-
-                    userViewModel.getHostUser().removeObserver(this);
+                        mapViewModel.init(getViewLifecycleOwner());
+                        userViewModel.getIsInited().removeObserver(this);
+                    }
                 }
             });
         }
-    }
-
-    private void requestLocationUpdate() {
-        LocationRequest locationRequest = LocationRequest.create();
-        locationRequest.setInterval(20000);
-        locationRequest.setFastestInterval(5000);
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-
-        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
-                .addLocationRequest(locationRequest);
-
-        SettingsClient client = LocationServices.getSettingsClient(getActivity());
-        Task<LocationSettingsResponse> task = client.checkLocationSettings(builder.build());
-
-        task.addOnSuccessListener(getActivity(), new OnSuccessListener<LocationSettingsResponse>() {
-            @Override
-            public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
-                // All location settings are satisfied. The client can initialize
-                // location requests here.
-                // ...
-            }
-        });
-
-        task.addOnFailureListener(getActivity(), new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                if (e instanceof ResolvableApiException) {
-                    // Location settings are not satisfied, but this can be fixed
-                    // by showing the user a dialog.
-                    try {
-                        // Show the dialog by calling startResolutionForResult(),
-                        // and check the result in onActivityResult().
-                        ResolvableApiException resolvable = (ResolvableApiException) e;
-                        resolvable.startResolutionForResult(getActivity(),
-                                REQUEST_CHECK_SETTINGS);
-                    } catch (IntentSender.SendIntentException sendEx) {
-                        // Ignore the error.
-                    }
-                }
-            }
-        });
-
-
-        LocationCallback locationCallback = new LocationCallback() {
-            @Override
-            public void onLocationResult(LocationResult locationResult) {
-                if (locationResult == null) {
-                    return;
-                }
-                Log.d(TAG, "onLocationResult: length " + locationResult.getLocations().size());
-                Location location = locationResult.getLocations().get(0);
-                mapViewModel.moveTo(new LatLng(location.getLatitude(), location.getLongitude()));
-                Log.d(TAG, "onLocationResult: " + location);
-            }
-        };
-
-        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-
-        // Start location updates
-        LocationServices.getFusedLocationProviderClient(getActivity()).requestLocationUpdates(locationRequest,
-                locationCallback,
-                Looper.getMainLooper());
-    }
-
-    private void getLastLocation() {
-        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        LocationServices.getFusedLocationProviderClient(getActivity()).getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
-            @Override
-            public void onComplete(@NonNull Task<Location> task) {
-                if (task.isSuccessful()) {
-                    Location location = task.getResult();
-                    Log.d(TAG, "onComplete: task.getResult: " + location);
-                    Log.d(TAG, "onComplete: mapViewModel" + mapViewModel);
-                    GeoPoint geoPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
-                    User user = userViewModel.getHostUser().getValue();
-                    user.setLocation(geoPoint);
-
-                    HashMap data = new HashMap<String, Object>();
-                    data.put("location", geoPoint);
-                    Log.d("USERID", user.getUID());
-                    userViewModel.getUserReference(user.getUID()).update(data);
-
-                    mapViewModel.moveTo(new LatLng(location.getLatitude(), location.getLongitude()));
-                }
-            }
-        });
-    }
-
-    private void addMapMarkers() {
-        User hostUser = userViewModel.getHostUser().getValue();
-        Log.d(TAG, "addMapMarkers: " + hostUser);
-        ClusterManager clusterManager = mapViewModel.getClusterManager();
-
-        ClusterMarker newClusterMarker = new ClusterMarker(
-                new LatLng(hostUser.getLocation().getLatitude(), hostUser.getLocation().getLongitude()),
-                hostUser.getName(),
-                "You are now here",
-                hostUser,
-                hostUser.getAvatarURL()
-        );
-
-        clusterManager.addItem(newClusterMarker);
-//            mClusterMarkers.add(newClusterMarker);
-        clusterManager.cluster();
     }
 
     private void bindingView(View view) {

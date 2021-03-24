@@ -28,10 +28,12 @@ import java.util.List;
 
 import data.models.Conversation;
 import data.models.User;
+import data.models.UserLocation;
 
 public class UserRepository {
     private final String TAG = "UserRepository";
     private final String USER_COLLECTION = "Users";
+    private final String USER_LOCATION_COLLECTION = "UserLocations";
     private final String FRIENDS_COLLECTION = "Friends";
 
     private static UserRepository mInstance;
@@ -51,11 +53,22 @@ public class UserRepository {
 
     public MutableLiveData<User> getHostUser(Context context) {
         SharedPreferences prefs = context.getSharedPreferences("user_infor", Context.MODE_PRIVATE);
-        String uuid = "";
+        String uid = "";
         if ( (prefs != null) && (prefs.contains("uid")) ) {
-            uuid = prefs.getString("uid", "");
+            Log.d(TAG, "getHostUser: uid " + prefs.getString("uid", ""));
+            uid = prefs.getString("uid", "");
         }
-        return getUserWithUID(uuid);
+        return getUserWithUID(uid);
+    }
+
+    public MutableLiveData<UserLocation> getHostUserLocation(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences("user_infor", Context.MODE_PRIVATE);
+        String uid = "";
+        if ( (prefs != null) && (prefs.contains("uid")) ) {
+            Log.d(TAG, "getHostUserLocation: uid " + prefs.getString("uid", ""));
+            uid = prefs.getString("uid", "");
+        }
+        return getUserLocationWithUID(uid);
     }
 
     public MutableLiveData<User> getUserWithUID(String UID) {
@@ -72,6 +85,22 @@ public class UserRepository {
             }
         });
         return user;
+    }
+
+    public MutableLiveData<UserLocation> getUserLocationWithUID(String UID) {
+        DocumentReference userLocationRef = mDb.collection(USER_LOCATION_COLLECTION).document(UID);
+        MutableLiveData<UserLocation> userLocation = new MutableLiveData<UserLocation>();
+        userLocationRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()){
+                    Log.d(TAG, "onComplete: successfully set the user client.");
+                    userLocation.postValue(task.getResult().toObject(UserLocation.class));
+                }
+            }
+        });
+        return userLocation;
     }
 
     public MutableLiveData<List<User>> getUserFriends(String UID) {
@@ -110,6 +139,10 @@ public class UserRepository {
 
     public DocumentReference getUserReference(String UID) {
         return mDb.collection(USER_COLLECTION).document(UID);
+    }
+
+    public DocumentReference getUserLocationReference(String UID) {
+        return mDb.collection(USER_LOCATION_COLLECTION).document(UID);
     }
 
     public MutableLiveData<List<Conversation>> getListConversations(){

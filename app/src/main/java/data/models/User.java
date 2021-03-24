@@ -15,7 +15,6 @@ public class User {
     private String UID;
     private String avatarURL;
     private String dob;
-    private GeoPoint location;
     private String phone;
     private String[] conversation;
 
@@ -26,7 +25,6 @@ public class User {
         this.UID = UID;
         this.avatarURL = avatarURL;
         this.dob = dob;
-        this.location = location;
         this.conversation = conversation;
     }
 
@@ -56,14 +54,6 @@ public class User {
         this.avatarURL = avatarURL;
     }
 
-    public GeoPoint getLocation() {
-        return location;
-    }
-
-    public void setLocation(GeoPoint location) {
-        this.location = location;
-    }
-
     public Bitmap getAvatar() {
         return avatar;
     }
@@ -90,7 +80,6 @@ public class User {
                 ", UID='" + UID + '\'' +
                 ", avatarURL='" + avatarURL + '\'' +
                 ", dob='" + dob + '\'' +
-                ", location=" + location +
                 ", conversation=" + Arrays.toString(conversation) +
                 '}';
     }

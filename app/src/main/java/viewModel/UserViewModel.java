@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import data.models.User;
+import data.models.UserLocation;
 import data.repositories.UserRepository;
 
 public class UserViewModel extends ViewModel {
@@ -35,16 +36,28 @@ public class UserViewModel extends ViewModel {
 
     UserRepository repository;
     MutableLiveData<User> mUser = new MutableLiveData<User>();
-    CollectionReference friendsRef;
 
+
+    CollectionReference friendsRef;
     private List<User> friendListTemp = new ArrayList<>();
     public MutableLiveData<List<User>> friendList;
+
+    MutableLiveData<Boolean> isInited = new MutableLiveData<Boolean>();
 
 
     public void init(Context context, LifecycleOwner lifecycleOwner) {
         repository = UserRepository.getInstance();
 
         mUser = repository.getHostUser(context);
+        mUser.observe(lifecycleOwner, new Observer<User>() {
+            @Override
+            public void onChanged(User user) {
+                Log.d(TAG, "onChanged: user and user location are inited");
+                isInited.postValue(true);
+
+                mUser.removeObserver(this);
+            }
+        });
 //        mUser.observe(lifecycleOwner, new Observer<User>() {
 //            @Override
 //            public void onChanged(User user) {
@@ -81,14 +94,15 @@ public class UserViewModel extends ViewModel {
 //                mUser.removeObserver(this);
 //            }
 //        });
+    }
 
-
+    public LiveData<Boolean> getIsInited() {
+        return isInited;
     }
 
     public LiveData<User> getHostUser() {
         return mUser;
     }
-
     public DocumentReference getUserReference(String UID) {
         return repository.getUserReference(UID);
     }
