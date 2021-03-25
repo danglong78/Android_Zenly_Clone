@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.Timestamp;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.study.android_zenly.R;
@@ -23,12 +24,13 @@ import java.util.Collection;
 import java.util.List;
 
 import data.models.Conversation;
+import data.models.Message;
 import data.models.User;
 import data.repositories.ConversationRepository;
+import ultis.DateFormatter;
 
 public class ChatListAdapter  extends RecyclerView.Adapter<ChatListAdapter.ViewHolder> implements Filterable {
-    private List<User> list,listAll ;
-    private ArrayList<Conversation> convList;
+    private ArrayList<Conversation> convList,convListAll;
     private FirebaseStorage storage;
     private StorageReference ref;
     private Context context;
@@ -36,15 +38,15 @@ public class ChatListAdapter  extends RecyclerView.Adapter<ChatListAdapter.ViewH
     private static ConversationRepository convRepo = new ConversationRepository();
 
     public ChatListAdapter(Context context,OnChatListListener onChatListListener) {
-        list = new ArrayList<>();
+        convList = new ArrayList<>();
         this.onChatListListener= onChatListListener;
         this.context = context;
         storage= FirebaseStorage.getInstance();
-        list.add(new User(null,"Dang Minh Hoang Long","123","0e9748c8-8978-11eb-8dcd-0242ac130003.png",null,null,null));
-        list.add(new User(null,"Ho Dai Tri","123","0e974b5c-8978-11eb-8dcd-0242ac130003.png",null,null,null));
-        list.add(new User(null,"Tran Thanh Tam","123","0e974d50-8978-11eb-8dcd-0242ac130003.png",null,null,null));
-        list.add(new User(null,"Huynh Lam Hoang Dai","123","0e974e36-8978-11eb-8dcd-0242ac130003.jpg",null,null,null));
-        listAll = new ArrayList<User>(list);
+        convList.add(new Conversation(null,"123","Dang Minh Hoang Long","0e9748c8-8978-11eb-8dcd-0242ac130003.png",new Message(null,"1","Hello",Timestamp.now())));
+        convList.add(new Conversation(null,"123","Ho Dai Tri","0e974b5c-8978-11eb-8dcd-0242ac130003.png",new Message(null,"1","Hello",Timestamp.now())));
+        convList.add(new Conversation(null,"123","Tran Thanh Tam","0e974d50-8978-11eb-8dcd-0242ac130003.png",new Message(null,"1","Hello",Timestamp.now())));
+        convList.add(new Conversation(null,"123","Huynh Lam Hoang Dai","0e974e36-8978-11eb-8dcd-0242ac130003.jpg",new Message(null,"1","Hello",Timestamp.now())));
+        convListAll=new ArrayList<>(convList);
     }
 
     public ChatListAdapter(String[] convID,Context context,OnChatListListener onChatListListener) {
@@ -83,8 +85,8 @@ public class ChatListAdapter  extends RecyclerView.Adapter<ChatListAdapter.ViewH
 
         holder.getUserNameTextView().setText(convList.get(position).getName());
         holder.getLastMessageTextView().setText(convList.get(position).getRecentMessage().getMess());
-        holder.getTimeText().setText(convList.get(position).getRecentMessage().getTime().toString());
-        ref= storage.getReference().child("avatars").child(list.get(position).getAvatarURL());
+        holder.getTimeText().setText(DateFormatter.format(convList.get(position).getRecentMessage().getTime().toDate(), DateFormatter.Template.TIME));
+        ref= storage.getReference().child("avatars").child(convList.get(position).getAvatarURL());
         if(ref!=null) {
             ref.getDownloadUrl().addOnSuccessListener(uri->{
                 String imageURL= uri.toString();
@@ -101,7 +103,7 @@ public class ChatListAdapter  extends RecyclerView.Adapter<ChatListAdapter.ViewH
 
     @Override
     public int getItemCount() {
-        return list.size();
+        return convList.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,View.OnLongClickListener{
@@ -153,11 +155,11 @@ public class ChatListAdapter  extends RecyclerView.Adapter<ChatListAdapter.ViewH
     Filter filter = new Filter() {
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
-            List<User> filteredList = new ArrayList<User>();
+            List<Conversation> filteredList = new ArrayList<Conversation>();
             if( constraint.toString().isEmpty())
-                filteredList.addAll(listAll);
+                filteredList.addAll(convListAll);
             else{
-                for(User user:listAll)
+                for(Conversation user:convListAll)
                 {
                     if(user.getName().toLowerCase().contains(constraint.toString().toLowerCase()))
                         filteredList.add(user);
@@ -171,8 +173,8 @@ public class ChatListAdapter  extends RecyclerView.Adapter<ChatListAdapter.ViewH
 
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
-            list.clear();
-            list.addAll((Collection<User>) results.values);
+            convList.clear();
+            convList.addAll((Collection<Conversation>) results.values);
             notifyDataSetChanged();
 
         }
