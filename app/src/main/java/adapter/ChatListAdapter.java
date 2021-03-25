@@ -22,18 +22,21 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import data.models.Conversation;
 import data.models.User;
+import data.repositories.ConversationRepository;
 
 public class ChatListAdapter  extends RecyclerView.Adapter<ChatListAdapter.ViewHolder> implements Filterable {
     private List<User> list,listAll ;
+    private ArrayList<Conversation> convList;
     private FirebaseStorage storage;
     private StorageReference ref;
     private Context context;
     private OnChatListListener onChatListListener;
+    private static ConversationRepository convRepo = new ConversationRepository();
 
     public ChatListAdapter(Context context,OnChatListListener onChatListListener) {
         list = new ArrayList<>();
-
         this.onChatListListener= onChatListListener;
         this.context = context;
         storage= FirebaseStorage.getInstance();
@@ -42,6 +45,16 @@ public class ChatListAdapter  extends RecyclerView.Adapter<ChatListAdapter.ViewH
         list.add(new User(null,"Tran Thanh Tam","123","0e974d50-8978-11eb-8dcd-0242ac130003.png",null,null,null));
         list.add(new User(null,"Huynh Lam Hoang Dai","123","0e974e36-8978-11eb-8dcd-0242ac130003.jpg",null,null,null));
         listAll = new ArrayList<User>(list);
+    }
+
+    public ChatListAdapter(String[] convID,Context context,OnChatListListener onChatListListener) {
+        convList = new ArrayList<>();
+        this.onChatListListener= onChatListListener;
+        this.context = context;
+        storage= FirebaseStorage.getInstance();
+        for(String s:convID){
+            convList.add(convRepo.getConversation(s).getValue());
+        }
     }
     @NonNull
     @Override
@@ -54,9 +67,23 @@ public class ChatListAdapter  extends RecyclerView.Adapter<ChatListAdapter.ViewH
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.getUserNameTextView().setText(list.get(position).getName());
-        holder.getLastMessageTextView().setText("Hello");
-        holder.getTimeText().setText("Today");
+//        holder.getUserNameTextView().setText(list.get(position).getName());
+//        holder.getLastMessageTextView().setText("Hello");
+//        holder.getTimeText().setText("Today");
+//        ref= storage.getReference().child("avatars").child(list.get(position).getAvatarURL());
+//        if(ref!=null) {
+//            ref.getDownloadUrl().addOnSuccessListener(uri->{
+//                String imageURL= uri.toString();
+//                Glide.with(context)
+//                        .load(imageURL)
+//                        .into(holder.getAvatar());
+//
+//            });
+//        }
+
+        holder.getUserNameTextView().setText(convList.get(position).getName());
+        holder.getLastMessageTextView().setText(convList.get(position).getRecentMessage().getMess());
+        holder.getTimeText().setText(convList.get(position).getRecentMessage().getTime().toString());
         ref= storage.getReference().child("avatars").child(list.get(position).getAvatarURL());
         if(ref!=null) {
             ref.getDownloadUrl().addOnSuccessListener(uri->{
