@@ -1,27 +1,26 @@
 package data.models;
 
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.DocumentReference;
 
 public class Message {
-    private User sender;
+    private DocumentReference sender;
     private String ID;
     private String mess;
     private Timestamp time;
 
-    public Message(User sender, String ID, String mess, Timestamp time) {
+    public Message(DocumentReference sender, String ID, String mess, Timestamp time) {
         this.sender = sender;
         this.ID = ID;
         this.mess = mess;
         this.time = time;
     }
 
-    public Message(){}
-
-    public User getSender() {
+    public DocumentReference getSender() {
         return sender;
     }
 
-    public void setSender(User sender) {
+    public void setSender(DocumentReference sender) {
         this.sender = sender;
     }
 
@@ -47,5 +46,15 @@ public class Message {
 
     public void setTime(Timestamp time) {
         this.time = time;
+    }
+
+    @Override
+    public String toString() {
+        return "Message{" +
+                "sender=" + sender +
+                ", ID='" + ID + '\'' +
+                ", mess='" + mess + '\'' +
+                ", time=" + time +
+                '}';
     }
 }
