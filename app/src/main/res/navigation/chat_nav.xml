@@ -7,12 +7,12 @@
 
     <fragment
         android:id="@+id/chatFragment"
-        android:name="UI.MainActivity.ChatFragment"
+        android:name="UI.chat.ChatFragment"
         android:label="fragment_chat"
         tools:layout="@layout/fragment_chat" />
     <fragment
         android:id="@+id/chatListFragment"
-        android:name="UI.MainActivity.ChatListFragment"
+        android:name="UI.chat.ChatListFragment"
         android:label="fragment_chat_list"
         tools:layout="@layout/fragment_chat_list" >
         <action
@@ -24,7 +24,7 @@
     </fragment>
     <fragment
         android:id="@+id/searchChatFragment"
-        android:name="UI.MainActivity.SearchChatFragment"
+        android:name="UI.chat.SearchChatFragment"
         android:label="SearchChatFragment" >
         <action
             android:id="@+id/action_searchChatFragment_to_chatFragment2"

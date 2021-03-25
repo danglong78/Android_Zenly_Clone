@@ -11,7 +11,7 @@
     app:layout_constraintStart_toStartOf="parent"
     android:fitsSystemWindows="true"
 
-    tools:context="UI.MainActivity.ChatListFragment">
+    tools:context="UI.chat.ChatListFragment">
 
 
     <TextView

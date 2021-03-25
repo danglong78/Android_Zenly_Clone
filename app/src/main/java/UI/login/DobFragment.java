@@ -23,6 +23,7 @@ import android.widget.TextView;
 import com.study.android_zenly.R;
 
 import java.util.Calendar;
+import java.util.Objects;
 
 
 public class DobFragment extends Fragment implements LoginFragmentInterface {
@@ -68,6 +69,7 @@ public class DobFragment extends Fragment implements LoginFragmentInterface {
     public void initView(View view) {
 
         datePicker = view.findViewById(R.id.datePicker);
+        datePicker.init(2000,1,1,null);
         dobTextView=view.findViewById(R.id.dobQuestion);
         view.findViewById(R.id.dateButton).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -101,7 +103,7 @@ public class DobFragment extends Fragment implements LoginFragmentInterface {
 
     @Override
     public void saveInformation() {
-        SharedPreferences prefs = getActivity().getSharedPreferences("user_infor", Context.MODE_PRIVATE);
+        SharedPreferences prefs = requireActivity().getSharedPreferences("user_infor", Context.MODE_PRIVATE);
         SharedPreferences.Editor myEditor = prefs.edit();
         myEditor.putInt("day",datePicker.getDayOfMonth());
         myEditor.putInt("month",datePicker.getMonth());
@@ -111,11 +113,11 @@ public class DobFragment extends Fragment implements LoginFragmentInterface {
 
     @Override
     public void loadInformation() {
-        SharedPreferences prefs = getActivity().getSharedPreferences("user_infor", Context.MODE_PRIVATE);
+        SharedPreferences prefs = requireActivity().getSharedPreferences("user_infor", Context.MODE_PRIVATE);
         if ( (prefs != null) && prefs.contains("day")&& prefs.contains("month")&& prefs.contains("year") ) {
             int day = prefs.getInt("day",1);
             int month = prefs.getInt("month",1);
-            int year = prefs.getInt("year",1);
+            int year = prefs.getInt("year",2000);
             datePicker.init(year,month,day,null);
         }
         if ( (prefs != null) && prefs.contains("name") ) {

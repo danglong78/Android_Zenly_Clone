@@ -1,11 +1,10 @@
-package UI.MainActivity;
+package UI.chat;
 
 import android.app.Activity;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import androidx.constraintlayout.motion.widget.MotionLayout;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
@@ -13,70 +12,87 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.Gravity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
-
 
 import com.study.android_zenly.R;
 
+import java.util.Objects;
+
+import UI.MainActivity.MainActivity;
 import adapter.ChatListAdapter;
 import ultis.FragmentTag;
 
 
-public class ChatListFragment extends Fragment implements ChatListAdapter.OnChatListListener {
-    private NavController navController;
+public class SearchChatFragment extends Fragment implements ChatListAdapter.OnChatListListener{
+
+    Button cancelBtn;
+    EditText searchText;
     MotionLayout homeFragmentMotionLayout;
-    TextView searchText;
+    NavController navController;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_chat_list, container, false);
+        return inflater.inflate(R.layout.fragment_search_chat, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-//        View homeFragment = (View) getActivity().findViewById(R.id.main_nav_host_fragment);
-        navController = Navigation.findNavController(view);
-        homeFragmentMotionLayout = (MotionLayout) getActivity().findViewById(R.id.motion_layout);
-        searchText= view.findViewById(R.id.searchView);
-        searchText.setOnClickListener(v->{
-            homeFragmentMotionLayout.setTransition(R.id.left,R.id.hideLeft);
-            homeFragmentMotionLayout.setProgress(1);
-            MainActivity activity = (MainActivity) getActivity();
-            activity.setFragmentTag(FragmentTag.CHAT,homeFragmentMotionLayout);
-            navController.navigate(R.id.action_chatListFragment_to_searchChatFragment);
-
-        });
         super.onViewCreated(view, savedInstanceState);
+        cancelBtn = view.findViewById(R.id.cancelBtn);
+        navController = Navigation.findNavController(view);
+
+        homeFragmentMotionLayout = (MotionLayout) getActivity().findViewById(R.id.motion_layout);
+
+        cancelBtn.setOnClickListener(v->{
+            requireActivity().onBackPressed();
+        });
+        searchText= view.findViewById(R.id.searchInput);
+
+        searchText.requestFocus();
+        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
         RecyclerView nav_drawer_recycler_view = view.findViewById(R.id.nav_drawer_recycler_view);
-//        view.setPadding(0,getStatusBarHeight(),0,0);
         ChatListAdapter adapter = new ChatListAdapter(getActivity(),this);
         nav_drawer_recycler_view.setAdapter(adapter);
         nav_drawer_recycler_view.setLayoutManager(new LinearLayoutManager(getActivity()));
+        searchText.addTextChangedListener(new TextWatcher(){
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-    }
-    private int getStatusBarHeight() {
-        int result = 0;
-        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
-        if (resourceId > 0) {
-            result = getResources().getDimensionPixelSize(resourceId);
-        }
-        return result;
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                adapter.getFilter().filter(s);
+            }
+        });
+
     }
 
     @Override
     public void onChatClick(int position) {
-        homeFragmentMotionLayout.setTransition(R.id.left,R.id.hideLeft);
-        homeFragmentMotionLayout.setProgress(1);
         MainActivity activity = (MainActivity) getActivity();
         activity.setFragmentTag(FragmentTag.CHAT,homeFragmentMotionLayout);
-        navController.navigate(R.id.action_chatListFragment_to_chatFragment);
+        InputMethodManager inputMethodManager =
+                (InputMethodManager) activity.getSystemService(
+                        Activity.INPUT_METHOD_SERVICE);
+        if(activity.getCurrentFocus()!=null)
+        {inputMethodManager.hideSoftInputFromWindow(
+                activity.getCurrentFocus().getWindowToken(), 0);}
+        navController.navigate(R.id.action_searchChatFragment_to_chatFragment2);
     }
 }

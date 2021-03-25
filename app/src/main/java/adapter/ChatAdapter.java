@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.study.android_zenly.R;
@@ -30,7 +31,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.BaseMessageVie
         private static final int VIEW_TYPE_INCOMING_MESSAGE = 0x00;
         private static final int VIEW_TYPE_OUTCOMING_MESSAGE = 0x01;
         private static final int VIEW_TYPE_DATE_HEADER = 0x02;
-        private String senderId;
+        private DocumentReference senderId;
         private StorageReference ref;
         private FirebaseStorage storage;
         private RecyclerView.LayoutManager layoutManager;
@@ -38,13 +39,13 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.BaseMessageVie
 
         private List<Wrapper> items;
 
-        public ChatAdapter(String senderId) {
+        public ChatAdapter(DocumentReference senderId) {
             this.senderId = senderId;
             this.items = new ArrayList<>();
-            User x= new User(null,"Dang Minh Hoang Long","123","0e9748c8-8978-11eb-8dcd-0242ac130003.png",null,null,null);
-            User y= new User(null,"Ho Dai Tri","1234","0e9748c8-8978-11eb-8dcd-0242ac130003.png",null,null,null);
-            items.add(new Wrapper(new Message(x,"1","Hello", Timestamp.now())));
-            items.add(new Wrapper(new Message(y,"1","Hi", Timestamp.now())));
+//            User x= new User(null,"Dang Minh Hoang Long","123","0e9748c8-8978-11eb-8dcd-0242ac130003.png",null,null,null);
+//            User y= new User(null,"Ho Dai Tri","1234","0e9748c8-8978-11eb-8dcd-0242ac130003.png",null,null,null);
+//            items.add(new Wrapper(new Message(x,"1","Hello", Timestamp.now())));
+//            items.add(new Wrapper(new Message(y,"1","Hi", Timestamp.now())));
         }
 
         @NonNull
@@ -108,12 +109,12 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.BaseMessageVie
                 return DateFormatter.isSameDay(dateToCompare, previousPositionDate);
             } else return false;
         }
-        private boolean isPreviousSameAuthor(String id, int position) {
+        private boolean isPreviousSameAuthor(DocumentReference id, int position) {
             int prevPosition = position + 1;
             if (items.size() <= prevPosition) return false;
 
             if (items.get(prevPosition).item instanceof Message) {
-                return ((Message) items.get(prevPosition).item).getSender().getUID().contentEquals(id);
+                return ((Message) items.get(prevPosition).item).getSender().equals(id);
             } else return false;
         }
         @Override
@@ -121,7 +122,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.BaseMessageVie
             Wrapper wrapper = items.get(position);
             if (wrapper.item instanceof Message) {
                 Message message = (Message) wrapper.item;
-                if (message.getSender().getUID().equals(senderId)) {
+                if (message.getSender().equals(senderId)) {
                     return VIEW_TYPE_OUTCOMING_MESSAGE;
                 } else {
                     return VIEW_TYPE_INCOMING_MESSAGE;
@@ -206,12 +207,12 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.BaseMessageVie
                 bubble.setSelected(isSelected());
                 text.setText(message.getMess());
                 time.setText(DateFormatter.format(message.getTime().toDate(), DateFormatter.Template.TIME));
-
-                boolean isAvatarExists =message.getSender().getAvatar() != null && !message.getSender().getAvatarURL().isEmpty();
-                userAvatar.setVisibility(isAvatarExists ? View.VISIBLE : View.GONE);
-                if (isAvatarExists ) {
-    //                imageLoader.loadImage(userAvatar, message.getUser().getAvatar());
-                }
+            //TODO chỉnh lại Avatar
+//                boolean isAvatarExists =message.getSender().getAvatar() != null && !message.getSender().getAvatarURL().isEmpty();
+//                userAvatar.setVisibility(isAvatarExists ? View.VISIBLE : View.GONE);
+//                if (isAvatarExists ) {
+//    //                imageLoader.loadImage(userAvatar, message.getUser().getAvatar());
+//                }
             }
 
         }
@@ -238,9 +239,9 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.BaseMessageVie
                 time.setText(DateFormatter.format(message.getTime().toDate(), DateFormatter.Template.TIME));
 
                 if (userAvatar != null) {
-                    boolean isAvatarExists = message.getSender().getAvatar() != null && !message.getSender().getAvatarURL().isEmpty();
-                    userAvatar.setVisibility(isAvatarExists ? View.VISIBLE : View.GONE);
-                    if (isAvatarExists) {
+//                    boolean isAvatarExists = message.getSender().getAvatar() != null && !message.getSender().getAvatarURL().isEmpty();
+//                    userAvatar.setVisibility(isAvatarExists ? View.VISIBLE : View.GONE);
+//                    if (isAvatarExists) {
     //                    StorageReference ref= FirebaseStorage.getInstance().getReference().child("avatars").child(list.get(position).getAvatarURL());
     //                    ref.getDownloadUrl().addOnSuccessListener(uri->{
     //                        String imageURL= uri.toString();
@@ -249,7 +250,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.BaseMessageVie
     //                                .into(holder.getAvatar());
 
     //                    });
-                    }
+//                    }
                 }
             }
 

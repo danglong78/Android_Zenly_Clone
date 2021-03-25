@@ -1,4 +1,4 @@
-package UI.MainActivity;
+package UI.chat;
 
 import android.os.Bundle;
 
@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 
 import com.study.android_zenly.R;
 
+import UI.MainActivity.MainActivity;
 import adapter.ChatAdapter;
 import ultis.FragmentTag;
 
@@ -28,7 +29,7 @@ public class ChatFragment extends Fragment {
     }
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ChatAdapter adapter = new ChatAdapter("123");
+        ChatAdapter adapter = new ChatAdapter(null);
         RecyclerView recyclerView= view.findViewById(R.id.message_list_recyclerview);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(),LinearLayoutManager.VERTICAL,true));

@@ -20,9 +20,14 @@
             app:destination="@id/request_location_nav"
             app:popUpTo="@id/homeFragment"
             app:popUpToInclusive="true" />
+
         <action
-            android:id="@+id/action_homeFragment_to_chatFragment"
-            app:destination="@id/chatFragment" />
+            android:id="@+id/action_homeFragment_to_searchFriendFragment"
+            app:destination="@id/searchFriendFragment"
+            app:enterAnim="@anim/slide_in_top"
+            app:exitAnim="@anim/slide_out_bottom"
+            app:popEnterAnim="@anim/slide_in_bottom"
+            app:popExitAnim="@anim/slide_out_top"/>
     </fragment>
     <navigation
         android:id="@+id/login_nav"
@@ -37,6 +42,7 @@
                 app:destination="@id/nameFragment"
                 app:enterAnim="@anim/slide_in_right"
                 app:exitAnim="@anim/slide_out_left"
+                app:launchSingleTop="true"
                 app:popUpTo="@id/introduceFragment"
                 app:popUpToInclusive="true" />
         </fragment>
@@ -48,6 +54,7 @@
             <action
                 android:id="@+id/action_nameFragment_to_dobFragment"
                 app:destination="@id/dobFragment"
+                app:launchSingleTop="true"
                 app:enterAnim="@anim/slide_in_right"
                 app:exitAnim="@anim/slide_out_left"
                 app:popEnterAnim="@anim/slide_in_left"
@@ -63,6 +70,7 @@
                 app:destination="@id/phoneFragment"
                 app:enterAnim="@anim/slide_in_right"
                 app:exitAnim="@anim/slide_out_left"
+                app:launchSingleTop="true"
                 app:popEnterAnim="@anim/slide_in_left"
                 app:popExitAnim="@anim/slide_out_right" />
         </fragment>
@@ -76,6 +84,7 @@
                 app:destination="@id/confirmOtpFragment"
                 app:enterAnim="@anim/slide_in_right"
                 app:exitAnim="@anim/slide_out_left"
+                app:launchSingleTop="true"
                 app:popEnterAnim="@anim/slide_in_left"
                 app:popExitAnim="@anim/slide_out_right" />
         </fragment>
@@ -142,10 +151,10 @@
         app:popUpTo="@id/homeFragment"
         app:popUpToInclusive="false" />
     <fragment
-        android:id="@+id/chatFragment"
-        android:name="UI.MainActivity.ChatFragment"
-        android:label="fragment_chat"
-        tools:layout="@layout/fragment_chat" />
+        android:id="@+id/searchFriendFragment"
+        android:name="UI.friend.SearchFriendFragment"
+        android:label="fragment_search_friend"
+        tools:layout="@layout/fragment_search_friend" />
 
 
 </navigation>

@@ -82,9 +82,10 @@ public class NameFragment extends Fragment implements LoginFragmentInterface{
                     InputMethodManager inputMethodManager =
                             (InputMethodManager) getActivity().getSystemService(
                                     Activity.INPUT_METHOD_SERVICE);
-                    inputMethodManager.hideSoftInputFromWindow(
-                            getActivity().getCurrentFocus().getWindowToken(), 0);
-                    navController.navigate(R.id.action_nameFragment_to_dobFragment,createBundle(false));
+                    if(getActivity().getCurrentFocus()!=null)
+                    {inputMethodManager.hideSoftInputFromWindow(
+                            getActivity().getCurrentFocus().getWindowToken(), 0);}
+                    navController.navigate(R.id.action_nameFragment_to_dobFragment);
                 }
             }
         });

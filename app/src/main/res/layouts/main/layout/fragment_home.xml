@@ -24,8 +24,15 @@
             android:id="@+id/addFriendFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:name="UI.MainActivity.AddFriendFragment"
-            tools:context="UI.MainActivity.AddFriendFragment"/>
+            android:name="UI.friend.AddFriendFragment"
+            tools:context="UI.friend.AddFriendFragment"/>
+<!--        <fragment-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:id="@+id/chat_nav_host_fragment"-->
+<!--            android:name="androidx.navigation.fragment.NavHostFragment"-->
+<!--            app:defaultNavHost="true"-->
+<!--            app:navGraph="@navigation/friend_nav"/>-->
     </com.google.android.material.navigation.NavigationView>
 
 

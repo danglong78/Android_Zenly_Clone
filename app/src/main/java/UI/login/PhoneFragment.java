@@ -24,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.FirebaseException;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
 import com.hbb20.CountryCodePicker;
@@ -72,6 +73,7 @@ public class PhoneFragment extends Fragment implements LoginFragmentInterface{
     public void initView(View view) {
         navController= Navigation.findNavController(view);
         ccp =  view.findViewById(R.id.ccp);
+        ccp.setDefaultCountryUsingPhoneCode(84);
         editTextCarrierNumber = view.findViewById(R.id.editText_carrierNumber);
         ccp.registerCarrierNumberEditText(editTextCarrierNumber);
         view.findViewById(R.id.buttonPhone).setOnClickListener(new View.OnClickListener() {
@@ -106,8 +108,9 @@ public class PhoneFragment extends Fragment implements LoginFragmentInterface{
                                     InputMethodManager inputMethodManager =
                                             (InputMethodManager) getActivity().getSystemService(
                                                     Activity.INPUT_METHOD_SERVICE);
-                                    inputMethodManager.hideSoftInputFromWindow(
-                                            getActivity().getCurrentFocus().getWindowToken(), 0);
+                                    if(getActivity().getCurrentFocus()!=null)
+                                    {inputMethodManager.hideSoftInputFromWindow(
+                                            getActivity().getCurrentFocus().getWindowToken(), 0);}
                                     navController.navigate(R.id.action_phoneFragment_to_confirmOtpFragment,bundle);
                                 }
                             });

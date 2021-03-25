@@ -3,19 +3,27 @@ package UI.MainActivity;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.motion.widget.MotionLayout;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 
 import android.os.Bundle;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
 
 import com.study.android_zenly.R;
 
 import ultis.FragmentTag;
+import viewModel.LoginViewModel;
+import viewModel.RequestLocationViewModel;
 
 public class MainActivity extends AppCompatActivity implements MainCallBacks{
     private FragmentTag tag;
     private MotionLayout motionLayout;
+    private NavController chatnavController,navController;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         tag=FragmentTag.OTHERS;
@@ -62,4 +70,5 @@ public class MainActivity extends AppCompatActivity implements MainCallBacks{
         this.tag= tag;
         motionLayout=motion;
     }
+
 }

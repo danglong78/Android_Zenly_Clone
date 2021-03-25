@@ -37,8 +37,8 @@
             app:navGraph="@navigation/chat_nav"/>
 
 
-<!--        android:name="UI.MainActivity.ChatListFragment"-->
-<!--        tools:context="UI.MainActivity.ChatListFragment"-->
+<!--        android:name="UI.chat.ChatListFragment"-->
+<!--        tools:context="UI.chat.ChatListFragment"-->
 <!--        android:name="androidx.navigation.fragment.NavHostFragment"-->
 <!--        app:defaultNavHost="true"-->
 <!--        app:navGraph="@navigation/chat_nav"-->

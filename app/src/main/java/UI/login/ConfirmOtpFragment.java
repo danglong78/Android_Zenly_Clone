@@ -177,6 +177,7 @@ public class ConfirmOtpFragment extends Fragment {
                                                 public void onComplete(@NonNull Task<Void> task) {
                                                     if (task.isSuccessful()) {
                                                         Log.d(TAG, "onComplete: newUserRef: success");
+                                                        navController.navigate(R.id.action_global_homeFragment);
                                                     }
                                                     else {
                                                         Log.d(TAG, "onComplete: newUserRef failed " + task.getException());
@@ -184,24 +185,17 @@ public class ConfirmOtpFragment extends Fragment {
                                                 }
                                             });
 
-                                            navController.navigate(R.id.action_global_homeFragment);
                                         } else {
                                             Toast.makeText(getActivity(), "Your verify code wrong!!!", Toast.LENGTH_SHORT).show();
                                         }
+                                        codeInput.setText("");
+                                        progressBar.setVisibility(View.INVISIBLE);
+                                        btn.setVisibility(View.VISIBLE);
                                     }
                                 });
 
                     }
-//                    SharedPreferences prefs = getActivity().getSharedPreferences("user_infor", Context.MODE_PRIVATE);
-//                    SharedPreferences.Editor myEditor = prefs.edit();
-//                    myEditor.putBoolean("isAuthenticated", true);
-//                    myEditor.commit();
-//
-////                    startActivity(new Intent(getActivity(), RequestPermissionActivity.class));
-//                    navController.navigate(R.id.action_global_homeFragment);
-                    codeInput.setText("");
-                    progressBar.setVisibility(View.INVISIBLE);
-                    btn.setVisibility(View.VISIBLE);
+
                 }
             }
         });

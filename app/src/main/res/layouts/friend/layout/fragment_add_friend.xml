@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layoutDescription="@xml/fragment_add_friend_scene"
-    tools:context="UI.MainActivity.AddFriendFragment">
+    tools:context="UI.friend.AddFriendFragment">
 
     <TextView
         android:id="@+id/textView4"
@@ -15,7 +15,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:paddingVertical="8dp"
-        android:text="MESSAGES"
+        android:text="FRIENDS"
         android:textColor="@color/cyan_900"
         android:textSize="20sp"
         android:textStyle="bold"
@@ -24,17 +24,28 @@
 
     <Button
         android:id="@+id/button"
-        android:layout_width="70dp"
+        android:layout_width="wrap_content"
         android:layout_height="40dp"
 
         android:layout_marginEnd="16dp"
-        android:backgroundTint="@color/cyan_900"
-        android:text="NEW"
-        android:textColor="@color/teal"
+        android:text="ADD FRIEND"
+        android:textColor="@color/white"
         android:textStyle="bold"
         app:cornerRadius="15dp"
         app:layout_constraintBaseline_toBaselineOf="@+id/textView4"
         app:layout_constraintEnd_toEndOf="parent" />
+    <TextView
+        android:id="@+id/friendSetting"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        app:cornerRadius="15dp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/textView4"
+        app:layout_constraintEnd_toStartOf="@+id/button"
+        android:drawableTint="@color/cyan_900"
+        app:drawableStartCompat="@drawable/ic_baseline_settings_24" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recent_friend_recycler_view"
@@ -43,7 +54,7 @@
         android:layout_marginTop="24dp"
         android:nestedScrollingEnabled="true"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/searchView" />
+        app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/suggest_friend_recycler_view"
@@ -53,21 +64,6 @@
         android:nestedScrollingEnabled="true"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/recent_friend_recycler_view" />
-
-    <TextView
-        android:text="SEARCH"
-        android:gravity="center"
-        android:background="@drawable/chat_input_background"
-        android:layout_marginTop="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView4"
-        android:layout_height="60dp"
-        android:textStyle="bold"
-        android:textColor="@color/cyan_900"
-        android:textSize="18sp"
-        android:layout_width="match_parent"
-        android:id="@+id/searchView"/>
 
     <LinearLayout
         android:id="@+id/guideline"

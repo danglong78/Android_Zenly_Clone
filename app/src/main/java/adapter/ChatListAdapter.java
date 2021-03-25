@@ -5,6 +5,8 @@ import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,11 +19,13 @@ import com.google.firebase.storage.StorageReference;
 import com.study.android_zenly.R;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import data.models.User;
 
-public class ChatListAdapter  extends RecyclerView.Adapter<ChatListAdapter.ViewHolder>{
-    private ArrayList<User> list ;
+public class ChatListAdapter  extends RecyclerView.Adapter<ChatListAdapter.ViewHolder> implements Filterable {
+    private List<User> list,listAll ;
     private FirebaseStorage storage;
     private StorageReference ref;
     private Context context;
@@ -29,6 +33,7 @@ public class ChatListAdapter  extends RecyclerView.Adapter<ChatListAdapter.ViewH
 
     public ChatListAdapter(Context context,OnChatListListener onChatListListener) {
         list = new ArrayList<>();
+
         this.onChatListListener= onChatListListener;
         this.context = context;
         storage= FirebaseStorage.getInstance();
@@ -36,6 +41,7 @@ public class ChatListAdapter  extends RecyclerView.Adapter<ChatListAdapter.ViewH
         list.add(new User(null,"Ho Dai Tri","123","0e974b5c-8978-11eb-8dcd-0242ac130003.png",null,null,null));
         list.add(new User(null,"Tran Thanh Tam","123","0e974d50-8978-11eb-8dcd-0242ac130003.png",null,null,null));
         list.add(new User(null,"Huynh Lam Hoang Dai","123","0e974e36-8978-11eb-8dcd-0242ac130003.jpg",null,null,null));
+        listAll = new ArrayList<User>(list);
     }
     @NonNull
     @Override
@@ -113,5 +119,36 @@ public class ChatListAdapter  extends RecyclerView.Adapter<ChatListAdapter.ViewH
     public interface OnChatListListener {
         void onChatClick(int position);
     }
+    @Override
+    public Filter getFilter() {
+        return filter;
+    }
+    Filter filter = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            List<User> filteredList = new ArrayList<User>();
+            if( constraint.toString().isEmpty())
+                filteredList.addAll(listAll);
+            else{
+                for(User user:listAll)
+                {
+                    if(user.getName().toLowerCase().contains(constraint.toString().toLowerCase()))
+                        filteredList.add(user);
+                }
+            }
+            FilterResults results = new FilterResults();
+            results.values=filteredList;
+            return results;
+
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            list.clear();
+            list.addAll((Collection<User>) results.values);
+            notifyDataSetChanged();
+
+        }
+    };
 
 }

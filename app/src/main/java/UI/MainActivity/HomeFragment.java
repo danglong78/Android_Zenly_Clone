@@ -1,27 +1,21 @@
 package UI.MainActivity;
 
 
-import android.Manifest;
-import android.content.IntentSender;
-import android.content.pm.PackageManager;
-import android.location.Location;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.motion.widget.MotionLayout;
 
-import androidx.core.app.ActivityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
+import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
 
 
-import android.os.Looper;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -30,30 +24,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 
-import com.google.android.gms.common.api.ResolvableApiException;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.LocationSettingsRequest;
-import com.google.android.gms.location.LocationSettingsResponse;
-import com.google.android.gms.location.SettingsClient;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.GeoPoint;
-import com.google.maps.android.clustering.ClusterManager;
 import com.study.android_zenly.R;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import data.models.ClusterMarker;
-import data.models.User;
+import UI.friend.AddFriendFragment;
+import ultis.FragmentTag;
 import viewModel.LoginViewModel;
 import viewModel.MapViewModel;
 import viewModel.RequestLocationViewModel;
@@ -62,7 +37,8 @@ import viewModel.UserViewModel;
 public class HomeFragment extends Fragment {
     private final String TAG = "HomeFragment";
 
-    NavController navController;
+
+    NavController navController,chatnavController;
 
     LoginViewModel loginviewModel;
     RequestLocationViewModel requestLocationViewModel;
@@ -74,7 +50,7 @@ public class HomeFragment extends Fragment {
     MotionLayout motionLayout;
     BottomSheetBehavior bottomSheetBehavior;
     int motionLayoutstate = 0;
-    MotionLayout friendMotionLayout;
+    AddFriendFragment addFriendFragment;
 
 
     @Override
@@ -102,10 +78,12 @@ public class HomeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         Log.d(TAG, "onViewCreated: order test");
-
+        observeLoginAndLocationPermissions(view);
         bindingView(view);
         setEventListener();
-        observeLoginAndLocationPermissions(view);
+
+
+
 
     }
 
@@ -130,11 +108,14 @@ public class HomeFragment extends Fragment {
                 }
             });
         }
+        if(bottomSheetBehavior.getState()==BottomSheetBehavior.STATE_EXPANDED) {
+            addFriendFragment.setProgress(1);
+        }
     }
 
     private void bindingView(View view) {
 
-        AddFriendFragment chatListFragment = (AddFriendFragment) getChildFragmentManager().findFragmentById(R.id.addFriendFragment);
+        addFriendFragment = (AddFriendFragment) getChildFragmentManager().findFragmentById(R.id.addFriendFragment);
         bottomSheetBehavior = BottomSheetBehavior.from(view.findViewById(R.id.navigation_drawer_bottom));
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         bottomSheetBehavior.setFitToContents(false);
@@ -144,18 +125,21 @@ public class HomeFragment extends Fragment {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
                 if (newState == BottomSheetBehavior.STATE_HALF_EXPANDED)
-                    chatListFragment.setProgress(0);
+                    addFriendFragment.setProgress(0);
+                if(newState == BottomSheetBehavior.STATE_EXPANDED)
+                    addFriendFragment.setProgress(1);
             }
 
             @Override
             public void onSlide(@NonNull View bottomSheet, float slideOffset) {
                 if (slideOffset > 0.6f) {
-                    chatListFragment.setProgress(slideOffset);
+                    addFriendFragment.setProgress(slideOffset);
                 }
             }
         });
 
-        chatBtn = (Button) view.findViewById(R.id.chatButton);
+        chatBtn = view.findViewById(R.id.chatButton);
+//        ((MaterialButton)chatBtn).setIconResource(R.drawable.ic_baseline_settings_24);
 
         userBtn = (Button) view.findViewById(R.id.userButton);
 
@@ -177,7 +161,13 @@ public class HomeFragment extends Fragment {
             public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
                 if (motionLayoutstate == 0) {
                     if (drawerView.getId() == R.id.navigation_view_left) {
-                        motionLayout.setTransition(R.id.chatButtonAnimation);
+                        if(chatnavController.getCurrentDestination().getId()==R.id.chatListFragment )
+                        {
+                            motionLayout.setTransition(R.id.start,R.id.left);
+                        }
+                        else{
+                            motionLayout.setTransition(R.id.start,R.id.hideLeft);
+                        }
                     } else {
                         motionLayout.setTransition(R.id.userButtonAnimation);
 
@@ -203,6 +193,13 @@ public class HomeFragment extends Fragment {
                 if (motionLayoutstate != 0)
                     motionLayoutstate = 0;
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                if (drawerView.getId() == R.id.navigation_view_left && chatnavController.getCurrentDestination().getId()!=R.id.chatListFragment) {
+                    NavOptions.Builder navBuilder = new NavOptions.Builder();
+                    NavOptions navOptions = navBuilder.setPopUpTo(R.id.chatListFragment, true).build();
+                    chatnavController.navigate(R.id.chatListFragment, null, navOptions);
+                    ((MainActivity)getActivity()).setFragmentTag(FragmentTag.OTHERS,motionLayout);
+
+                }
             }
 
             @Override
@@ -244,6 +241,7 @@ public class HomeFragment extends Fragment {
 
     private void observeLoginAndLocationPermissions(View view) {
         navController = Navigation.findNavController(view);
+        chatnavController= Navigation.findNavController(getActivity(),R.id.chat_nav_host_fragment);
         loginviewModel = new ViewModelProvider(requireActivity()).get(LoginViewModel.class);
         loginviewModel.init(getActivity());
         loginviewModel.getAuthentication().observe(getViewLifecycleOwner(), (Observer<Boolean>) isAuthenticated -> {
@@ -271,5 +269,9 @@ public class HomeFragment extends Fragment {
             }
         });
     }
+    public  void setBottomSheetState(int state) {
+        bottomSheetBehavior.setState(state);
+    }
+
 
 }
