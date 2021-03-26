@@ -79,9 +79,14 @@ public class ListUsersReposity {
                                     if (task.isSuccessful()) {
                                         DocumentSnapshot document = task.getResult();
                                         if (document.exists()) {
-                                            Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-                                            listUser.getValue().add(document.toObject(User.class));
-                                            listUser.postValue(listUser.getValue());
+                                            Log.d(TAG, "DocumentSnapshot getListUser: " + document.getData());
+                                            User addUser = document.toObject(User.class);
+
+                                            if(!listUser.getValue().contains(addUser)){
+                                                listUser.getValue().add(document.toObject(User.class));
+                                                listUser.postValue(listUser.getValue());
+                                            }
+
                                         } else {
                                             Log.d(TAG, "No such document");
                                         }
@@ -122,7 +127,6 @@ public class ListUsersReposity {
     public void add(String addUID){
         UserRef addUserRef = new UserRef(mDb.document(USER_COLLECTION + "/" + addUID));
         Log.d(TAG, "add: create" + addUserRef);
-        listRef.document(addUID).set(addUserRef);
 
         listRef.document(addUID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -130,7 +134,7 @@ public class ListUsersReposity {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                        Log.d(TAG, "DocumentSnapshot add: " + document.getData());
                     } else {
                         Log.d(TAG, "No such document");
                         listRef.document(addUID).set(addUserRef);

@@ -148,6 +148,7 @@ public class SuggestFriendReposity {
                                 for (DocumentChange dc : snapshots.getDocumentChanges()) {
                                     if(dc.getType() == DocumentChange.Type.ADDED){
                                         User newSuggest = dc.getDocument().toObject(User.class);
+
                                         list.add(newSuggest.getUID());
                                     }
                                 }

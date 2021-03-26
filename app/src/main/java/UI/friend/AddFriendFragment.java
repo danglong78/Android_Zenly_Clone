@@ -89,9 +89,12 @@ public class AddFriendFragment extends Fragment implements AddFriendsFragmentCal
                     mViewModel.getSuggestFriendList().observe(getViewLifecycleOwner(), new Observer<List<User>>() {
                         @Override
                         public void onChanged(List<User> users) {
+                            Log.d(TAG, "onChanged: users.size() " + users.size());
                             FriendSuggestListAdapter adapter = new FriendSuggestListAdapter(getActivity(), (ArrayList<User>)mViewModel.getSuggestFriendList().getValue(),AddFriendFragment.this);
                             friendSuggestRecyclerView.setAdapter(adapter);
                             friendSuggestRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+
 
                             mViewModel.getSuggestFriendList().removeObserver(this);
                         }
