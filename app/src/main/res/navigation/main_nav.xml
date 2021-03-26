@@ -21,13 +21,6 @@
             app:popUpTo="@id/homeFragment"
             app:popUpToInclusive="true" />
 
-        <action
-            android:id="@+id/action_homeFragment_to_searchFriendFragment"
-            app:destination="@id/searchFriendFragment"
-            app:enterAnim="@anim/slide_in_top"
-            app:exitAnim="@anim/slide_out_bottom"
-            app:popEnterAnim="@anim/slide_in_bottom"
-            app:popExitAnim="@anim/slide_out_top"/>
     </fragment>
     <navigation
         android:id="@+id/login_nav"
@@ -150,11 +143,7 @@
         app:destination="@id/homeFragment"
         app:popUpTo="@id/homeFragment"
         app:popUpToInclusive="false" />
-    <fragment
-        android:id="@+id/searchFriendFragment"
-        android:name="UI.friend.SearchFriendFragment"
-        android:label="fragment_search_friend"
-        tools:layout="@layout/fragment_search_friend" />
+
 
 
 </navigation>

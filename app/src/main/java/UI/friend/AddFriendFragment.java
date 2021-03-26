@@ -23,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.study.android_zenly.R;
 
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ import java.util.List;
 import java.util.Objects;
 
 import UI.MainActivity.AddFriendsFragmentCallback;
+import UI.MainActivity.HomeFragment;
 import UI.MainActivity.MainActivity;
 import adapter.FriendSuggestListAdapter;
 import adapter.RecentFriendListAdapter;
@@ -43,7 +45,6 @@ public class AddFriendFragment extends Fragment implements AddFriendsFragmentCal
     private final String TAG = "AddFriendFragment";
     private final int CONTACT_REQUEST_ID = 10;
     private FriendSuggestViewModel mViewModel;
-    private MotionLayout motionLayout;
     TextView friendListText;
 
     public static AddFriendFragment newInstance() {
@@ -74,7 +75,7 @@ public class AddFriendFragment extends Fragment implements AddFriendsFragmentCal
 
                 Log.d(TAG, "onViewCreated: " + mViewModel.getSuggestFriendList().getValue());
 
-                FriendSuggestListAdapter adapter = new FriendSuggestListAdapter(getActivity(), (ArrayList<User>) mViewModel.getSuggestFriendList().getValue());
+                FriendSuggestListAdapter adapter = new FriendSuggestListAdapter(getActivity(), (ArrayList<User>) mViewModel.getSuggestFriendList().getValue(),this);
                 friendSuggestRecyclerView.setAdapter(adapter);
                 friendSuggestRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
@@ -83,8 +84,6 @@ public class AddFriendFragment extends Fragment implements AddFriendsFragmentCal
                 recentFriendRecyclerView.setAdapter(recentFriendAdapter);
                 recentFriendRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
 
-                motionLayout = view.findViewById(R.id.friend_motion_layout);
-                motionLayout.setTransition(R.id.start, R.id.end);
 
                 mViewModel.getSuggestFriendList().observe(getViewLifecycleOwner(), new Observer<List<User>>() {
 
@@ -105,14 +104,17 @@ public class AddFriendFragment extends Fragment implements AddFriendsFragmentCal
             RecyclerView recentFriendRecyclerView = view.findViewById(R.id.recent_friend_recycler_view);
             recentFriendRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
 
-            motionLayout = view.findViewById(R.id.friend_motion_layout);
-            motionLayout.setTransition(R.id.start, R.id.end);
-            NavController navController= Navigation.findNavController(requireActivity(),R.id.main_nav_host_fragment);
+
+            NavController navController= Navigation.findNavController(requireActivity(),R.id.friend_nav_host_fragment);
             friendListText= view.findViewById(R.id.friendSetting);
             friendListText.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    navController.navigate(R.id.action_homeFragment_to_searchFriendFragment);
+                    HomeFragment fragment = (HomeFragment) getParentFragment().getParentFragment();
+                    assert fragment != null;
+                    fragment.setBottomSheetState(BottomSheetBehavior.STATE_EXPANDED);
+                    navController.navigate(R.id.action_addFriendFragment_to_searchFriendFragment);
+
                 }
             });
 
@@ -129,9 +131,14 @@ public class AddFriendFragment extends Fragment implements AddFriendsFragmentCal
 
     }
 
+
     @Override
-    public void setProgress(float progress) {
-        motionLayout.setProgress(progress);
+    public void onAddButtonClick(String hostUID, String FriendUID) {
+        /* Tham hàm addFriend vào đây
+         *
+         *
+         *
+         */
     }
 
     @Override
@@ -143,7 +150,7 @@ public class AddFriendFragment extends Fragment implements AddFriendsFragmentCal
 
             Log.d(TAG, "onViewCreated: " + mViewModel.getSuggestFriendList().getValue());
 
-            FriendSuggestListAdapter adapter = new FriendSuggestListAdapter(getActivity(), (ArrayList<User>) mViewModel.getSuggestFriendList().getValue());
+            FriendSuggestListAdapter adapter = new FriendSuggestListAdapter(getActivity(), (ArrayList<User>) mViewModel.getSuggestFriendList().getValue(),this);
             friendSuggestRecyclerView.setAdapter(adapter);
             friendSuggestRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 

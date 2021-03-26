@@ -1,5 +1,5 @@
 package UI.MainActivity;
 
 public interface AddFriendsFragmentCallback {
-    public void setProgress(float progress);
+    public void onAddButtonClick(String hostUID,String FriendUID);
 }

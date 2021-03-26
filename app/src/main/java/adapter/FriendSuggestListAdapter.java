@@ -1,10 +1,12 @@
 package adapter;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.DataSetObserver;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,12 +20,15 @@ import com.study.android_zenly.R;
 
 import java.util.ArrayList;
 
+import UI.MainActivity.AddFriendsFragmentCallback;
 import data.models.User;
 
 public class FriendSuggestListAdapter  extends RecyclerView.Adapter<FriendSuggestListAdapter.ViewHolder>{
     private ArrayList<User> list ;
     private FirebaseStorage storage;
     private StorageReference ref;
+    private String userUID;
+    private AddFriendsFragmentCallback listener;
     private Context context;
     public FriendSuggestListAdapter(Context context) {
         list = new ArrayList<>();
@@ -35,10 +40,15 @@ public class FriendSuggestListAdapter  extends RecyclerView.Adapter<FriendSugges
         list.add(new User(null,"Huynh Lam Hoang Dai","123","0e974e36-8978-11eb-8dcd-0242ac130003.jpg",null,null,null));
     }
 
-    public FriendSuggestListAdapter(Context context, ArrayList<User> list){
+    public FriendSuggestListAdapter(Context context, ArrayList<User> list,AddFriendsFragmentCallback listener){
         this.list = list;
         storage = FirebaseStorage.getInstance();
         this.context = context;
+        SharedPreferences prefs = context.getSharedPreferences("user_info",Context.MODE_PRIVATE);
+        if ( (prefs != null) && (prefs.contains("uid")) ) {
+            userUID=prefs.getString("uid","");
+        }
+        this.listener=listener;
     }
 
     @NonNull
@@ -64,6 +74,14 @@ public class FriendSuggestListAdapter  extends RecyclerView.Adapter<FriendSugges
 
             });
         }
+        holder.getBtn().setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                listener.onAddButtonClick(userUID,list.get(position).getUID());
+            }
+        });
+
     }
 
     @Override
@@ -74,16 +92,21 @@ public class FriendSuggestListAdapter  extends RecyclerView.Adapter<FriendSugges
     public class ViewHolder  extends RecyclerView.ViewHolder{
         private TextView userNameText;
         private ImageView image;
-            public ViewHolder(@NonNull View itemView) {
+        private Button addBtn;
+
+        public ViewHolder(@NonNull View itemView) {
             super(itemView);
-                userNameText = (TextView) itemView.findViewById(R.id.userNameText);
-                image=(ImageView) itemView.findViewById(R.id.avatar);
+            userNameText = (TextView) itemView.findViewById(R.id.userNameText);
+            image=(ImageView) itemView.findViewById(R.id.avatar);
+            addBtn= (Button)itemView.findViewById(R.id.addBtn);
 
             }
         public TextView getUserNameTextView() {
             return userNameText;
         }
         public ImageView getAvatar() {return image;}
+        public Button getBtn(){return addBtn;}
 
     }
+
 }

@@ -1,6 +1,8 @@
 package UI.chat;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -86,7 +88,7 @@ public class SearchChatFragment extends Fragment implements ChatListAdapter.OnCh
     @Override
     public void onChatClick(int position) {
         MainActivity activity = (MainActivity) getActivity();
-        activity.setFragmentTag(FragmentTag.CHAT,homeFragmentMotionLayout);
+        activity.setFragmentTag(FragmentTag.CHAT,homeFragmentMotionLayout,navController);
         InputMethodManager inputMethodManager =
                 (InputMethodManager) activity.getSystemService(
                         Activity.INPUT_METHOD_SERVICE);
@@ -94,5 +96,16 @@ public class SearchChatFragment extends Fragment implements ChatListAdapter.OnCh
         {inputMethodManager.hideSoftInputFromWindow(
                 activity.getCurrentFocus().getWindowToken(), 0);}
         navController.navigate(R.id.action_searchChatFragment_to_chatFragment2);
+    }
+
+    @Override
+    public void onLongChatClick(int position) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setItems(new String[]{"Delete"},new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                //TODO: Delete Conversation Function
+            }
+        });
+        builder.create().show();
     }
 }

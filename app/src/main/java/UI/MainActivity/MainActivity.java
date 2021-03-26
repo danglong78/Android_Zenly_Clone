@@ -6,6 +6,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
+import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 
@@ -23,7 +24,7 @@ import viewModel.RequestLocationViewModel;
 public class MainActivity extends AppCompatActivity implements MainCallBacks{
     private FragmentTag tag;
     private MotionLayout motionLayout;
-    private NavController chatnavController,navController;
+    private NavController navController;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         tag=FragmentTag.OTHERS;
@@ -34,11 +35,11 @@ public class MainActivity extends AppCompatActivity implements MainCallBacks{
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
         switch(tag){
 
         case CHAT:
         {
+
             motionLayout.setTransition(R.id.hideLeft,R.id.left);
             motionLayout.setProgress(1);
             InputMethodManager inputMethodManager =
@@ -47,17 +48,24 @@ public class MainActivity extends AppCompatActivity implements MainCallBacks{
             if(getCurrentFocus()!=null)
             {inputMethodManager.hideSoftInputFromWindow(
                     getCurrentFocus().getWindowToken(), 0);}
+            NavOptions.Builder navBuilder = new NavOptions.Builder();
+            NavOptions navOptions = navBuilder.setPopUpTo(R.id.chatListFragment, true).build();
+            navController.navigate(R.id.chatListFragment, null, navOptions);
             tag=FragmentTag.OTHERS;
+
             break;
         }
             case SETTINGS:
-            {
+            {        super.onBackPressed();
+
 //                motionLayout.setTransition(R.id.hideRight,R.id.right);
                 motionLayout.setProgress(1);
+
                 break;
             }
             case OTHERS:
-            {
+            {        super.onBackPressed();
+
 
                 break;
             }
@@ -66,9 +74,10 @@ public class MainActivity extends AppCompatActivity implements MainCallBacks{
     }
 
     @Override
-    public void setFragmentTag(FragmentTag tag,MotionLayout motion) {
+    public void setFragmentTag(FragmentTag tag,MotionLayout motion,NavController navController) {
         this.tag= tag;
         motionLayout=motion;
+        this.navController=navController;
     }
 
 }

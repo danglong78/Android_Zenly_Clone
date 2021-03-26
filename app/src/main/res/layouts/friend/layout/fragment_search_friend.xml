@@ -8,7 +8,6 @@
     android:paddingHorizontal="10dp"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintStart_toStartOf="parent"
-    android:fitsSystemWindows="true"
     tools:context="UI.friend.SearchFriendFragment">
     <TextView
         android:id="@+id/title"
@@ -35,6 +34,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="60dp"
+        android:layout_marginHorizontal="10dp"
         android:id="@+id/searchView"
         android:background="@drawable/chat_input_background"
 
@@ -59,11 +59,13 @@
 
         <Button
             android:id="@+id/cancelBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="40dp"
+            android:layout_height="50dp"
             android:backgroundTint="@color/cyan_900"
-            android:text="Cancel"
-            android:textColor="@color/teal"
+            android:padding="10dp"
+            app:icon="@drawable/ic_baseline_search_24"
+            app:iconTint="@color/teal"
+
             android:textStyle="bold"
 
             app:cornerRadius="30dp"

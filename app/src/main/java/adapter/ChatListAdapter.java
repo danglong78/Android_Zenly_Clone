@@ -139,11 +139,13 @@ public class ChatListAdapter  extends RecyclerView.Adapter<ChatListAdapter.ViewH
 
         @Override
         public boolean onLongClick(View v) {
+            onChatListListener.onLongChatClick(getAdapterPosition());
             return false;
         }
     }
     public interface OnChatListListener {
         void onChatClick(int position);
+        void onLongChatClick(int position);
     }
     @Override
     public Filter getFilter() {

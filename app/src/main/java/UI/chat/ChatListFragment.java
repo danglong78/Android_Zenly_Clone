@@ -1,6 +1,8 @@
 package UI.chat;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -10,7 +12,6 @@ import androidx.constraintlayout.motion.widget.MotionLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -58,14 +59,14 @@ public class ChatListFragment extends Fragment implements ChatListAdapter.OnChat
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 //        View homeFragment = (View) getActivity().findViewById(R.id.main_nav_host_fragment);
-        navController = Navigation.findNavController(view);
+        navController = Navigation.findNavController(requireActivity(),R.id.chat_nav_host_fragment);
         homeFragmentMotionLayout = (MotionLayout) getActivity().findViewById(R.id.motion_layout);
         searchText= view.findViewById(R.id.searchView);
         searchText.setOnClickListener(v->{
             homeFragmentMotionLayout.setTransition(R.id.left,R.id.hideLeft);
             homeFragmentMotionLayout.setProgress(1);
             MainActivity activity = (MainActivity) getActivity();
-            activity.setFragmentTag(FragmentTag.CHAT,homeFragmentMotionLayout);
+            activity.setFragmentTag(FragmentTag.CHAT,homeFragmentMotionLayout,navController);
             navController.navigate(R.id.action_chatListFragment_to_searchChatFragment);
 
         });
@@ -77,17 +78,17 @@ public class ChatListFragment extends Fragment implements ChatListAdapter.OnChat
         if(loginviewModel.getAuthentication().getValue() && requestLocationViewModel.getHasPermission().getValue())
         {
             RecyclerView nav_drawer_recycler_view = view.findViewById(R.id.nav_drawer_recycler_view);
-//        view.setPadding(0,getStatusBarHeight(),0,0);
-            UserViewModel mUserViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
-            mChatListViewModel = new ViewModelProvider(requireActivity()).get(ChatListViewModel.class);
-            mChatListViewModel.init(mUserViewModel);
-            mChatListViewModel.getConvList().observe(getViewLifecycleOwner(), new Observer<List<Conversation>>() {
-                @Override
-                public void onChanged(List<Conversation> conversations) {
-                    madapter.notifyDataSetChanged();
-                }
-            });
-            madapter = new ChatListAdapter(mChatListViewModel.getConvList().getValue(),getActivity(),this);
+//            UserViewModel mUserViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
+//            mChatListViewModel = new ViewModelProvider(requireActivity()).get(ChatListViewModel.class);
+//            mChatListViewModel.init(mUserViewModel);
+//            mChatListViewModel.getConvList().observe(getViewLifecycleOwner(), new Observer<List<Conversation>>() {
+//                @Override
+//                public void onChanged(List<Conversation> conversations) {
+//                    madapter.notifyDataSetChanged();
+//                }
+//            });
+//            madapter = new ChatListAdapter(mChatListViewModel.getConvList().getValue(),getActivity(),this);
+            madapter = new ChatListAdapter(getActivity(),this);
             nav_drawer_recycler_view.setAdapter(madapter);
             nav_drawer_recycler_view.setLayoutManager(new LinearLayoutManager(getActivity()));
         }
@@ -106,8 +107,19 @@ public class ChatListFragment extends Fragment implements ChatListAdapter.OnChat
         homeFragmentMotionLayout.setTransition(R.id.left,R.id.hideLeft);
         homeFragmentMotionLayout.setProgress(1);
         MainActivity activity = (MainActivity) getActivity();
-        activity.setFragmentTag(FragmentTag.CHAT,homeFragmentMotionLayout);
+        activity.setFragmentTag(FragmentTag.CHAT,homeFragmentMotionLayout,navController);
         navController.navigate(R.id.action_chatListFragment_to_chatFragment);
+    }
+
+    @Override
+    public void onLongChatClick(int position) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setItems(new String[]{"Delete"},new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                //TODO: Delete Conversation Function
+            }
+        });
+        builder.create().show();
     }
 
 

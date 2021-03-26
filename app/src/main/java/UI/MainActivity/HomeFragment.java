@@ -27,7 +27,6 @@ import android.widget.Button;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.study.android_zenly.R;
 
-import UI.friend.AddFriendFragment;
 import ultis.FragmentTag;
 import viewModel.LoginViewModel;
 import viewModel.MapViewModel;
@@ -47,10 +46,10 @@ public class HomeFragment extends Fragment {
 
     Button chatBtn, userBtn, mapBtn, friendBtn;
     DrawerLayout drawerLayout;
-    MotionLayout motionLayout;
+    MotionLayout motionLayout,bottomSheetMotionLayout;
     BottomSheetBehavior bottomSheetBehavior;
     int motionLayoutstate = 0;
-    AddFriendFragment addFriendFragment;
+
 
 
     @Override
@@ -84,7 +83,6 @@ public class HomeFragment extends Fragment {
 
 
 
-
     }
 
     @Override
@@ -113,13 +111,13 @@ public class HomeFragment extends Fragment {
             });
         }
         if(bottomSheetBehavior.getState()==BottomSheetBehavior.STATE_EXPANDED) {
-            addFriendFragment.setProgress(1);
+            bottomSheetMotionLayout.setProgress(1);
         }
     }
 
     private void bindingView(View view) {
 
-        addFriendFragment = (AddFriendFragment) getChildFragmentManager().findFragmentById(R.id.addFriendFragment);
+        bottomSheetMotionLayout = (MotionLayout) view.findViewById(R.id.friend_motion_layout);
         bottomSheetBehavior = BottomSheetBehavior.from(view.findViewById(R.id.navigation_drawer_bottom));
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         bottomSheetBehavior.setFitToContents(false);
@@ -129,15 +127,15 @@ public class HomeFragment extends Fragment {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
                 if (newState == BottomSheetBehavior.STATE_HALF_EXPANDED)
-                    addFriendFragment.setProgress(0);
+                    bottomSheetMotionLayout.setProgress(0);
                 if(newState == BottomSheetBehavior.STATE_EXPANDED)
-                    addFriendFragment.setProgress(1);
+                    bottomSheetMotionLayout.setProgress(1);
             }
 
             @Override
             public void onSlide(@NonNull View bottomSheet, float slideOffset) {
                 if (slideOffset > 0.6f) {
-                    addFriendFragment.setProgress(slideOffset);
+                    bottomSheetMotionLayout.setProgress(slideOffset);
                 }
             }
         });
@@ -201,7 +199,7 @@ public class HomeFragment extends Fragment {
                     NavOptions.Builder navBuilder = new NavOptions.Builder();
                     NavOptions navOptions = navBuilder.setPopUpTo(R.id.chatListFragment, true).build();
                     chatnavController.navigate(R.id.chatListFragment, null, navOptions);
-                    ((MainActivity)getActivity()).setFragmentTag(FragmentTag.OTHERS,motionLayout);
+                    ((MainActivity)getActivity()).setFragmentTag(FragmentTag.OTHERS,motionLayout,navController);
 
                 }
             }
