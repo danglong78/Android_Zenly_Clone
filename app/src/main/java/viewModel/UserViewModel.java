@@ -35,7 +35,7 @@ public class UserViewModel extends ViewModel {
     private final String TAG = "UserViewModel";
 
     UserRepository repository;
-    MutableLiveData<User> mUser = new MutableLiveData<User>();
+     private static MutableLiveData<User> mUser = new MutableLiveData<User>();
 
 
     CollectionReference friendsRef;
@@ -109,5 +109,12 @@ public class UserViewModel extends ViewModel {
 
     public LiveData<List<User>> getFriendList() {
         return friendList;
+    }
+
+
+    public LiveData<String[]> getConvList() {
+        MutableLiveData<String[]> res = null;
+        res.postValue(getHostUser().getValue().getConversation());
+        return res;
     }
 }

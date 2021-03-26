@@ -103,6 +103,10 @@ public class HomeFragment extends Fragment {
                     if (isInited) {
 
                         mapViewModel.init(getViewLifecycleOwner());
+
+
+
+
                         userViewModel.getIsInited().removeObserver(this);
                     }
                 }

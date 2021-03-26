@@ -49,14 +49,11 @@ public class ChatListAdapter  extends RecyclerView.Adapter<ChatListAdapter.ViewH
         convListAll=new ArrayList<>(convList);
     }
 
-    public ChatListAdapter(String[] convID,Context context,OnChatListListener onChatListListener) {
-        convList = new ArrayList<>();
+    public ChatListAdapter(ArrayList<Conversation> convList,Context context,OnChatListListener onChatListListener) {
         this.onChatListListener= onChatListListener;
         this.context = context;
         storage= FirebaseStorage.getInstance();
-        for(String s:convID){
-            convList.add(convRepo.getConversation(s).getValue());
-        }
+        this.convList = convList;
     }
     @NonNull
     @Override

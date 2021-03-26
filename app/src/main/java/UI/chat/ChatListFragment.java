@@ -8,7 +8,9 @@ import androidx.annotation.Nullable;
 
 import androidx.constraintlayout.motion.widget.MotionLayout;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -28,17 +30,24 @@ import android.widget.TextView;
 
 import com.study.android_zenly.R;
 
+import java.util.List;
+
 import UI.MainActivity.MainActivity;
 import adapter.ChatListAdapter;
+import data.models.Conversation;
 import ultis.FragmentTag;
+import viewModel.ChatListViewModel;
 import viewModel.LoginViewModel;
 import viewModel.RequestLocationViewModel;
+import viewModel.UserViewModel;
 
 
 public class ChatListFragment extends Fragment implements ChatListAdapter.OnChatListListener {
     private NavController navController;
     MotionLayout homeFragmentMotionLayout;
     TextView searchText;
+    private ChatListViewModel mChatListViewModel;
+    private ChatListAdapter madapter;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -69,8 +78,17 @@ public class ChatListFragment extends Fragment implements ChatListAdapter.OnChat
         {
             RecyclerView nav_drawer_recycler_view = view.findViewById(R.id.nav_drawer_recycler_view);
 //        view.setPadding(0,getStatusBarHeight(),0,0);
-            ChatListAdapter adapter = new ChatListAdapter(getActivity(),this);
-            nav_drawer_recycler_view.setAdapter(adapter);
+            UserViewModel mUserViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
+            mChatListViewModel = new ViewModelProvider(requireActivity()).get(ChatListViewModel.class);
+            mChatListViewModel.init(mUserViewModel);
+            mChatListViewModel.getConvList().observe(getViewLifecycleOwner(), new Observer<List<Conversation>>() {
+                @Override
+                public void onChanged(List<Conversation> conversations) {
+                    madapter.notifyDataSetChanged();
+                }
+            });
+            madapter = new ChatListAdapter(mChatListViewModel.getConvList().getValue(),getActivity(),this);
+            nav_drawer_recycler_view.setAdapter(madapter);
             nav_drawer_recycler_view.setLayoutManager(new LinearLayoutManager(getActivity()));
         }
     }
