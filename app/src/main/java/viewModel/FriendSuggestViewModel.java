@@ -29,8 +29,9 @@ public class FriendSuggestViewModel extends ViewModel {
     private MutableLiveData<List<User>> suggestFriendList;
 
 
-    public void init(Context context, String UID){
-        repository = SuggestFriendReposity.getInstance(UID);
+    public void init(Context context){
+        Log.d(TAG, "init: Runned");
+        repository = SuggestFriendReposity.getInstance(new ViewModelProvider((FragmentActivity)context).get(UserViewModel.class).getHostUser().getValue().getUID());
         repository.initContactSuggestFriendList(context, new ViewModelProvider((FragmentActivity)context).get(UserViewModel.class).getHostUser().getValue().getPhone());
         suggestFriendRefList = repository.getSuggestFriendRefList();
         suggestFriendList = repository.getSuggestFriendList();

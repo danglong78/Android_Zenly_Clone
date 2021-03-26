@@ -87,7 +87,7 @@ public class AddFriendFragment extends Fragment implements AddFriendsFragmentCal
                 if (loginviewModel.getAuthentication().getValue() && requestLocationViewModel.getHasPermission().getValue()) {
                     if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_CONTACTS) ==
                             PackageManager.PERMISSION_GRANTED) {
-                        mViewModel.init(getActivity(), FirebaseAuth.getInstance().getUid());
+                        mViewModel.init(getActivity());
                         Log.d(TAG, "Dang chay ne");
 
 //                    RecyclerView recentFriendRecyclerView = view.findViewById(R.id.recent_friend_recycler_view);
@@ -102,8 +102,6 @@ public class AddFriendFragment extends Fragment implements AddFriendsFragmentCal
                                 FriendSuggestListAdapter adapter = new FriendSuggestListAdapter(getActivity(), (ArrayList<User>) mViewModel.getSuggestFriendList().getValue(), AddFriendFragment.this);
                                 friendSuggestRecyclerView.setAdapter(adapter);
                                 friendSuggestRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-                                mViewModel.getSuggestFriendList().removeObserver(this);
                             }
                         });
 

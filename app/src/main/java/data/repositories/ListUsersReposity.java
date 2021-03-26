@@ -83,7 +83,7 @@ public class ListUsersReposity {
                                             User addUser = document.toObject(User.class);
 
                                             if(!listUser.getValue().contains(addUser)){
-                                                listUser.getValue().add(document.toObject(User.class));
+                                                listUser.getValue().add(addUser);
                                                 listUser.postValue(listUser.getValue());
                                             }
 
