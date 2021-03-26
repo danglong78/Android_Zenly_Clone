@@ -17,6 +17,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -37,7 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import UI.MainActivity.AddFriendsFragmentCallback;
+import UI.friend.AddFriendsFragmentCallback;
 import UI.MainActivity.HomeFragment;
 import UI.MainActivity.MainActivity;
 import adapter.FriendSuggestListAdapter;
@@ -105,27 +106,27 @@ public class AddFriendFragment extends Fragment implements AddFriendsFragmentCal
                             }
                         });
 
-                        Log.d(TAG, "Dang chay ne2");
-                        NavController navController = Navigation.findNavController(requireActivity(), R.id.friend_nav_host_fragment);
-                        friendListText = view.findViewById(R.id.friendSetting);
-                        friendListText.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                HomeFragment fragment = (HomeFragment) getParentFragment().getParentFragment();
-                                assert fragment != null;
-                                fragment.setBottomSheetState(BottomSheetBehavior.STATE_EXPANDED);
-                                navController.navigate(R.id.action_addFriendFragment_to_searchFriendFragment);
+                            Log.d(TAG, "Dang chay ne2");
+                            NavController navController = Navigation.findNavController(requireActivity(), R.id.friend_nav_host_fragment);
+                            friendListText = view.findViewById(R.id.friendSetting);
+                            friendListText.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    HomeFragment fragment = (HomeFragment) getParentFragment().getParentFragment();
+                                    assert fragment != null;
+                                    fragment.setBottomSheetState(BottomSheetBehavior.STATE_EXPANDED);
+                                    navController.navigate(R.id.action_addFriendFragment_to_searchFriendFragment);
 
-                            }
-                        });
+                                }
+                            });
 
-                    } else {
-                        requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, CONTACT_REQUEST_ID);
+                        } else {
+                            requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, CONTACT_REQUEST_ID);
+                        }
+                        userViewModel.getIsInited().removeObserver(this);
                     }
-                    userViewModel.getIsInited().removeObserver(this);
-                }
 
-            }
+                }
 
         });
 
@@ -199,6 +200,15 @@ public class AddFriendFragment extends Fragment implements AddFriendsFragmentCal
     @Override
     public void onAddButtonClick(String hostUID, String FriendUID) {
         /* Tham hàm addFriend vào đây
+         *
+         *
+         *
+         */
+    }
+
+    @Override
+    public void onHideClick(String hostUID, String FriendUID) {
+        /* Tham hàm Hide Suggesst vào đây
          *
          *
          *

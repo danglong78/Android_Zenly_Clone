@@ -58,9 +58,9 @@ public class ChatListFragment extends Fragment implements ChatListAdapter.OnChat
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-//        View homeFragment = (View) getActivity().findViewById(R.id.main_nav_host_fragment);
-        navController = Navigation.findNavController(requireActivity(),R.id.chat_nav_host_fragment);
-        homeFragmentMotionLayout = (MotionLayout) getActivity().findViewById(R.id.motion_layout);
+        super.onViewCreated(view, savedInstanceState);
+        navController = Navigation.findNavController(view);
+        homeFragmentMotionLayout = (MotionLayout) requireActivity().findViewById(R.id.motion_layout);
         searchText= view.findViewById(R.id.searchView);
         searchText.setOnClickListener(v->{
             homeFragmentMotionLayout.setTransition(R.id.left,R.id.hideLeft);
@@ -70,7 +70,6 @@ public class ChatListFragment extends Fragment implements ChatListAdapter.OnChat
             navController.navigate(R.id.action_chatListFragment_to_searchChatFragment);
 
         });
-        super.onViewCreated(view, savedInstanceState);
         LoginViewModel loginviewModel = new ViewModelProvider(requireActivity()).get(LoginViewModel.class);
         RequestLocationViewModel requestLocationViewModel = new ViewModelProvider(requireActivity()).get(RequestLocationViewModel.class);
         loginviewModel.init(getActivity());
@@ -117,6 +116,7 @@ public class ChatListFragment extends Fragment implements ChatListAdapter.OnChat
         builder.setItems(new String[]{"Delete"},new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 //TODO: Delete Conversation Function
+                madapter.deleteConversation( position);
             }
         });
         builder.create().show();

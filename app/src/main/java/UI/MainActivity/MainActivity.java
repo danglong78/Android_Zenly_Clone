@@ -21,13 +21,14 @@ import ultis.FragmentTag;
 import viewModel.LoginViewModel;
 import viewModel.RequestLocationViewModel;
 
-public class MainActivity extends AppCompatActivity implements MainCallBacks{
+public class MainActivity extends AppCompatActivity implements MainCallBacks {
     private FragmentTag tag;
     private MotionLayout motionLayout;
     private NavController navController;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        tag=FragmentTag.OTHERS;
+        tag = FragmentTag.OTHERS;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -35,36 +36,36 @@ public class MainActivity extends AppCompatActivity implements MainCallBacks{
 
     @Override
     public void onBackPressed() {
-        switch(tag){
+        switch (tag) {
 
-        case CHAT:
-        {
+            case CHAT: {
 
-            motionLayout.setTransition(R.id.hideLeft,R.id.left);
-            motionLayout.setProgress(1);
-            InputMethodManager inputMethodManager =
-                    (InputMethodManager) getSystemService(
-                            INPUT_METHOD_SERVICE);
-            if(getCurrentFocus()!=null)
-            {inputMethodManager.hideSoftInputFromWindow(
-                    getCurrentFocus().getWindowToken(), 0);}
-            NavOptions.Builder navBuilder = new NavOptions.Builder();
-            NavOptions navOptions = navBuilder.setPopUpTo(R.id.chatListFragment, true).build();
-            navController.navigate(R.id.chatListFragment, null, navOptions);
-            tag=FragmentTag.OTHERS;
+                motionLayout.setTransition(R.id.hideLeft, R.id.left);
+                motionLayout.setProgress(1);
+                InputMethodManager inputMethodManager =
+                        (InputMethodManager) getSystemService(
+                                INPUT_METHOD_SERVICE);
+                if (getCurrentFocus() != null) {
+                    inputMethodManager.hideSoftInputFromWindow(
+                            getCurrentFocus().getWindowToken(), 0);
+                }
+                NavOptions.Builder navBuilder = new NavOptions.Builder();
+                NavOptions navOptions = navBuilder.setPopUpTo(R.id.chatListFragment, true).build();
+                navController.navigate(R.id.chatListFragment, null, navOptions);
+                tag = FragmentTag.OTHERS;
 
-            break;
-        }
-            case SETTINGS:
-            {        super.onBackPressed();
+                break;
+            }
+            case SETTINGS: {
+                super.onBackPressed();
 
 //                motionLayout.setTransition(R.id.hideRight,R.id.right);
                 motionLayout.setProgress(1);
 
                 break;
             }
-            case OTHERS:
-            {        super.onBackPressed();
+            case OTHERS: {
+                super.onBackPressed();
 
 
                 break;
@@ -74,10 +75,10 @@ public class MainActivity extends AppCompatActivity implements MainCallBacks{
     }
 
     @Override
-    public void setFragmentTag(FragmentTag tag,MotionLayout motion,NavController navController) {
-        this.tag= tag;
-        motionLayout=motion;
-        this.navController=navController;
+    public void setFragmentTag(FragmentTag tag, MotionLayout motion, NavController navController) {
+        this.tag = tag;
+        motionLayout = motion;
+        this.navController = navController;
     }
 
 }

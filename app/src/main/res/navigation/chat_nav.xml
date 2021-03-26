@@ -17,10 +17,12 @@
         tools:layout="@layout/fragment_chat_list" >
         <action
             android:id="@+id/action_chatListFragment_to_chatFragment"
-            app:destination="@id/chatFragment" />
+            app:destination="@id/chatFragment"
+            app:launchSingleTop="true" />
         <action
             android:id="@+id/action_chatListFragment_to_searchChatFragment"
-            app:destination="@id/searchChatFragment" />
+            app:destination="@id/searchChatFragment"
+            app:launchSingleTop="true" />
     </fragment>
     <fragment
         android:id="@+id/searchChatFragment"
@@ -29,6 +31,7 @@
         <action
             android:id="@+id/action_searchChatFragment_to_chatFragment2"
             app:destination="@id/chatFragment"
+            app:launchSingleTop="true"
             app:popUpTo="@id/chatListFragment" />
     </fragment>
 </navigation>

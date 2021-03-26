@@ -179,4 +179,10 @@ public class ChatListAdapter  extends RecyclerView.Adapter<ChatListAdapter.ViewH
         }
     };
 
+    public void deleteConversation(int position) {
+        convList.remove(position);
+//        notifyDataSetChanged();
+        notifyItemRemoved(position);
+    }
+
 }

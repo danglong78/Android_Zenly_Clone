@@ -2,7 +2,6 @@ package adapter;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.database.DataSetObserver;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,9 +20,8 @@ import com.study.android_zenly.R;
 
 import java.util.ArrayList;
 
-import UI.MainActivity.AddFriendsFragmentCallback;
+import UI.friend.AddFriendsFragmentCallback;
 import data.models.User;
-import data.models.UserRef;
 
 public class FriendSuggestListAdapter  extends RecyclerView.Adapter<FriendSuggestListAdapter.ViewHolder>{
     private ArrayList<User> list ;
@@ -83,6 +81,15 @@ public class FriendSuggestListAdapter  extends RecyclerView.Adapter<FriendSugges
             public void onClick(View v) {
                 listener.onAddButtonClick(userUID,list.get(position).getUID());
             }
+
+        });
+        holder.getDeleteIcon().setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                listener.onAddButtonClick(userUID,list.get(position).getUID());
+
+            }
         });
 
     }
@@ -93,7 +100,7 @@ public class FriendSuggestListAdapter  extends RecyclerView.Adapter<FriendSugges
     }
 
     public class ViewHolder  extends RecyclerView.ViewHolder{
-        private TextView userNameText;
+        private TextView userNameText,deleteIcon;
         private ImageView image;
         private Button addBtn;
 
@@ -102,6 +109,7 @@ public class FriendSuggestListAdapter  extends RecyclerView.Adapter<FriendSugges
             userNameText = (TextView) itemView.findViewById(R.id.userNameText);
             image=(ImageView) itemView.findViewById(R.id.avatar);
             addBtn= (Button)itemView.findViewById(R.id.addBtn);
+            deleteIcon= itemView.findViewById(R.id.deleteIcon);
 
             }
         public TextView getUserNameTextView() {
@@ -109,6 +117,7 @@ public class FriendSuggestListAdapter  extends RecyclerView.Adapter<FriendSugges
         }
         public ImageView getAvatar() {return image;}
         public Button getBtn(){return addBtn;}
+        public TextView getDeleteIcon(){return  deleteIcon;}
 
     }
 

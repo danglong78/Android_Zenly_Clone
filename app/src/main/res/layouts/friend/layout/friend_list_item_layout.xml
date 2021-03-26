@@ -40,8 +40,8 @@
             android:layout_marginStart="10dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-               <Button
-            android:id="@+id/timeText"
+        <Button
+            android:id="@+id/settingBtn"
             android:layout_height="50dp"
             android:layout_width="42dp"
             android:paddingHorizontal="3dp"
