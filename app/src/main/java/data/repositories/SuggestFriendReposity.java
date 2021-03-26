@@ -23,27 +23,32 @@ import java.util.ArrayList;
 import java.util.List;
 
 import data.models.User;
+import data.models.UserRef;
 
 public class SuggestFriendReposity {
     private final String TAG = "SuggestFriendReposity";
     private final String USER_COLLECTION = "Users";
+    private final String SUGGESTIONS_COLLECTION = "Suggestions";
 
     private FirebaseFirestore mDb;
     private static SuggestFriendReposity mInstance;
 
+    private ListUsersReposity list;
 
-    private SuggestFriendReposity() {
+
+    private SuggestFriendReposity(String UID) {
         mDb = FirebaseFirestore.getInstance();
+        list = new ListUsersReposity(SUGGESTIONS_COLLECTION, UID);
     }
 
-    public static SuggestFriendReposity getInstance() {
+    public static SuggestFriendReposity getInstance(String UID) {
         if (mInstance == null) {
-            mInstance = new SuggestFriendReposity();
+            mInstance = new SuggestFriendReposity(UID);
         }
         return mInstance;
     }
 
-    private ArrayList<String> getPhoneNumbersFromContact(Context context) {
+    private ArrayList<String> getPhoneNumbersFromContact(Context context, String userPhone) {
         ArrayList<String> phones = new ArrayList<>();
 
 
@@ -69,8 +74,11 @@ public class SuggestFriendReposity {
 
                         phoneNo = "+84" + phoneNo.substring(1);
 
-                        phones.add(phoneNo);
-                        Log.i(TAG, "Phone: " + phoneNo);
+                        if (!phoneNo.equals(userPhone)){
+                            phones.add(phoneNo);
+                            Log.i(TAG, "Phone: " + phoneNo);
+                        }
+
 
                     }
                     pCur.close();
@@ -84,41 +92,75 @@ public class SuggestFriendReposity {
         return phones;
     }
 
-    public MutableLiveData<List<User>> getSuggestFriendList(Context context) {
-        ArrayList<String> phones = getPhoneNumbersFromContact(context);
-        MutableLiveData<List<User>> suggestFriendList = new MutableLiveData<List<User>>();
-        suggestFriendList.setValue(new ArrayList<User>());
+//    public MutableLiveData<List<User>> getSuggestFriendList(Context context) {
+//        ArrayList<String> phones = getPhoneNumbersFromContact(context);
+//        MutableLiveData<List<User>> suggestFriendList = new MutableLiveData<List<User>>();
+//        suggestFriendList.setValue(new ArrayList<User>());
+//
+//
+//        for (String phone : phones) {
+//            mDb.collection(USER_COLLECTION)
+//                    .whereEqualTo("phone", phone)
+//                    .addSnapshotListener(new EventListener<QuerySnapshot>() {
+//                        @Override
+//                        public void onEvent(@Nullable QuerySnapshot snapshots,
+//                                            @Nullable FirebaseFirestoreException e) {
+//                            if (e != null) {
+//                                Log.w(TAG, "listen:error", e);
+//                                return;
+//                            }
+//
+//                            List<User> newSuggestFriendList = new ArrayList<>();
+//
+//                            for (DocumentChange dc : snapshots.getDocumentChanges()) {
+//                                if(dc.getType() == DocumentChange.Type.ADDED){
+//                                    newSuggestFriendList.add(dc.getDocument().toObject(User.class));
+//                                    Log.d(TAG, "SuggestFriend: " + dc.getDocument().get("phone"));
+//                                }
+//                            }
+//
+//                            suggestFriendList.getValue().addAll(newSuggestFriendList);
+//                            suggestFriendList.postValue(suggestFriendList.getValue());
+//                        }
+//                    });
+//        }
+//
+//        Log.d(TAG, "getSuggestFriendList: " + suggestFriendList.getValue());
+//
+//        return suggestFriendList;
+//        }
 
+        public void initContactSuggestFriendList(Context context, String userPhone){
+            ArrayList<String> phones = getPhoneNumbersFromContact(context, userPhone);
 
-        for (String phone : phones) {
-            mDb.collection(USER_COLLECTION)
-                    .whereEqualTo("phone", phone)
-                    .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                        @Override
-                        public void onEvent(@Nullable QuerySnapshot snapshots,
-                                            @Nullable FirebaseFirestoreException e) {
-                            if (e != null) {
-                                Log.w(TAG, "listen:error", e);
-                                return;
-                            }
+            for (String phone : phones) {
+                mDb.collection(USER_COLLECTION)
+                        .whereEqualTo("phone", phone)
+                        .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                            @Override
+                            public void onEvent(@Nullable QuerySnapshot snapshots,
+                                                @Nullable FirebaseFirestoreException e) {
+                                if (e != null) {
+                                    Log.w(TAG, "listen:error", e);
+                                    return;
+                                }
 
-                            List<User> newSuggestFriendList = new ArrayList<>();
-
-                            for (DocumentChange dc : snapshots.getDocumentChanges()) {
-                                if(dc.getType() == DocumentChange.Type.ADDED){
-                                    newSuggestFriendList.add(dc.getDocument().toObject(User.class));
-                                    Log.d(TAG, "SuggestFriend: " + dc.getDocument().get("phone"));
+                                for (DocumentChange dc : snapshots.getDocumentChanges()) {
+                                    if(dc.getType() == DocumentChange.Type.ADDED){
+                                        User newSuggest = dc.getDocument().toObject(User.class);
+                                        list.add(newSuggest.getUID());
+                                    }
                                 }
                             }
-
-                            suggestFriendList.getValue().addAll(newSuggestFriendList);
-                            suggestFriendList.postValue(suggestFriendList.getValue());
-                        }
-                    });
+                        });
+            }
         }
 
-        Log.d(TAG, "getSuggestFriendList: " + suggestFriendList.getValue());
-
-        return suggestFriendList;
-        }
+    public MutableLiveData<List<UserRef>> getSuggestFriendRefList(){
+        return list.getListUserReference();
     }
+
+    public MutableLiveData<List<User>> getSuggestFriendList(){
+        return list.getListUser();
+    }
+}

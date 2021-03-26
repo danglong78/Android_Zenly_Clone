@@ -2,9 +2,12 @@ package data.models;
 
 import android.graphics.Bitmap;
 
+import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.Exclude;
 import com.google.firebase.firestore.GeoPoint;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class User {
@@ -62,6 +65,8 @@ public class User {
         return name;
     }
 
+    public String getPhone() {return phone; }
+
     public void setAvatar(Bitmap avatar) {
         this.avatar = avatar;
     }
@@ -82,5 +87,13 @@ public class User {
                 ", dob='" + dob + '\'' +
                 ", conversation=" + Arrays.toString(conversation) +
                 '}';
+    }
+
+    public boolean equals(Object o) {
+        if(o instanceof User) {
+            User u = (User) o;
+            return this.getUID().equals(u.getUID());
+        }
+        else return false;
     }
 }

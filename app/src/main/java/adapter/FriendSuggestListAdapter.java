@@ -3,6 +3,7 @@ package adapter;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.DataSetObserver;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,7 @@ import java.util.ArrayList;
 
 import UI.MainActivity.AddFriendsFragmentCallback;
 import data.models.User;
+import data.models.UserRef;
 
 public class FriendSuggestListAdapter  extends RecyclerView.Adapter<FriendSuggestListAdapter.ViewHolder>{
     private ArrayList<User> list ;
@@ -30,7 +32,7 @@ public class FriendSuggestListAdapter  extends RecyclerView.Adapter<FriendSugges
     private String userUID;
     private AddFriendsFragmentCallback listener;
     private Context context;
-    public FriendSuggestListAdapter(Context context) {
+    public FriendSuggestListAdapter(Context context,AddFriendsFragmentCallback listener) {
         list = new ArrayList<>();
         this.context = context;
         storage = FirebaseStorage.getInstance();
@@ -62,6 +64,7 @@ public class FriendSuggestListAdapter  extends RecyclerView.Adapter<FriendSugges
 
     @Override
     public void onBindViewHolder(@NonNull FriendSuggestListAdapter.ViewHolder holder, int position) {
+        Log.d("FRiend",list.get(position).getName());
         holder.getUserNameTextView().setText(list.get(position).getName());
 
         ref= storage.getReference().child("avatars").child(list.get(position).getAvatarURL());
