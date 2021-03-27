@@ -7,41 +7,30 @@ import android.provider.ContactsContract;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
-import androidx.lifecycle.MutableLiveData;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import data.models.User;
-import data.models.UserRef;
 
-public class SuggestFriendReposity extends ListUsersReposity {
+public class SuggestFriendRepository extends ListUsersRepository {
     private final String TAG = "SuggestFriendReposity";
     private final String USER_COLLECTION = "Users";
 
-
-    private FirebaseFirestore mDb;
-    private static SuggestFriendReposity mInstance;
+    private static SuggestFriendRepository mInstance;
 
 
-    private SuggestFriendReposity(String SUGGESTIONS_COLLECTION, String UID) {
+    private SuggestFriendRepository(String SUGGESTIONS_COLLECTION, String UID) {
         super(SUGGESTIONS_COLLECTION, UID);
-        mDb = FirebaseFirestore.getInstance();
     }
 
-    public static SuggestFriendReposity getInstance(String SUGGESTIONS_COLLECTION, String UID) {
+    public static SuggestFriendRepository getInstance(String SUGGESTIONS_COLLECTION, String UID) {
         if (mInstance == null) {
-            mInstance = new SuggestFriendReposity(SUGGESTIONS_COLLECTION, UID);
+            mInstance = new SuggestFriendRepository(SUGGESTIONS_COLLECTION, UID);
         }
         return mInstance;
     }
@@ -72,7 +61,7 @@ public class SuggestFriendReposity extends ListUsersReposity {
 
                         phoneNo = "+84" + phoneNo.substring(1);
 
-                        if (!phoneNo.equals(userPhone)){
+                        if (!phoneNo.equals(userPhone)) {
                             phones.add(phoneNo);
                             Log.i(TAG, "Phone: " + phoneNo);
                         }
@@ -128,36 +117,36 @@ public class SuggestFriendReposity extends ListUsersReposity {
 //        return suggestFriendList;
 //        }
 
-        public void initContactSuggestFriendList(Context context, String userPhone){
-            ArrayList<String> phones = getPhoneNumbersFromContact(context, userPhone);
+    public void initContactSuggestFriendList(Context context, String userPhone) {
+        ArrayList<String> phones = getPhoneNumbersFromContact(context, userPhone);
 
-            for (String phone : phones) {
-                mDb.collection(USER_COLLECTION)
-                        .whereEqualTo("phone", phone)
-                        .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                            @Override
-                            public void onEvent(@Nullable QuerySnapshot snapshots,
-                                                @Nullable FirebaseFirestoreException e) {
-                                if (e != null) {
-                                    Log.w(TAG, "listen:error", e);
-                                    return;
-                                }
+        for (String phone : phones) {
+            mDb.collection(USER_COLLECTION)
+                    .whereEqualTo("phone", phone)
+                    .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                        @Override
+                        public void onEvent(@Nullable QuerySnapshot snapshots,
+                                            @Nullable FirebaseFirestoreException e) {
+                            if (e != null) {
+                                Log.w(TAG, "listen:error", e);
+                                return;
+                            }
 
-                                for (DocumentChange dc : snapshots.getDocumentChanges()) {
-                                    if(dc.getType() == DocumentChange.Type.ADDED){
-                                        User newSuggest = dc.getDocument().toObject(User.class);
-                                        add(newSuggest.getUID());
-                                    }
+                            for (DocumentChange dc : snapshots.getDocumentChanges()) {
+                                if (dc.getType() == DocumentChange.Type.ADDED) {
+                                    User newSuggest = dc.getDocument().toObject(User.class);
+                                    addToMyRepository(newSuggest.getUID());
                                 }
                             }
-                        });
-            }
+                        }
+                    });
         }
+    }
 
-    public void modify(String modifyUID, boolean hidden){
+    public void modify(String modifyUID, boolean hidden) {
         listRef.document(modifyUID).update("hidden", hidden);
         removeList(modifyUID);
-        Log.d(TAG, "modify: "+ UID + " modify " + modifyUID + " " + hidden);
+        Log.d(TAG, "modify: " + UID + " modify " + modifyUID + " " + hidden);
     }
 
 }
