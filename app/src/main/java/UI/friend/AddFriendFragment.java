@@ -198,7 +198,7 @@ public class AddFriendFragment extends Fragment implements AddFriendsFragmentCal
 
 
     @Override
-    public void onAddButtonClick(String hostUID, String FriendUID) {
+    public void onAddButtonClick(String friendUID) {
         /* Tham hàm addFriend vào đây
          *
          *
@@ -207,12 +207,9 @@ public class AddFriendFragment extends Fragment implements AddFriendsFragmentCal
     }
 
     @Override
-    public void onHideClick(String hostUID, String FriendUID) {
-        /* Tham hàm Hide Suggesst vào đây
-         *
-         *
-         *
-         */
+    public void onHideClick(String suggestUID) {
+        Log.d(TAG, "onHideClick: ");
+        mViewModel.hideSuggest(suggestUID);
     }
 
     @Override

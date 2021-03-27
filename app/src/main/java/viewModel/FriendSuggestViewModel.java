@@ -23,20 +23,26 @@ import data.repositories.SuggestFriendReposity;
 
 public class FriendSuggestViewModel extends ViewModel {
     private final String TAG = "FriendSuggestViewModel";
+    private final String SUGGESTIONS_COLLECTION = "Suggestions";
 
     SuggestFriendReposity repository;
     private MutableLiveData<List<UserRef>> suggestFriendRefList;
     private MutableLiveData<List<User>> suggestFriendList;
 
+    private String hostUID;
+    private String hostPhone;
+
 
     public void init(Context context){
         Log.d(TAG, "init: Runned");
-        repository = SuggestFriendReposity.getInstance(new ViewModelProvider((FragmentActivity)context).get(UserViewModel.class).getHostUser().getValue().getUID());
-        repository.initContactSuggestFriendList(context, new ViewModelProvider((FragmentActivity)context).get(UserViewModel.class).getHostUser().getValue().getPhone());
-        suggestFriendRefList = repository.getSuggestFriendRefList();
-        suggestFriendList = repository.getSuggestFriendList();
+        hostUID = new ViewModelProvider((FragmentActivity)context).get(UserViewModel.class).getHostUser().getValue().getUID();
+        hostPhone = new ViewModelProvider((FragmentActivity)context).get(UserViewModel.class).getHostUser().getValue().getPhone();
+        repository = SuggestFriendReposity.getInstance(SUGGESTIONS_COLLECTION,hostUID);
+        repository.initContactSuggestFriendList(context, hostPhone);
+        suggestFriendRefList = repository.getListUserReference();
+        suggestFriendList = repository.getListUser();
+        repository.getPaginations();
     }
-
 
     public LiveData<List<UserRef>> getSuggestFriendRefList() {
         Log.d(TAG, "getSuggestFriendList: " + suggestFriendRefList);
@@ -46,5 +52,13 @@ public class FriendSuggestViewModel extends ViewModel {
     public LiveData<List<User>> getSuggestFriendList(){
         Log.d(TAG, "getSuggestFriendList: " + suggestFriendList);
         return suggestFriendList;
+    }
+
+    public void hideSuggest(String suggestUID){
+        repository.modify(suggestUID, true);
+    }
+
+    public void load(){
+        repository.getPaginations();
     }
 }

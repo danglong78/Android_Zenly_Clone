@@ -25,25 +25,23 @@ import java.util.List;
 import data.models.User;
 import data.models.UserRef;
 
-public class SuggestFriendReposity {
+public class SuggestFriendReposity extends ListUsersReposity {
     private final String TAG = "SuggestFriendReposity";
     private final String USER_COLLECTION = "Users";
-    private final String SUGGESTIONS_COLLECTION = "Suggestions";
+
 
     private FirebaseFirestore mDb;
     private static SuggestFriendReposity mInstance;
 
-    private ListUsersReposity list;
 
-
-    private SuggestFriendReposity(String UID) {
+    private SuggestFriendReposity(String SUGGESTIONS_COLLECTION, String UID) {
+        super(SUGGESTIONS_COLLECTION, UID);
         mDb = FirebaseFirestore.getInstance();
-        list = new ListUsersReposity(SUGGESTIONS_COLLECTION, UID);
     }
 
-    public static SuggestFriendReposity getInstance(String UID) {
+    public static SuggestFriendReposity getInstance(String SUGGESTIONS_COLLECTION, String UID) {
         if (mInstance == null) {
-            mInstance = new SuggestFriendReposity(UID);
+            mInstance = new SuggestFriendReposity(SUGGESTIONS_COLLECTION, UID);
         }
         return mInstance;
     }
@@ -148,8 +146,7 @@ public class SuggestFriendReposity {
                                 for (DocumentChange dc : snapshots.getDocumentChanges()) {
                                     if(dc.getType() == DocumentChange.Type.ADDED){
                                         User newSuggest = dc.getDocument().toObject(User.class);
-
-                                        list.add(newSuggest.getUID());
+                                        add(newSuggest.getUID());
                                     }
                                 }
                             }
@@ -157,11 +154,10 @@ public class SuggestFriendReposity {
             }
         }
 
-    public MutableLiveData<List<UserRef>> getSuggestFriendRefList(){
-        return list.getListUserReference();
+    public void modify(String modifyUID, boolean hidden){
+        listRef.document(modifyUID).update("hidden", hidden);
+        removeList(modifyUID);
+        Log.d(TAG, "modify: "+ UID + " modify " + modifyUID + " " + hidden);
     }
 
-    public MutableLiveData<List<User>> getSuggestFriendList(){
-        return list.getListUser();
-    }
 }

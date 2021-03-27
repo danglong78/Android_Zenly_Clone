@@ -79,7 +79,7 @@ public class FriendSuggestListAdapter  extends RecyclerView.Adapter<FriendSugges
 
             @Override
             public void onClick(View v) {
-                listener.onAddButtonClick(userUID,list.get(position).getUID());
+                listener.onAddButtonClick(list.get(position).getUID());
             }
 
         });
@@ -87,8 +87,8 @@ public class FriendSuggestListAdapter  extends RecyclerView.Adapter<FriendSugges
 
             @Override
             public void onClick(View v) {
-                listener.onAddButtonClick(userUID,list.get(position).getUID());
-
+                Log.d("AdapterFriendSuggest", "onClick: ");
+                listener.onHideClick(list.get(position).getUID());
             }
         });
 

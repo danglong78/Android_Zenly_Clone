@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
@@ -15,6 +16,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
 
@@ -28,14 +30,17 @@ public class ListUsersReposity {
     private final String TAG = "ListUsersReposity";
     private final String USER_COLLECTION = "Users";
     private final String LIST_COLLECTION = "List";
+    private final int pagination = 8;
 
     private String COLLECTION;
-    private String UID;
+    protected String UID;
     private FirebaseFirestore mDb;
 
-    private CollectionReference listRef;
-    MutableLiveData<List<UserRef>> listUserRef;
-    MutableLiveData<List<User>> listUser;
+    protected CollectionReference listRef;
+    protected MutableLiveData<List<UserRef>> listUserRef;
+    protected MutableLiveData<List<User>> listUser;
+
+    protected DocumentSnapshot lastPaginated;
 
 
     public ListUsersReposity(String COLLECTION, String UID) {
@@ -50,13 +55,76 @@ public class ListUsersReposity {
 
         listUser = new MutableLiveData<List<User>>();
         listUser.setValue(new ArrayList<User>());
+
+        lastPaginated = null;
     }
 
     public MutableLiveData<List<User>> getListUser(){
         return listUser;
     }
 
-    public MutableLiveData<List<UserRef>> getListUserReference() {
+    public MutableLiveData<List<UserRef>> getListUserReference (){
+        return listUserRef;
+    }
+
+    private void processSnapshots(QuerySnapshot snapshots){
+        List<UserRef> newRefList = listUserRef.getValue();
+
+        for (DocumentChange dc : snapshots.getDocumentChanges()) {
+            switch (dc.getType()) {
+                case ADDED:
+                    Log.d(TAG, "ADD: " + UserRef.toUserRef(dc));
+                    UserRef addUserRef = UserRef.toUserRef(dc);
+                    newRefList.add(addUserRef);
+                    if (!addUserRef.getHidden())
+                        addUserRef.getRef().get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>(){
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot document = task.getResult();
+                                    if (document.exists()) {
+                                        Log.d(TAG, "DocumentSnapshot getListUser: " + document.getData());
+                                        User addUser = document.toObject(User.class);
+
+                                        if(!listUser.getValue().contains(addUser)){
+                                            listUser.getValue().add(addUser);
+                                            listUser.postValue(listUser.getValue());
+                                        }
+
+                                    } else {
+                                        Log.d(TAG, "No such document");
+                                    }
+                                } else {
+                                    Log.d(TAG, "get failed with ", task.getException());
+                                }
+                            }
+                        });
+                    break;
+                case MODIFIED:
+                    Log.d(TAG, "MODIFIED: " + UserRef.toUserRef(dc));
+                    UserRef modifyUserRef = UserRef.toUserRef(dc);
+                    newRefList.remove(modifyUserRef);
+
+                    Log.d(TAG, "onEventMODIFIED: " + modifyUserRef.getRef().getPath());
+                    if(modifyUserRef.getHidden())
+                        removeList(toUID(modifyUserRef.getRef().getPath()));
+
+                    newRefList.add(modifyUserRef);
+                    break;
+                case REMOVED:
+                    Log.d(TAG, "REMOVED: " + UserRef.toUserRef(dc));
+                    UserRef removeUserRef = UserRef.toUserRef(dc);
+                    newRefList.remove(removeUserRef);
+                    removeList(toUID(removeUserRef.getRef().getPath()));
+                    break;
+            }
+        }
+        listUserRef.getValue().addAll(newRefList);
+        listUserRef.postValue(listUserRef.getValue());
+        Log.d(TAG, "onEvent: " + listUserRef.getValue().size());
+    }
+
+    public void getAll() {
         listRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot snapshots, @Nullable FirebaseFirestoreException e) {
@@ -65,63 +133,9 @@ public class ListUsersReposity {
                     return;
                 }
 
-                List<UserRef> newRefList = listUserRef.getValue();
-
-                for (DocumentChange dc : snapshots.getDocumentChanges()) {
-                    switch (dc.getType()) {
-                        case ADDED:
-                            Log.d(TAG, "ADD: " + UserRef.toUserRef(dc));
-                            UserRef addUserRef = UserRef.toUserRef(dc);
-                            newRefList.add(addUserRef);
-                            addUserRef.getRef().get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>(){
-                                @Override
-                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                    if (task.isSuccessful()) {
-                                        DocumentSnapshot document = task.getResult();
-                                        if (document.exists()) {
-                                            Log.d(TAG, "DocumentSnapshot getListUser: " + document.getData());
-                                            User addUser = document.toObject(User.class);
-
-                                            if(!listUser.getValue().contains(addUser)){
-                                                listUser.getValue().add(addUser);
-                                                listUser.postValue(listUser.getValue());
-                                            }
-
-                                        } else {
-                                            Log.d(TAG, "No such document");
-                                        }
-                                    } else {
-                                        Log.d(TAG, "get failed with ", task.getException());
-                                    }
-                                }
-                            });
-                            break;
-                        case MODIFIED:
-                            Log.d(TAG, "MODIFIED: " + UserRef.toUserRef(dc));
-                            UserRef modifyUserRef = UserRef.toUserRef(dc);
-                            newRefList.remove(modifyUserRef);
-
-                            Log.d(TAG, "onEventMODIFIED: " + modifyUserRef.getRef().getPath());
-                            if(modifyUserRef.getHidden())
-                                removeList(modifyUserRef.getRef().getPath());
-
-                            newRefList.add(modifyUserRef);
-                            break;
-                        case REMOVED:
-                            Log.d(TAG, "REMOVED: " + UserRef.toUserRef(dc));
-                            UserRef removeUserRef = UserRef.toUserRef(dc);
-                            newRefList.remove(removeUserRef);
-                            removeList(removeUserRef.getRef().getPath());
-                            break;
-                    }
-                }
-                listUserRef.getValue().addAll(newRefList);
-                listUserRef.postValue(listUserRef.getValue());
-                Log.d(TAG, "onEvent: " + listUserRef.getValue().size());
+                processSnapshots(snapshots);
             }
         });
-
-        return listUserRef;
     }
 
     public void add(String addUID){
@@ -154,13 +168,13 @@ public class ListUsersReposity {
         Log.d(TAG, "remove: " + UID + " remove " + removeUID);
     }
 
-    public void modify(String modifyUID, boolean hidden){
-        listRef.document(modifyUID).update("hidden", hidden);
-        Log.d(TAG, "modify: "+ UID + " modify " + modifyUID + " " + hidden);
+
+
+    private String toUID(String userRef){
+        return userRef.substring(userRef.lastIndexOf('/') + 1);
     }
 
-    private void removeList(String userRef){
-        String UID = userRef.substring(userRef.lastIndexOf('/') + 1);
+    protected void removeList(String UID){
         Log.d(TAG, "removeList: " + UID);
         List<User> list = listUser.getValue();
         for(User u : list){
@@ -171,6 +185,27 @@ public class ListUsersReposity {
             }
         }
         listUser.postValue(list);
+    }
+
+    public void getPaginations(){
+        Query query = null;
+
+        if(lastPaginated == null){
+            query =  listRef.limit(pagination);
+        }
+        else {
+            query = listRef.startAfter(lastPaginated).limit(pagination);
+        }
+
+        query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot snapshots) {
+                processSnapshots(snapshots);
+
+                if(snapshots.size() != 0)
+                    lastPaginated = snapshots.getDocuments().get(snapshots.size() -1);
+            }
+        });
     }
 
 //    public void add(String addUID){
