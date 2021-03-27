@@ -77,19 +77,28 @@ public class ChatListFragment extends Fragment implements ChatListAdapter.OnChat
         if(loginviewModel.getAuthentication().getValue() && requestLocationViewModel.getHasPermission().getValue())
         {
             RecyclerView nav_drawer_recycler_view = view.findViewById(R.id.nav_drawer_recycler_view);
-//            UserViewModel mUserViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
-//            mChatListViewModel = new ViewModelProvider(requireActivity()).get(ChatListViewModel.class);
-//            mChatListViewModel.init(mUserViewModel);
-//            mChatListViewModel.getConvList().observe(getViewLifecycleOwner(), new Observer<List<Conversation>>() {
-//                @Override
-//                public void onChanged(List<Conversation> conversations) {
-//                    madapter.notifyDataSetChanged();
-//                }
-//            });
-//            madapter = new ChatListAdapter(mChatListViewModel.getConvList().getValue(),getActivity(),this);
-            madapter = new ChatListAdapter(getActivity(),this);
-            nav_drawer_recycler_view.setAdapter(madapter);
-            nav_drawer_recycler_view.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+//        view.setPadding(0,getStatusBarHeight(),0,0);
+            UserViewModel mUserViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
+            mChatListViewModel = new ViewModelProvider(requireActivity()).get(ChatListViewModel.class);
+            mChatListViewModel.init(mUserViewModel,getActivity(),getViewLifecycleOwner());
+            ChatListAdapter.OnChatListListener onChatListListener = this;
+            mChatListViewModel.getIsInited().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+                @Override
+                public void onChanged(Boolean isInited) {
+                    if (isInited) {
+                        madapter = new ChatListAdapter(mChatListViewModel.getConvList().getValue(),getActivity(),onChatListListener);
+                        mChatListViewModel.getConvList().observe(getViewLifecycleOwner(), new Observer<List<Conversation>>() {
+                            @Override
+                            public void onChanged(List<Conversation> conversations) {
+                                madapter.notifyDataSetChanged();
+                            }
+                        });
+                        nav_drawer_recycler_view.setAdapter(madapter);
+                        nav_drawer_recycler_view.setLayoutManager(new LinearLayoutManager(getActivity()));
+                    }
+                }
+            });
         }
     }
     private int getStatusBarHeight() {
@@ -100,16 +109,7 @@ public class ChatListFragment extends Fragment implements ChatListAdapter.OnChat
         }
         return result;
     }
-
-    @Override
-    public void onChatClick(int position) {
-        homeFragmentMotionLayout.setTransition(R.id.left,R.id.hideLeft);
-        homeFragmentMotionLayout.setProgress(1);
-        MainActivity activity = (MainActivity) getActivity();
-        activity.setFragmentTag(FragmentTag.CHAT,homeFragmentMotionLayout,navController);
-        navController.navigate(R.id.action_chatListFragment_to_chatFragment);
-    }
-
+    
     @Override
     public void onLongChatClick(int position) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -121,6 +121,4 @@ public class ChatListFragment extends Fragment implements ChatListAdapter.OnChat
         });
         builder.create().show();
     }
-
-
 }

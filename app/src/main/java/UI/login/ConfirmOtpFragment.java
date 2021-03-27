@@ -41,6 +41,7 @@ import java.util.concurrent.TimeUnit;
 
 import data.models.User;
 import data.models.UserLocation;
+import data.repositories.ConversationRepository;
 import data.repositories.UserRepository;
 
 
@@ -170,6 +171,7 @@ public class ConfirmOtpFragment extends Fragment {
                                             newUser.setUID(FirebaseAuth.getInstance().getUid());
                                             newUser.setAvatarURL("0e974d50-8978-11eb-8dcd-0242ac130003.png");
                                             newUser.setPhone(prefs.getString("phone", ""));
+                                            newUser.setNewUserConv(ConversationRepository.getInstance().creteServerConv());
                                             DocumentReference newUserRef = UserRepository.getInstance().getUserReference(FirebaseAuth.getInstance().getUid());
 
                                             newUserRef.set(newUser).addOnCompleteListener(new OnCompleteListener<Void>() {

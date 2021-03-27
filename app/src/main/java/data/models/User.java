@@ -19,27 +19,37 @@ public class User {
     private String avatarURL;
     private String dob;
     private String phone;
-    private String[] conversation;
+    private ArrayList<String> conversation;
 
-
-    public User(Bitmap avatar, String name, String UID, String avatarURL, String dob, GeoPoint location, String[] conversation) {
+    public User(Bitmap avatar, String name, String UID, String avatarURL, String dob, String phone, ArrayList<String> conversation) {
         this.avatar = avatar;
         this.name = name;
         this.UID = UID;
         this.avatarURL = avatarURL;
         this.dob = dob;
+        this.phone = phone;
         this.conversation = conversation;
     }
 
-    public String[] getConversation() {
-        return conversation;
+    public User(){
+
     }
 
-    public void setConversation(String[] conversation) {
-        this.conversation = conversation;
+    public Bitmap getAvatar() {
+        return avatar;
     }
 
-    public User() {}
+    public void setAvatar(Bitmap avatar) {
+        this.avatar = avatar;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public String getUID() {
         return UID;
@@ -57,36 +67,34 @@ public class User {
         this.avatarURL = avatarURL;
     }
 
-    public Bitmap getAvatar() {
-        return avatar;
+    public String getDob() {
+        return dob;
     }
 
-    public String getName() {
-        return name;
+    public void setDob(String dob) {
+        this.dob = dob;
     }
 
-    public String getPhone() {return phone; }
 
-    public void setAvatar(Bitmap avatar) {
-        this.avatar = avatar;
+    public String getPhone() {
+        return phone;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
-    public void setPhone(String phone) {this.phone = phone; }
+    public ArrayList<String> getConversation() {
+        return conversation;
+    }
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "avatar=" + avatar +
-                ", name='" + name + '\'' +
-                ", UID='" + UID + '\'' +
-                ", avatarURL='" + avatarURL + '\'' +
-                ", dob='" + dob + '\'' +
-                ", conversation=" + Arrays.toString(conversation) +
-                '}';
+    public void setConversation(ArrayList<String> conversation) {
+        this.conversation = conversation;
+    }
+
+    public void setNewUserConv(String convID){
+        conversation = new ArrayList<String>();
+        conversation.add(convID);
     }
 
     public boolean equals(Object o) {

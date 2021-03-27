@@ -42,10 +42,10 @@ public class ChatListAdapter  extends RecyclerView.Adapter<ChatListAdapter.ViewH
         this.onChatListListener= onChatListListener;
         this.context = context;
         storage= FirebaseStorage.getInstance();
-        convList.add(new Conversation(null,"123","Dang Minh Hoang Long","0e9748c8-8978-11eb-8dcd-0242ac130003.png",new Message(null,"1","Hello",Timestamp.now())));
-        convList.add(new Conversation(null,"123","Ho Dai Tri","0e974b5c-8978-11eb-8dcd-0242ac130003.png",new Message(null,"1","Hello",Timestamp.now())));
-        convList.add(new Conversation(null,"123","Tran Thanh Tam","0e974d50-8978-11eb-8dcd-0242ac130003.png",new Message(null,"1","Hello",Timestamp.now())));
-        convList.add(new Conversation(null,"123","Huynh Lam Hoang Dai","0e974e36-8978-11eb-8dcd-0242ac130003.jpg",new Message(null,"1","Hello",Timestamp.now())));
+        convList.add(new Conversation(null,"123","Dang Minh Hoang Long","0e9748c8-8978-11eb-8dcd-0242ac130003.png",new Message(null,"1","Hello",Timestamp.now()),null));
+        convList.add(new Conversation(null,"123","Ho Dai Tri","0e974b5c-8978-11eb-8dcd-0242ac130003.png",new Message(null,"1","Hello",Timestamp.now()),null));
+        convList.add(new Conversation(null,"123","Tran Thanh Tam","0e974d50-8978-11eb-8dcd-0242ac130003.png",new Message(null,"1","Hello",Timestamp.now()),null));
+        convList.add(new Conversation(null,"123","Huynh Lam Hoang Dai","0e974e36-8978-11eb-8dcd-0242ac130003.jpg",new Message(null,"1","Hello",Timestamp.now()),null));
         convListAll=new ArrayList<>(convList);
     }
 

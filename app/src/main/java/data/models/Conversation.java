@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 
 import com.google.firebase.firestore.Exclude;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Conversation {
@@ -14,26 +15,18 @@ public class Conversation {
     private String name;
     private String avatarURL;
     private Message recentMessage;
+    private ArrayList<User> member;
 
-    public Conversation(Bitmap avatar, String ID, String name, String avatarURL, Message recentMessage) {
+    public Conversation(Bitmap avatar, String ID, String name, String avatarURL, Message recentMessage, ArrayList<User> member) {
         this.avatar = avatar;
         this.ID = ID;
         this.name = name;
         this.avatarURL = avatarURL;
         this.recentMessage = recentMessage;
+        this.member = member;
     }
 
-    public Message getRecentMessage() {
-        return recentMessage;
-    }
-
-    public void setRecentMessage(Message recentMessage) {
-        this.recentMessage = recentMessage;
-    }
-
-    public Conversation(){
-
-    }
+    public Conversation(){}
 
     public Bitmap getAvatar() {
         return avatar;
@@ -67,8 +60,21 @@ public class Conversation {
         this.avatarURL = avatarURL;
     }
 
+    public Message getRecentMessage() {
+        return recentMessage;
+    }
 
+    public void setRecentMessage(Message recentMessage) {
+        this.recentMessage = recentMessage;
+    }
 
+    public ArrayList<User> getMember() {
+        return member;
+    }
+
+    public void setMember(ArrayList<User> member) {
+        this.member = member;
+    }
 
     @Override
     public String toString() {
@@ -76,7 +82,9 @@ public class Conversation {
                 "avatar=" + avatar +
                 ", ID='" + ID + '\'' +
                 ", name='" + name + '\'' +
-                ", avatarURL='" + avatarURL + '\'' + '\'' +
+                ", avatarURL='" + avatarURL + '\'' +
+                ", recentMessage=" + recentMessage +
+                ", member=" + member +
                 '}';
     }
 }

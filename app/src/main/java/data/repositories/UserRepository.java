@@ -29,6 +29,7 @@ import java.util.List;
 import data.models.Conversation;
 import data.models.User;
 import data.models.UserLocation;
+import ultis.MyCallBack;
 
 public class UserRepository {
     private final String TAG = "UserRepository";
@@ -151,7 +152,17 @@ public class UserRepository {
         ConversationRepository convRepo = new ConversationRepository();
         List<Conversation> list = new ArrayList<Conversation>();
         for(String id : user.getConversation()){
-            list.add(convRepo.getConversation(id).getValue());
+            Conversation temp = new Conversation();
+            convRepo.getConversation(id, temp, new MyCallBack() {
+                @Override
+                public void onCallback(Conversation pos, Conversation des) {
+                    des.setID(pos.getID());
+                    des.setName(pos.getName());
+                    des.setRecentMessage(pos.getRecentMessage());
+                    des.setAvatarURL(pos.getAvatarURL());
+                }
+            });
+            list.add(temp);
         }
         MutableLiveData<List<Conversation>> res = null;
         res.postValue(list);

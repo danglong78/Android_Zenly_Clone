@@ -112,8 +112,8 @@ public class UserViewModel extends ViewModel {
     }
 
 
-    public LiveData<String[]> getConvList() {
-        MutableLiveData<String[]> res = null;
+    public LiveData<ArrayList<String>> getConvList() {
+        MutableLiveData<ArrayList<String>> res = null;
         res.postValue(getHostUser().getValue().getConversation());
         return res;
     }
