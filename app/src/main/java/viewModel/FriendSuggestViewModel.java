@@ -17,7 +17,7 @@ import data.models.UserRef;
 import data.repositories.SuggestFriendRepository;
 
 
-public class FriendSuggestViewModel extends ViewModel {
+public class    FriendSuggestViewModel extends ViewModel {
     private final String TAG = "FriendSuggestViewModel";
     private final String SUGGESTIONS_COLLECTION = "Suggestions";
 

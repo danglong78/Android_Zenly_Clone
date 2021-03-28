@@ -19,7 +19,9 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.os.Handler;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -39,13 +41,16 @@ import UI.MainActivity.HomeFragment;
 import adapter.FriendSuggestListAdapter;
 import adapter.RecentFriendListAdapter;
 import data.models.User;
+import ultis.PaginationListener;
 import viewModel.FriendSuggestViewModel;
 import viewModel.InvitationViewModel;
 import viewModel.LoginViewModel;
 import viewModel.RequestLocationViewModel;
 import viewModel.UserViewModel;
 
-public class AddFriendFragment extends Fragment implements FriendSuggestListAdapter.AddFriendsFragmentCallback {
+import static ultis.PaginationListener.PAGE_START;
+
+public class AddFriendFragment extends Fragment implements FriendSuggestListAdapter.AddFriendsFragmentCallback , SwipeRefreshLayout.OnRefreshListener{
 
     private final String TAG = "AddFriendFragment";
     private final int CONTACT_REQUEST_ID = 10;
@@ -57,11 +62,18 @@ public class AddFriendFragment extends Fragment implements FriendSuggestListAdap
 
     TextView friendListText,friendRequestText;
 
-    public static AddFriendFragment newInstance() {
-        return new AddFriendFragment();
-    }
-
+//    public static AddFriendFragment newInstance() {
+//        return new AddFriendFragment();
+//    }
+    SwipeRefreshLayout swipeRefresh;
     RecyclerView friendSuggestRecyclerView;
+    FriendSuggestListAdapter adapter;
+    private int currentPage = PAGE_START;
+    private boolean isLastPage = false;
+    private int totalPage = 10;
+    private boolean isLoading = false;
+    int itemCount = 0;
+
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -81,9 +93,10 @@ public class AddFriendFragment extends Fragment implements FriendSuggestListAdap
         loginviewModel.init(getActivity());
         requestLocationViewModel.init(getActivity());
 
-        RecyclerView friendSuggestRecyclerView = view.findViewById(R.id.suggest_friend_recycler_view);
+        friendSuggestRecyclerView = view.findViewById(R.id.suggest_friend_recycler_view);
         RecyclerView recentFriendRecyclerView = view.findViewById(R.id.recent_friend_recycler_view);
-
+        swipeRefresh = view.findViewById(R.id.swipeRefresh);
+        swipeRefresh.setOnRefreshListener(this);
         Log.d(TAG, String.valueOf(friendSuggestRecyclerView.getId()));
         UserViewModel userViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
         userViewModel.getIsInited().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
@@ -104,15 +117,32 @@ public class AddFriendFragment extends Fragment implements FriendSuggestListAdap
                         RecentFriendListAdapter recentFriendAdapter = new RecentFriendListAdapter();
                         recentFriendRecyclerView.setAdapter(recentFriendAdapter);
                         recentFriendRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
-
+                        LinearLayoutManager layoutManager =new LinearLayoutManager(getActivity());
                         friendSuggestViewModel.getSuggestFriendList().observe(getViewLifecycleOwner(), new Observer<List<User>>() {
                             @Override
                             public void onChanged(List<User> users) {
-                                FriendSuggestListAdapter adapter = new FriendSuggestListAdapter(getActivity(), (ArrayList<User>) friendSuggestViewModel.getSuggestFriendList().getValue(), AddFriendFragment.this);
+                                adapter = new FriendSuggestListAdapter(getActivity(), (ArrayList<User>) friendSuggestViewModel.getSuggestFriendList().getValue(), AddFriendFragment.this);
                                 friendSuggestRecyclerView.setAdapter(adapter);
-                                friendSuggestRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+                                friendSuggestRecyclerView.setLayoutManager(layoutManager);
                             }
                         });
+                        friendSuggestRecyclerView.addOnScrollListener(new PaginationListener(layoutManager) {
+                            @Override
+                            protected void loadMoreItems() {
+                                isLoading = true;
+                                currentPage++;
+                                doApiCall();
+                            }
+                            @Override
+                            public boolean isLastPage() {
+                                return isLastPage;
+                            }
+                            @Override
+                            public boolean isLoading() {
+                                return isLoading;
+                            }
+                        });
+
 
                         Log.d(TAG, "Dang chay ne2");
                         NavController navController = Navigation.findNavController(requireActivity(), R.id.friend_nav_host_fragment);
@@ -204,6 +234,7 @@ public class AddFriendFragment extends Fragment implements FriendSuggestListAdap
 //
 //
 //        }
+        doApiCall();
     }
 
     @Override
@@ -271,5 +302,41 @@ public class AddFriendFragment extends Fragment implements FriendSuggestListAdap
             }).show();
         }
 
+    }
+    private void doApiCall() {
+        final ArrayList<User> items = new ArrayList<>();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                //TODO thêm user ở đây, thay cái vòng lặp thành hàm thêm
+                for (int i = 0; i < 10; i++) {
+                    itemCount++;
+                    User postItem = new User(null,"Huynh Lam Hoang Dai","123","0e974e36-8978-11eb-8dcd-0242ac130003.jpg",null,null,null);
+                    items.add(postItem);
+
+                }
+                //TODO thêm user ở đây
+
+                if (currentPage != PAGE_START) adapter.removeLoading();
+                adapter.addItems(items);
+                swipeRefresh.setRefreshing(false);
+                // check weather is last page or not
+                if (currentPage < totalPage) {
+                    adapter.addLoading();
+                } else {
+                    isLastPage = true;
+                }
+                isLoading = false;
+            }
+        }, 1500);
+    }
+
+    @Override
+    public void onRefresh() {
+        itemCount = 0;
+        currentPage = PAGE_START;
+        isLastPage = false;
+        adapter.clear();
+        doApiCall();
     }
 }
