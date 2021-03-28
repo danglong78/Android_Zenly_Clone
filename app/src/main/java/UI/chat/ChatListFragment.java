@@ -109,7 +109,17 @@ public class ChatListFragment extends Fragment implements ChatListAdapter.OnChat
         }
         return result;
     }
-    
+
+
+    @Override
+    public void onChatClick(int position) {
+        homeFragmentMotionLayout.setTransition(R.id.left,R.id.hideLeft);
+        homeFragmentMotionLayout.setProgress(1);
+        MainActivity activity = (MainActivity) getActivity();
+        activity.setFragmentTag(FragmentTag.CHAT,homeFragmentMotionLayout,navController);
+        navController.navigate(R.id.action_chatListFragment_to_chatFragment);
+    }
+
     @Override
     public void onLongChatClick(int position) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
