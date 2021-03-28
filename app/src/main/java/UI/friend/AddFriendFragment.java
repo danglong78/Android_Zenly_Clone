@@ -1,12 +1,12 @@
 package UI.friend;
 
-import androidx.constraintlayout.motion.widget.MotionLayout;
 import androidx.core.app.ActivityCompat;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -17,7 +17,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -30,17 +29,13 @@ import android.widget.TextView;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.firebase.auth.FirebaseAuth;
 import com.study.android_zenly.BuildConfig;
 import com.study.android_zenly.R;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
-import UI.friend.AddFriendsFragmentCallback;
 import UI.MainActivity.HomeFragment;
-import UI.MainActivity.MainActivity;
 import adapter.FriendSuggestListAdapter;
 import adapter.RecentFriendListAdapter;
 import data.models.User;
@@ -50,7 +45,7 @@ import viewModel.LoginViewModel;
 import viewModel.RequestLocationViewModel;
 import viewModel.UserViewModel;
 
-public class AddFriendFragment extends Fragment implements AddFriendsFragmentCallback {
+public class AddFriendFragment extends Fragment implements FriendSuggestListAdapter.AddFriendsFragmentCallback {
 
     private final String TAG = "AddFriendFragment";
     private final int CONTACT_REQUEST_ID = 10;
@@ -60,7 +55,7 @@ public class AddFriendFragment extends Fragment implements AddFriendsFragmentCal
     private LoginViewModel loginviewModel;
     private RequestLocationViewModel requestLocationViewModel;
 
-    TextView friendListText;
+    TextView friendListText,friendRequestText;
 
     public static AddFriendFragment newInstance() {
         return new AddFriendFragment();
@@ -130,6 +125,17 @@ public class AddFriendFragment extends Fragment implements AddFriendsFragmentCal
                                 fragment.setBottomSheetState(BottomSheetBehavior.STATE_EXPANDED);
                                 navController.navigate(R.id.action_addFriendFragment_to_searchFriendFragment);
 
+                            }
+                        });
+                        friendRequestText= view.findViewById(R.id.friendRequest);
+                        friendRequestText.setOnClickListener(new View.OnClickListener() {
+
+                            @Override
+                            public void onClick(View v) {
+                                HomeFragment fragment = (HomeFragment) getParentFragment().getParentFragment();
+                                assert fragment != null;
+                                fragment.setBottomSheetState(BottomSheetBehavior.STATE_EXPANDED);
+                                navController.navigate(R.id.action_addFriendFragment2_to_friendRequestFragment);
                             }
                         });
 
@@ -220,7 +226,19 @@ public class AddFriendFragment extends Fragment implements AddFriendsFragmentCal
     @Override
     public void onHideClick(String suggestUID) {
         Log.d(TAG, "onHideClick: ");
-        friendSuggestViewModel.hideSuggest(suggestUID);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage("Are you sure you want hide this one ?");
+        builder.setNegativeButton("No",null);
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                friendSuggestViewModel.hideSuggest(suggestUID);
+
+            }
+        });
+        builder.create().show();
+
     }
 
     @Override

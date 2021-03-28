@@ -20,7 +20,6 @@ import com.study.android_zenly.R;
 import java.util.ArrayList;
 import java.util.List;
 
-import UI.friend.AddFriendsFragmentCallback;
 import data.models.User;
 
 public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.ViewHolder> {
@@ -29,10 +28,10 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Vi
     private FirebaseStorage storage;
     private StorageReference ref;
     private String userUID;
-    private AddFriendsFragmentCallback listener;
     private Context context;
+    private FriendListCallback callback;
 
-    public FriendListAdapter(Context context, ArrayList<User> list){
+    public FriendListAdapter(Context context, ArrayList<User> list,FriendListCallback callback){
         this.list = list;
         storage = FirebaseStorage.getInstance();
         this.context = context;
@@ -40,7 +39,7 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Vi
         if ( (prefs != null) && (prefs.contains("uid")) ) {
             userUID=prefs.getString("uid","");
         }
-        this.listener=listener;
+        this.callback = callback;
     }
     @NonNull
     @Override
@@ -65,6 +64,12 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Vi
 
             });
         }
+        holder.getBtn().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                callback.onFriendSettingClick(list.get(position).getUID(),list.get(position).getName());
+            }
+        });
     }
 
     @Override
@@ -88,5 +93,8 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Vi
         }
         public ImageView getAvatar() {return image;}
         public Button getBtn(){return settingBtn;}
+    }
+    public interface FriendListCallback {
+        public void onFriendSettingClick(String UID, String userName);
     }
 }

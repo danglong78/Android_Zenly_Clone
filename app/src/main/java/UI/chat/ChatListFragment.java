@@ -74,32 +74,32 @@ public class ChatListFragment extends Fragment implements ChatListAdapter.OnChat
         RequestLocationViewModel requestLocationViewModel = new ViewModelProvider(requireActivity()).get(RequestLocationViewModel.class);
         loginviewModel.init(getActivity());
         requestLocationViewModel.init(getActivity());
-        if(loginviewModel.getAuthentication().getValue() && requestLocationViewModel.getHasPermission().getValue())
-        {
-            RecyclerView nav_drawer_recycler_view = view.findViewById(R.id.nav_drawer_recycler_view);
-
-//        view.setPadding(0,getStatusBarHeight(),0,0);
-            UserViewModel mUserViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
-            mChatListViewModel = new ViewModelProvider(requireActivity()).get(ChatListViewModel.class);
-            mChatListViewModel.init(mUserViewModel,getActivity(),getViewLifecycleOwner());
-            ChatListAdapter.OnChatListListener onChatListListener = this;
-            mChatListViewModel.getIsInited().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
-                @Override
-                public void onChanged(Boolean isInited) {
-                    if (isInited) {
-                        madapter = new ChatListAdapter(mChatListViewModel.getConvList().getValue(),getActivity(),onChatListListener);
-                        mChatListViewModel.getConvList().observe(getViewLifecycleOwner(), new Observer<List<Conversation>>() {
-                            @Override
-                            public void onChanged(List<Conversation> conversations) {
-                                madapter.notifyDataSetChanged();
-                            }
-                        });
-                        nav_drawer_recycler_view.setAdapter(madapter);
-                        nav_drawer_recycler_view.setLayoutManager(new LinearLayoutManager(getActivity()));
-                    }
-                }
-            });
-        }
+//        if(loginviewModel.getAuthentication().getValue() && requestLocationViewModel.getHasPermission().getValue())
+//        {
+//            RecyclerView nav_drawer_recycler_view = view.findViewById(R.id.nav_drawer_recycler_view);
+//
+////        view.setPadding(0,getStatusBarHeight(),0,0);
+//            UserViewModel mUserViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
+//            mChatListViewModel = new ViewModelProvider(requireActivity()).get(ChatListViewModel.class);
+//            mChatListViewModel.init(mUserViewModel,getActivity(),getViewLifecycleOwner());
+//            ChatListAdapter.OnChatListListener onChatListListener = this;
+//            mChatListViewModel.getIsInited().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+//                @Override
+//                public void onChanged(Boolean isInited) {
+//                    if (isInited) {
+//                        madapter = new ChatListAdapter(mChatListViewModel.getConvList().getValue(),getActivity(),onChatListListener);
+//                        mChatListViewModel.getConvList().observe(getViewLifecycleOwner(), new Observer<List<Conversation>>() {
+//                            @Override
+//                            public void onChanged(List<Conversation> conversations) {
+//                                madapter.notifyDataSetChanged();
+//                            }
+//                        });
+//                        nav_drawer_recycler_view.setAdapter(madapter);
+//                        nav_drawer_recycler_view.setLayoutManager(new LinearLayoutManager(getActivity()));
+//                    }
+//                }
+//            });
+//        }
     }
     private int getStatusBarHeight() {
         int result = 0;

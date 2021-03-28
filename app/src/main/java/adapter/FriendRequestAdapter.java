@@ -20,17 +20,18 @@ import com.study.android_zenly.R;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import data.models.User;
 
-public class FriendInvitingListAdapter extends RecyclerView.Adapter<FriendInvitingListAdapter.ViewHolder>  {
-    private List<User> list;
+public class FriendRequestAdapter extends RecyclerView.Adapter<FriendRequestAdapter.ViewHolder> {
+    private ArrayList<User> list;
     private FirebaseStorage storage;
     private StorageReference ref;
     private String userUID;
+    private FriendRequestCallback callback;
     private Context context;
-    InvitedListCallback callback;
 
-    public FriendInvitingListAdapter(Context context, ArrayList<User> list,InvitedListCallback callback){
+    public FriendRequestAdapter(Context context,ArrayList<User> list,FriendRequestCallback callback){
         this.list = list;
         storage = FirebaseStorage.getInstance();
         this.context = context;
@@ -38,16 +39,17 @@ public class FriendInvitingListAdapter extends RecyclerView.Adapter<FriendInviti
         if ( (prefs != null) && (prefs.contains("uid")) ) {
             userUID=prefs.getString("uid","");
         }
-        this.callback=callback;
-    }
+        this.callback= callback;
 
+    }
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.invited_list_item_layout, parent, false);
+                .inflate(R.layout.friend_request_list_item_layout, parent, false);
 
-        return new FriendInvitingListAdapter.ViewHolder(view);    }
+        return new FriendRequestAdapter.ViewHolder(view);
+    }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
@@ -63,10 +65,16 @@ public class FriendInvitingListAdapter extends RecyclerView.Adapter<FriendInviti
 
             });
         }
-        holder.getBtn().setOnClickListener(new View.OnClickListener() {
+        holder.getAddBtn().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                callback.onInvitedUserSettingClick(list.get(position).getUID(),list.get(position).getName());
+                callback.onAddButtonClick(list.get(position).getUID());
+            }
+        });
+        holder.getDelBtn().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                callback.onDelButtonClick(list.get(position).getUID());
             }
         });
     }
@@ -79,22 +87,25 @@ public class FriendInvitingListAdapter extends RecyclerView.Adapter<FriendInviti
     public class ViewHolder extends RecyclerView.ViewHolder{
         private TextView userNameText;
         private ImageView image;
-        private Button settingBtn;
+        private Button acceptBtn,delBtn;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             userNameText = (TextView) itemView.findViewById(R.id.userNameText);
             image=(ImageView) itemView.findViewById(R.id.avatar);
-            settingBtn= (Button)itemView.findViewById(R.id.settingBtn);
+            acceptBtn= (Button)itemView.findViewById(R.id.addBtn);
+            delBtn = (Button)itemView.findViewById(R.id.deleteBtn);
         }
         public TextView getUserNameTextView() {
             return userNameText;
         }
         public ImageView getAvatar() {return image;}
-        public Button getBtn(){return settingBtn;}
+        public Button getAddBtn(){return acceptBtn;}
+        public Button getDelBtn(){return delBtn;}
 
     }
-    public interface InvitedListCallback{
-        public void onInvitedUserSettingClick(String uid,String userName);
+    public interface FriendRequestCallback {
+        public void onAddButtonClick(String FriendUID);
+        public void onDelButtonClick(String FriendUID);
     }
 }

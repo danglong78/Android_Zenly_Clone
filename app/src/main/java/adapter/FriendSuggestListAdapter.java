@@ -20,7 +20,6 @@ import com.study.android_zenly.R;
 
 import java.util.ArrayList;
 
-import UI.friend.AddFriendsFragmentCallback;
 import data.models.User;
 
 public class FriendSuggestListAdapter  extends RecyclerView.Adapter<FriendSuggestListAdapter.ViewHolder>{
@@ -119,6 +118,10 @@ public class FriendSuggestListAdapter  extends RecyclerView.Adapter<FriendSugges
         public Button getBtn(){return addBtn;}
         public TextView getDeleteIcon(){return  deleteIcon;}
 
+    }
+    public interface AddFriendsFragmentCallback {
+        public void onAddButtonClick(String friendUID);
+        public void onHideClick(String suggestUID);
     }
 
 }
