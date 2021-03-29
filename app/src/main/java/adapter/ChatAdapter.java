@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
+import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -46,6 +47,15 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.BaseMessageVie
 //            User y= new User(null,"Ho Dai Tri","1234","0e9748c8-8978-11eb-8dcd-0242ac130003.png",null,null,null);
 //            items.add(new Wrapper(new Message(x,"1","Hello", Timestamp.now())));
 //            items.add(new Wrapper(new Message(y,"1","Hi", Timestamp.now())));
+        }
+
+        public ChatAdapter(MutableLiveData<ArrayList<Message>> listMess,DocumentReference senderId){
+            this.senderId = senderId;
+            this.items = new ArrayList<>();
+            ArrayList<Message> Mess = listMess.getValue();
+            for(Message aMess : Mess){
+                items.add(new Wrapper(aMess));
+            }
         }
 
         @NonNull

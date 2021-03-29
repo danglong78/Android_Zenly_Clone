@@ -1,15 +1,21 @@
 package data.repositories;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.MutableLiveData;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import data.models.Conversation;
 import data.models.Message;
 import data.models.User;
 
@@ -44,6 +50,25 @@ public class MessageRepository {
         });
         return aMess;
     };
+
+    public MutableLiveData<ArrayList<Message>> getListMess(String convID,MutableLiveData<Boolean> isInited){
+        CollectionReference colRef = mDb.collection("Messages");
+        MutableLiveData<ArrayList<Message>> mess = new MutableLiveData<ArrayList<Message>>();
+        ArrayList<Message> listMess = new ArrayList<Message>();
+        colRef.whereEqualTo("id",convID).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>(){
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()){
+                    for(QueryDocumentSnapshot doc : task.getResult()){
+                        listMess.add(doc.toObject(Message.class));
+                    }
+                    mess.postValue(listMess);
+                    isInited.postValue(true);
+                }
+            }
+        });
+        return mess;
+    }
 
 
 }
