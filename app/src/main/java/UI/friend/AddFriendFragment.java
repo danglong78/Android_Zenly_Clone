@@ -137,7 +137,7 @@ public class AddFriendFragment extends Fragment implements FriendSuggestListAdap
                             protected void loadMoreItems() {
                                 isLoading = true;
                                 currentPage++;
-                                doApiCall();
+//                                doApiCall();
                             }
                             @Override
                             public boolean isLastPage() {
@@ -181,7 +181,7 @@ public class AddFriendFragment extends Fragment implements FriendSuggestListAdap
 
                 }
 
-            });
+            }});
         }
 
 
@@ -240,7 +240,7 @@ public class AddFriendFragment extends Fragment implements FriendSuggestListAdap
 //
 //
 //        }
-        doApiCall();
+//        doApiCall();
     }
 
     @Override
@@ -343,6 +343,6 @@ public class AddFriendFragment extends Fragment implements FriendSuggestListAdap
         currentPage = PAGE_START;
         isLastPage = false;
         adapter.clear();
-        doApiCall();
+//        doApiCall();
     }
 }

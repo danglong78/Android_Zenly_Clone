@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,8 +38,8 @@ public class ChatFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         RecyclerView recyclerView= view.findViewById(R.id.message_list_recyclerview);
-        String id = savedInstanceState.getString("id");
-        String name = savedInstanceState.getString("name");
+        String id = getArguments().getString("id");
+        String name = getArguments().getString("name");
         ChatViewModel mChatListViewModel = new ViewModelProvider(requireActivity()).get(ChatViewModel.class);
         mChatListViewModel.init(id,getActivity(),getViewLifecycleOwner());
         mChatListViewModel.getIsInited().observe(getViewLifecycleOwner(), new Observer<Boolean>(){
@@ -46,6 +47,7 @@ public class ChatFragment extends Fragment {
             @Override
             public void onChanged(Boolean isInited) {
                 if(isInited){
+                    Log.d("zo man hinh chat","zo roi ne");
                     ChatAdapter adapter = new ChatAdapter(mChatListViewModel.getMessList(), FirebaseFirestore.getInstance().collection("Users").document(FirebaseAuth.getInstance().getUid()));
                     recyclerView.setAdapter(adapter);
                     recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(),LinearLayoutManager.VERTICAL,true));

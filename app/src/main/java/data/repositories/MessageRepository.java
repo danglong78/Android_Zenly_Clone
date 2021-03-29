@@ -1,5 +1,7 @@
 package data.repositories;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 
@@ -42,6 +44,7 @@ public class MessageRepository {
         aMess.setMess("Wellcome to Zenly Clone!!!");
         aMess.setSender(new User(null,"Zenly Clone","zenlyserver","Zenly_appicon.png",null,null,null));
         aMess.setTime(Timestamp.now());
+        aMess.setConvID(convID);
         messRef.set(aMess).addOnCompleteListener(new OnCompleteListener<Void>(){
             @Override
             public void onComplete(@NonNull Task<Void> task) {
@@ -51,19 +54,23 @@ public class MessageRepository {
         return aMess;
     };
 
-    public MutableLiveData<ArrayList<Message>> getListMess(String convID,MutableLiveData<Boolean> isInited){
+    public MutableLiveData<ArrayList<Message>> getListMess(String convID){
         CollectionReference colRef = mDb.collection("Messages");
         MutableLiveData<ArrayList<Message>> mess = new MutableLiveData<ArrayList<Message>>();
         ArrayList<Message> listMess = new ArrayList<Message>();
-        colRef.whereEqualTo("id",convID).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>(){
+        Log.d("mess repo", "dang load convID: "+convID);
+        colRef.whereEqualTo("convID",convID).orderBy("time").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>(){
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if(task.isSuccessful()){
+                    Log.d("mess repo", "dang load mess list");
                     for(QueryDocumentSnapshot doc : task.getResult()){
                         listMess.add(doc.toObject(Message.class));
                     }
+                    Log.d("mess repo", "Load xong mess 1");
                     mess.postValue(listMess);
-                    isInited.postValue(true);
+                }else{
+                    Log.d("mess repo", "fail roi");
                 }
             }
         });
