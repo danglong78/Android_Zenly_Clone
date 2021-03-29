@@ -34,6 +34,18 @@
         app:layout_constraintBaseline_toBaselineOf="@+id/textView4"
         app:layout_constraintEnd_toEndOf="parent" />
     <TextView
+        android:id="@+id/friendRequest"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        app:cornerRadius="15dp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/textView4"
+        app:layout_constraintEnd_toStartOf="@+id/friendSetting"
+        android:drawableTint="@color/cyan_900"
+        app:drawableStartCompat="@drawable/ic_baseline_person_add_alt_1_24" />
+    <TextView
         android:id="@+id/friendSetting"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -55,14 +67,23 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/searchView" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/suggest_friend_recycler_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:nestedScrollingEnabled="true"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefresh"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/recent_friend_recycler_view" />
+        app:layout_constraintTop_toBottomOf="@+id/recent_friend_recycler_view">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/suggest_friend_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="24dp" />
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
 
     <TextView
         android:text="SEARCH"

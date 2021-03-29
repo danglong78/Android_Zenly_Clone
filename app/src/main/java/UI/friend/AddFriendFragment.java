@@ -1,12 +1,12 @@
 package UI.friend;
 
-import androidx.constraintlayout.motion.widget.MotionLayout;
 import androidx.core.app.ActivityCompat;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -17,10 +17,11 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.os.Handler;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -30,27 +31,26 @@ import android.widget.TextView;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.firebase.auth.FirebaseAuth;
 import com.study.android_zenly.BuildConfig;
 import com.study.android_zenly.R;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
-import UI.friend.AddFriendsFragmentCallback;
 import UI.MainActivity.HomeFragment;
-import UI.MainActivity.MainActivity;
 import adapter.FriendSuggestListAdapter;
 import adapter.RecentFriendListAdapter;
 import data.models.User;
+import ultis.PaginationListener;
 import viewModel.FriendSuggestViewModel;
 import viewModel.InvitationViewModel;
 import viewModel.LoginViewModel;
 import viewModel.RequestLocationViewModel;
 import viewModel.UserViewModel;
 
-public class AddFriendFragment extends Fragment implements AddFriendsFragmentCallback {
+import static ultis.PaginationListener.PAGE_START;
+
+public class AddFriendFragment extends Fragment implements FriendSuggestListAdapter.AddFriendsFragmentCallback , SwipeRefreshLayout.OnRefreshListener{
 
     private final String TAG = "AddFriendFragment";
     private final int CONTACT_REQUEST_ID = 10;
@@ -60,13 +60,20 @@ public class AddFriendFragment extends Fragment implements AddFriendsFragmentCal
     private LoginViewModel loginviewModel;
     private RequestLocationViewModel requestLocationViewModel;
 
-    TextView friendListText;
+    TextView friendListText,friendRequestText;
 
-    public static AddFriendFragment newInstance() {
-        return new AddFriendFragment();
-    }
-
+//    public static AddFriendFragment newInstance() {
+//        return new AddFriendFragment();
+//    }
+    SwipeRefreshLayout swipeRefresh;
     RecyclerView friendSuggestRecyclerView;
+    FriendSuggestListAdapter adapter;
+    private int currentPage = PAGE_START;
+    private boolean isLastPage = false;
+    private int totalPage = 10;
+    private boolean isLoading = false;
+    int itemCount = 0;
+
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -88,9 +95,10 @@ public class AddFriendFragment extends Fragment implements AddFriendsFragmentCal
         loginviewModel.init(getActivity());
         requestLocationViewModel.init(getActivity());
 
-        RecyclerView friendSuggestRecyclerView = view.findViewById(R.id.suggest_friend_recycler_view);
+        friendSuggestRecyclerView = view.findViewById(R.id.suggest_friend_recycler_view);
         RecyclerView recentFriendRecyclerView = view.findViewById(R.id.recent_friend_recycler_view);
-
+        swipeRefresh = view.findViewById(R.id.swipeRefresh);
+        swipeRefresh.setOnRefreshListener(this);
         Log.d(TAG, String.valueOf(friendSuggestRecyclerView.getId()));
         UserViewModel userViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
 
@@ -112,37 +120,63 @@ public class AddFriendFragment extends Fragment implements AddFriendsFragmentCal
 
 //                    RecyclerView recentFriendRecyclerView = view.findViewById(R.id.recent_friend_recycler_view);
 
-                            RecentFriendListAdapter recentFriendAdapter = new RecentFriendListAdapter();
-                            recentFriendRecyclerView.setAdapter(recentFriendAdapter);
-                            recentFriendRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+                        RecentFriendListAdapter recentFriendAdapter = new RecentFriendListAdapter();
+                        recentFriendRecyclerView.setAdapter(recentFriendAdapter);
+                        recentFriendRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+                        LinearLayoutManager layoutManager =new LinearLayoutManager(getActivity());
+                        friendSuggestViewModel.getSuggestFriendList().observe(getViewLifecycleOwner(), new Observer<List<User>>() {
+                            @Override
+                            public void onChanged(List<User> users) {
+                                adapter = new FriendSuggestListAdapter(getActivity(), (ArrayList<User>) friendSuggestViewModel.getSuggestFriendList().getValue(), AddFriendFragment.this);
+                                friendSuggestRecyclerView.setAdapter(adapter);
+                                friendSuggestRecyclerView.setLayoutManager(layoutManager);
+                            }
+                        });
+                        friendSuggestRecyclerView.addOnScrollListener(new PaginationListener(layoutManager) {
+                            @Override
+                            protected void loadMoreItems() {
+                                isLoading = true;
+                                currentPage++;
+                                doApiCall();
+                            }
+                            @Override
+                            public boolean isLastPage() {
+                                return isLastPage;
+                            }
+                            @Override
+                            public boolean isLoading() {
+                                return isLoading;
+                            }
+                        });
 
-                            friendSuggestViewModel.getSuggestFriendList().observe(getViewLifecycleOwner(), new Observer<List<User>>() {
-                                @Override
-                                public void onChanged(List<User> users) {
-                                    FriendSuggestListAdapter adapter = new FriendSuggestListAdapter(getActivity(), (ArrayList<User>) friendSuggestViewModel.getSuggestFriendList().getValue(), AddFriendFragment.this);
-                                    friendSuggestRecyclerView.setAdapter(adapter);
-                                    friendSuggestRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-                                }
-                            });
 
-                            Log.d(TAG, "Dang chay ne2");
-                            NavController navController = Navigation.findNavController(requireActivity(), R.id.friend_nav_host_fragment);
-                            friendListText = view.findViewById(R.id.friendSetting);
-                            friendListText.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    HomeFragment fragment = (HomeFragment) getParentFragment().getParentFragment();
-                                    assert fragment != null;
-                                    fragment.setBottomSheetState(BottomSheetBehavior.STATE_EXPANDED);
-                                    navController.navigate(R.id.action_addFriendFragment_to_searchFriendFragment);
+                        Log.d(TAG, "Dang chay ne2");
+                        NavController navController = Navigation.findNavController(requireActivity(), R.id.friend_nav_host_fragment);
+                        friendListText = view.findViewById(R.id.friendSetting);
+                        friendListText.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                HomeFragment fragment = (HomeFragment) getParentFragment().getParentFragment();
+                                assert fragment != null;
+                                fragment.setBottomSheetState(BottomSheetBehavior.STATE_EXPANDED);
+                                navController.navigate(R.id.action_addFriendFragment_to_searchFriendFragment);
 
-                                }
-                            });
+                            }
+                        });
+                        friendRequestText= view.findViewById(R.id.friendRequest);
+                        friendRequestText.setOnClickListener(new View.OnClickListener() {
 
-                        } else {
-                            requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, CONTACT_REQUEST_ID);
-                        }
-                        userViewModel.getIsInited().removeObserver(this);
+                            @Override
+                            public void onClick(View v) {
+                                HomeFragment fragment = (HomeFragment) getParentFragment().getParentFragment();
+                                assert fragment != null;
+                                fragment.setBottomSheetState(BottomSheetBehavior.STATE_EXPANDED);
+                                navController.navigate(R.id.action_addFriendFragment2_to_friendRequestFragment);
+                            }
+                        });
+
+                    } else {
+                        requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, CONTACT_REQUEST_ID);
                     }
 
                 }
@@ -206,6 +240,7 @@ public class AddFriendFragment extends Fragment implements AddFriendsFragmentCal
 //
 //
 //        }
+        doApiCall();
     }
 
     @Override
@@ -228,7 +263,19 @@ public class AddFriendFragment extends Fragment implements AddFriendsFragmentCal
     @Override
     public void onHideClick(String suggestUID) {
         Log.d(TAG, "onHideClick: ");
-        friendSuggestViewModel.hideSuggest(suggestUID);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage("Are you sure you want hide this one ?");
+        builder.setNegativeButton("No",null);
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                friendSuggestViewModel.hideSuggest(suggestUID);
+
+            }
+        });
+        builder.create().show();
+
     }
 
     @Override
@@ -261,5 +308,41 @@ public class AddFriendFragment extends Fragment implements AddFriendsFragmentCal
             }).show();
         }
 
+    }
+    private void doApiCall() {
+        final ArrayList<User> items = new ArrayList<>();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                //TODO thêm user ở đây, thay cái vòng lặp thành hàm thêm
+                for (int i = 0; i < 10; i++) {
+                    itemCount++;
+                    User postItem = new User(null,"Huynh Lam Hoang Dai","123","0e974e36-8978-11eb-8dcd-0242ac130003.jpg",null,null,null);
+                    items.add(postItem);
+
+                }
+                //TODO thêm user ở đây
+
+                if (currentPage != PAGE_START) adapter.removeLoading();
+                adapter.addItems(items);
+                swipeRefresh.setRefreshing(false);
+                // check weather is last page or not
+                if (currentPage < totalPage) {
+                    adapter.addLoading();
+                } else {
+                    isLastPage = true;
+                }
+                isLoading = false;
+            }
+        }, 1500);
+    }
+
+    @Override
+    public void onRefresh() {
+        itemCount = 0;
+        currentPage = PAGE_START;
+        isLastPage = false;
+        adapter.clear();
+        doApiCall();
     }
 }

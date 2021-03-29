@@ -18,10 +18,18 @@
             app:popEnterAnim="@anim/slide_in_bottom"
             app:popExitAnim="@anim/slide_out_top"
             />
+        <action
+            android:id="@+id/action_addFriendFragment2_to_friendRequestFragment"
+            app:destination="@id/friendRequestFragment" />
     </fragment>
     <fragment
         android:id="@+id/searchFriendFragment"
         android:name="UI.friend.SearchFriendFragment"
         android:label="fragment_search_friend"
         tools:layout="@layout/fragment_search_friend" />
+    <fragment
+        android:id="@+id/friendRequestFragment"
+        android:name="UI.friend.FriendRequestFragment"
+        android:label="fragment_friend_request"
+        tools:layout="@layout/fragment_friend_request" />
 </navigation>
