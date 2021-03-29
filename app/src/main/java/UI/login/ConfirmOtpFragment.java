@@ -143,7 +143,6 @@ public class ConfirmOtpFragment extends Fragment {
                                             myEditor.putString("uid", FirebaseAuth.getInstance().getUid());
                                             myEditor.commit();
 
-
                                             UserLocation newUserLocation = new UserLocation();
                                             newUserLocation.setLocation(new GeoPoint(1,1));
                                             newUserLocation.setUserUID(FirebaseAuth.getInstance().getUid());
@@ -215,21 +214,44 @@ public class ConfirmOtpFragment extends Fragment {
                     myEditor.putString("uid", FirebaseAuth.getInstance().getUid());
                     myEditor.commit();
 
-                    User newUser = new User();
+                    UserLocation newUserLocation = new UserLocation();
+                    newUserLocation.setLocation(new GeoPoint(1,1));
+                    newUserLocation.setUserUID(FirebaseAuth.getInstance().getUid());
+                    newUserLocation.setImageURL("0e974d50-8978-11eb-8dcd-0242ac130003.png");
+                    newUserLocation.setName(prefs.getString("name", ""));
+                    newUserLocation.setSnippet(prefs.getString("name", "") + " is HERE");
 
+                    DocumentReference newUserLocationRef = UserRepository.getInstance().getUserLocationReference(FirebaseAuth.getInstance().getUid());
+
+                    newUserLocationRef.set(newUserLocation).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Log.d(TAG, "onComplete: newUserLocationRef: success");
+                            }
+                            else {
+                                Log.d(TAG, "onComplete: newUserLocationRef failed " + task.getException());
+                            }
+                        }
+                    });
+
+                    User newUser = new User();
                     newUser.setName(prefs.getString("name", ""));
                     newUser.setUID(FirebaseAuth.getInstance().getUid());
+                    newUser.setAvatarURL("0e974d50-8978-11eb-8dcd-0242ac130003.png");
+                    newUser.setPhone(prefs.getString("codePhone", "")+prefs.getString("phone", ""));
+                    newUser.setNewUserConv(ConversationRepository.getInstance().creteServerConv());
                     DocumentReference newUserRef = UserRepository.getInstance().getUserReference(FirebaseAuth.getInstance().getUid());
-
 
                     newUserRef.set(newUser).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
                                 Log.d(TAG, "onComplete: newUserRef: success");
+                                navController.navigate(R.id.action_global_homeFragment);
                             }
                             else {
-                                Log.d(TAG, "onComplete: failed " + task.getException());
+                                Log.d(TAG, "onComplete: newUserRef failed " + task.getException());
                             }
                         }
                     });

@@ -100,6 +100,7 @@ public class ClusterManagerRenderer extends DefaultClusterRenderer<ClusterMarker
     public void updateClusterMarker(ClusterMarker clusterMarker) {
         Marker marker = getMarker(clusterMarker);
         Log.d(TAG, "updateClusterMarker: " + marker);
+        Log.d(TAG, "updateClusterMarker: find marker friend " + clusterMarker.getTitle());
         if (marker != null) {
             marker.setPosition(clusterMarker.getPosition());
         }

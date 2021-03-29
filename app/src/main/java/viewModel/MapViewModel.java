@@ -11,10 +11,13 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.LocationCallback;
@@ -42,6 +45,7 @@ import java.util.List;
 import data.models.ClusterMarker;
 import data.models.User;
 import data.models.UserLocation;
+import data.models.UserRef;
 import data.repositories.UserRepository;
 import ultis.ClusterManagerRenderer;
 
@@ -54,6 +58,11 @@ public class MapViewModel extends ViewModel {
 
     private GoogleMap mMap;
     private ClusterMarker mHostMarker = null;
+    private List<ClusterMarker> mFriendMarkers = new ArrayList<ClusterMarker>();
+
+    private LiveData<List<UserLocation>> mFriendLocationList;
+    private LiveData<List<UserRef>> mFriendRefList;
+
     private LocationRequest locationRequest;
     private ClusterManagerRenderer mClusterManagerRenderer;
     private ClusterManager mClusterManager;
@@ -88,15 +97,63 @@ public class MapViewModel extends ViewModel {
             public void onChanged(UserLocation userLocation) {
                 Log.d(TAG, "onChanged: user location is inited");
 
+                //  Add host marker
                 mHostMarker = new ClusterMarker(
                         new LatLng(userLocation.getLocation().getLatitude(), userLocation.getLocation().getLongitude()),
                         userLocation.getName(),
                         "You are now here",
-                        userLocation,
+                        userLocation.getUserUID(),
                         userLocation.getImageURL()
                 );
                 mClusterManager.addItem(mHostMarker);
+                moveTo(new LatLng(userLocation.getLocation().getLatitude(), userLocation.getLocation().getLongitude()));
+
+                // Add friend markers
+                FriendViewModel mFriendViewModel = new ViewModelProvider((FragmentActivity) activity).get(FriendViewModel.class);
+                mFriendLocationList = mFriendViewModel.getFriendLocationList();
+                mFriendLocationList.observe(lifecycleOwner, new Observer<List<UserLocation>>() {
+
+                    @Override
+                    public void onChanged(List<UserLocation> userLocations) {
+                        Log.d(TAG, "onChanged: userLocations " + userLocations.size());
+                        for (UserLocation userLocation : userLocations) {
+                            Log.d(TAG, "onChanged: userLocation " + userLocation.getUserUID());
+                            Boolean isExisted = false;
+                            for (ClusterMarker clusterMarker : mFriendMarkers) {
+                                if (userLocation.getUserUID().equals(clusterMarker.getUserUID())) {
+                                    isExisted = true;
+                                    break;
+                                }
+                            }
+
+                            if (!isExisted) {
+                                ClusterMarker newFriendMarker = new ClusterMarker(
+                                        new LatLng(userLocation.getLocation().getLatitude(), userLocation.getLocation().getLongitude()),
+                                        userLocation.getName(),
+                                        "Your friend",
+                                        userLocation.getUserUID(),
+                                        userLocation.getImageURL());
+                                addMarker(userLocation, "Your Friend " + userLocation.getName());
+                            }
+
+                            // Update location real time
+                            updateMarker(userLocation.getUserUID(), new LatLng(userLocation.getLocation().getLatitude(), userLocation.getLocation().getLongitude()));
+                        }
+                    }
+                });
+
+                // Ghost mode
+                mFriendRefList = mFriendViewModel.getFriendsRefList();
+                mFriendRefList.observe(lifecycleOwner, new Observer<List<UserRef>>() {
+                    @Override
+                    public void onChanged(List<UserRef> userRefs) {
+
+                    }
+                });
+
+
                 mClusterManager.cluster();
+
 
                 mHostUserLocationRef = UserRepository.getInstance().getUserLocationReference(userLocation.getUserUID());
 
@@ -135,15 +192,14 @@ public class MapViewModel extends ViewModel {
                     data.put("location", geoPoint);
                     hostUserLocationRef.update(data);
 
-                    moveTo(new LatLng(location.getLatitude(), location.getLongitude()));
-
+//                    moveTo(new LatLng(location.getLatitude(), location.getLongitude()));
                 }
             }
         });
     }
 
     public void requestLocationUpdate(Context activity) {
-        LocationRequest locationRequest = LocationRequest.create();
+        locationRequest = LocationRequest.create();
         locationRequest.setInterval(1500);
         locationRequest.setFastestInterval(1000);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
@@ -192,7 +248,7 @@ public class MapViewModel extends ViewModel {
                 Location location = locationResult.getLocations().get(0);
                 mHostMarker.setPosition(new LatLng(location.getLatitude(), location.getLongitude()));
                 updateHostMarker();
-                moveTo(new LatLng(location.getLatitude(), location.getLongitude()));
+//                moveTo(new LatLng(location.getLatitude(), location.getLongitude()));
 
                 GeoPoint geoPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
                 HashMap data = new HashMap<String, Object>();
@@ -220,34 +276,35 @@ public class MapViewModel extends ViewModel {
                 Looper.getMainLooper());
     }
 
-    public void addMarker(UserLocation userLocation) {
+    public void addMarker(UserLocation userLocation, String snippet) {
         ClusterMarker newClusterMarker = new ClusterMarker(
                 new LatLng(userLocation.getLocation().getLatitude(), userLocation.getLocation().getLongitude()),
                 userLocation.getName(),
-                "You are now here",
-                userLocation,
+                snippet,
+                userLocation.getUserUID(),
                 userLocation.getImageURL()
         );
 
         mClusterManager.addItem(newClusterMarker);
+        mClusterMarkers.add(newClusterMarker);
         mClusterManager.cluster();
     }
 
-    public void addMarkerList(List<UserLocation> userLocations) {
-        for (UserLocation userLocation : userLocations) {
-            ClusterMarker newClusterMarker = new ClusterMarker(
-                    new LatLng(userLocation.getLocation().getLatitude(), userLocation.getLocation().getLongitude()),
-                    userLocation.getName(),
-                    "You are now here",
-                    userLocation,
-                    userLocation.getImageURL()
-            );
-            mClusterMarkers.add(newClusterMarker);
-            mClusterManager.addItem(newClusterMarker);
-        }
-
-        mClusterManager.cluster();
-    }
+//    public void addMarkerList(List<UserLocation> userLocations) {
+//        for (UserLocation userLocation : userLocations) {
+//            ClusterMarker newClusterMarker = new ClusterMarker(
+//                    new LatLng(userLocation.getLocation().getLatitude(), userLocation.getLocation().getLongitude()),
+//                    userLocation.getName(),
+//                    "You are now here",
+//                    userLocation.getUserUID(),
+//                    userLocation.getImageURL()
+//            );
+//            mClusterMarkers.add(newClusterMarker);
+//            mClusterManager.addItem(newClusterMarker);
+//        }
+//
+//        mClusterManager.cluster();
+//    }
 
     public void updateHostMarker() {
         Log.d(TAG, "updateHostMarker: "  + mClusterManager.updateItem(mHostMarker));
@@ -255,9 +312,10 @@ public class MapViewModel extends ViewModel {
         mClusterManager.cluster();
     }
 
-    public void updateMarker(String uid) {
+    public void updateMarker(String uid, LatLng newLocation) {
         for (ClusterMarker marker : mClusterMarkers) {
-            if (marker.getUserLocation().getUserUID().equals(uid)) {
+            if (marker.getUserUID().equals(uid)) {
+                marker.setPosition(newLocation);
                 mClusterManager.updateItem(marker);
                 mClusterManagerRenderer.updateClusterMarker(marker);
                 mClusterManager.cluster();
