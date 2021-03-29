@@ -34,6 +34,8 @@ import android.widget.Button;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.study.android_zenly.R;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import ultis.FragmentTag;
@@ -55,6 +57,7 @@ public class HomeFragment extends Fragment {
     UserViewModel userViewModel;
     MapViewModel mapViewModel;
     FriendViewModel friendViewModel;
+
 
     Button chatBtn, userBtn, mapBtn, friendBtn;
     DrawerLayout drawerLayout;
@@ -92,9 +95,6 @@ public class HomeFragment extends Fragment {
         observeLoginAndLocationPermissions(view);
         bindingView(view);
         setEventListener();
-
-
-
     }
 
     @Override
@@ -103,7 +103,6 @@ public class HomeFragment extends Fragment {
         super.onStart();
         if(loginviewModel.getAuthentication().getValue() ) {
             userViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
-            userViewModel.init(getActivity(), getViewLifecycleOwner());
 
             mapViewModel = new ViewModelProvider(requireActivity()).get(MapViewModel.class);
             mapViewModel.setActivity(getActivity());
@@ -116,16 +115,44 @@ public class HomeFragment extends Fragment {
                     public void onChanged(Boolean isInited) {
                         if (isInited) {
                             Log.d(TAG, "onChanged: observe inited user event");
+
                             mapViewModel.init(getViewLifecycleOwner());
-                            friendViewModel.init(getActivity());
 
                             runLocationUpdateWorker(userViewModel.getHostUser().getValue().getUID());
+
+                            // Friends
+                            friendViewModel.init(requireActivity(), getViewLifecycleOwner());
+                            friendViewModel.getIsInited().observe(getViewLifecycleOwner(), new Observer<List<Boolean>>() {
+
+                                @Override
+                                public void onChanged(List<Boolean> isInitedList) {
+                                    Boolean isAllInited = true;
+                                    for (Boolean isInited : isInitedList) {
+                                        if (!isInited) {
+                                            isAllInited = false;
+                                            break;
+                                        }
+                                    }
+
+                                    if (isAllInited) {
+                                        // Add friend markers
+                                        // Map
+                                        mapViewModel.init(getViewLifecycleOwner());
+
+                                        friendViewModel.getIsInited().removeObserver(this);
+                                    }
+                                }
+
+
+                            });
 
                             userViewModel.getIsInited().removeObserver(this);
                         }
                     }
                 });
             }
+
+            userViewModel.init(getActivity(), getViewLifecycleOwner());
 
         }
         if(bottomSheetBehavior.getState()==BottomSheetBehavior.STATE_EXPANDED) {

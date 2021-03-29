@@ -64,9 +64,9 @@ public class AddFriendFragment extends Fragment implements FriendSuggestListAdap
     private RequestLocationViewModel requestLocationViewModel;
     private UserViewModel userViewModel;
 
-    TextView friendListText,friendRequestText;
+    TextView friendListText, friendRequestText;
 
-//    public static AddFriendFragment newInstance() {
+    //    public static AddFriendFragment newInstance() {
 //        return new AddFriendFragment();
 //    }
     RecyclerView friendSuggestRecyclerView;
@@ -223,7 +223,7 @@ public class AddFriendFragment extends Fragment implements FriendSuggestListAdap
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage("Are you sure you want hide this one ?");
-        builder.setNegativeButton("No",null);
+        builder.setNegativeButton("No", null);
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -266,5 +266,4 @@ public class AddFriendFragment extends Fragment implements FriendSuggestListAdap
         }
 
     }
-
 }

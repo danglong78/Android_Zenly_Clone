@@ -4,7 +4,9 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -24,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import data.models.User;
+import data.models.UserLocation;
 import data.models.UserRef;
 
 public class ListUsersRepository {
@@ -77,6 +80,43 @@ public class ListUsersRepository {
     public MutableLiveData<List<UserRef>> getListUserReference() {
         return listUserRef;
     }
+
+    public MutableLiveData<List<UserLocation>> getUserLocationList(LifecycleOwner lifecycleOwner) {
+        MutableLiveData<List<UserLocation>> userLocationList = new MutableLiveData<List<UserLocation>>();
+        userLocationList.setValue(new ArrayList<UserLocation>());
+
+        listUserRef.observe(lifecycleOwner, new Observer<List<UserRef>>() {
+
+            @Override
+            public void onChanged(List<UserRef> userRefs) {
+                for (UserRef userRef : userRefs) {
+                    boolean isExisted = false;
+                    for (UserLocation userLocation : userLocationList.getValue()) {
+                        if (userLocation.getUserUID().equals(userRef.getRef().getId())) {
+                            isExisted = true;
+                            break;
+                        }
+                    }
+                    if (!isExisted) {
+                        mDb.collection("UserLocations").document(userRef.getRef().getId()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    Log.d(TAG, "onComplete: getUserLocationList " + task.getResult().toObject(UserLocation.class));
+                                    userLocationList.getValue().add(task.getResult().toObject(UserLocation.class));
+                                    userLocationList.postValue(userLocationList.getValue());
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+        });
+
+        return userLocationList;
+    }
+
 
     private void handleREMOVED(List<UserRef> newRefList, DocumentChange dc){
         Log.d(TAG, "handleREMOVED: " + COLLECTION + " " + UserRef.toUserRef(dc));

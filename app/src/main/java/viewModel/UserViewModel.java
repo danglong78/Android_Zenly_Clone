@@ -46,19 +46,22 @@ public class UserViewModel extends ViewModel {
 
 
     public void init(Context context, LifecycleOwner lifecycleOwner) {
-        repository = UserRepository.getInstance();
+        if (isInited.getValue() == null) {
+            repository = UserRepository.getInstance();
 
-        mUser = repository.getHostUser(context);
-        mUser.observe(lifecycleOwner, new Observer<User>() {
-            @Override
-            public void onChanged(User user) {
-                Log.d(TAG, "onChanged: user and user location are inited");
-                Log.d(TAG, "onChanged: " + mUser.getValue().toString());
-                isInited.postValue(true);
+            mUser = repository.getHostUser(context);
+            mUser.observe(lifecycleOwner, new Observer<User>() {
+                @Override
+                public void onChanged(User user) {
+                    Log.d(TAG, "onChanged: user and user location are inited");
+                    Log.d(TAG, "onChanged: " + mUser.getValue().toString());
+                    isInited.postValue(true);
 
-                mUser.removeObserver(this);
-            }
-        });
+                    mUser.removeObserver(this);
+                }
+            });
+        }
+
 //        mUser.observe(lifecycleOwner, new Observer<User>() {
 //            @Override
 //            public void onChanged(User user) {
