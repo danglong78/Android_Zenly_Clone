@@ -10,8 +10,9 @@ public class UserRef {
     public UserRef(){
     }
 
-    public UserRef(DocumentReference ref) {
+    public UserRef(DocumentReference ref, boolean hidden) {
         this.ref = ref;
+        this.hidden = hidden;
     }
 
     public void setHidden(boolean hidden){

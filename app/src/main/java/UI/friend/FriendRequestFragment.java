@@ -7,6 +7,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -33,8 +34,6 @@ import viewModel.RequestLocationViewModel;
 public class FriendRequestFragment extends Fragment implements FriendRequestAdapter.FriendRequestCallback {
 
     InvitationViewModel invitationViewModel;
-    LoginViewModel loginviewModel;
-    RequestLocationViewModel requestLocationViewModel;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -54,13 +53,19 @@ public class FriendRequestFragment extends Fragment implements FriendRequestAdap
 //        list.add(new User(null,"Huynh Lam Hoang Dai","123","0e974e36-8978-11eb-8dcd-0242ac130003.jpg",null,null,null));
 
 
+        invitationViewModel = new ViewModelProvider(requireActivity()).get(InvitationViewModel.class);
 
 
+        invitationViewModel.getInvitationsList().observe(getViewLifecycleOwner(), new Observer<List<User>>() {
+            @Override
+            public void onChanged(List<User> users) {
+                FriendRequestAdapter adapter= new FriendRequestAdapter(requireActivity(), (ArrayList<User>) invitationViewModel.getInvitationsList().getValue(),FriendRequestFragment.this);
+                RecyclerView recyclerView = view.findViewById(R.id.friend_recycler_view);
+                recyclerView.setAdapter(adapter);
+                recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+            }});
+        
 
-        FriendRequestAdapter adapter= new FriendRequestAdapter(requireActivity(), (ArrayList<User>) invitationViewModel.getInvitationsList().getValue(),this);
-        RecyclerView recyclerView = view.findViewById(R.id.friend_recycler_view);
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
     }
 
     @Override

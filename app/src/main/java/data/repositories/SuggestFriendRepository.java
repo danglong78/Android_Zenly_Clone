@@ -118,6 +118,8 @@ public class SuggestFriendRepository extends ListUsersRepository {
 //        }
 
     public void initContactSuggestFriendList(Context context, String userPhone) {
+        addInit();
+
         ArrayList<String> phones = getPhoneNumbersFromContact(context, userPhone);
 
         for (String phone : phones) {

@@ -17,7 +17,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-import androidx.paging.PagedList;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -62,13 +61,13 @@ public class AddFriendFragment extends Fragment implements FriendSuggestListAdap
     private InvitationViewModel invitationViewModel;
     private LoginViewModel loginviewModel;
     private RequestLocationViewModel requestLocationViewModel;
+    private UserViewModel userViewModel;
 
     TextView friendListText,friendRequestText;
 
 //    public static AddFriendFragment newInstance() {
 //        return new AddFriendFragment();
 //    }
-    private PagedList<User> suggestFriendList;
     RecyclerView friendSuggestRecyclerView;
     FriendSuggestListAdapter adapter;
     private int currentPage = PAGE_START;
@@ -92,6 +91,7 @@ public class AddFriendFragment extends Fragment implements FriendSuggestListAdap
         invitationViewModel = new ViewModelProvider(requireActivity()).get(InvitationViewModel.class);
         loginviewModel = new ViewModelProvider(requireActivity()).get(LoginViewModel.class);
         requestLocationViewModel = new ViewModelProvider(requireActivity()).get(RequestLocationViewModel.class);
+        userViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
 
         loginviewModel.init(getActivity());
         requestLocationViewModel.init(getActivity());
@@ -106,7 +106,7 @@ public class AddFriendFragment extends Fragment implements FriendSuggestListAdap
         LinearLayoutManager layoutManager =new LinearLayoutManager(getActivity());
         friendSuggestRecyclerView.setLayoutManager(layoutManager);
 
-        UserViewModel userViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
+
         userViewModel.getIsInited().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
@@ -128,9 +128,11 @@ public class AddFriendFragment extends Fragment implements FriendSuggestListAdap
                         friendSuggestViewModel.getSuggestFriendList().observe(getViewLifecycleOwner(), new Observer<List<User>>() {
                             @Override
                             public void onChanged(List<User> users) {
+                                Log.d(TAG, "onChanged: isInited " + isInited );
+                                Log.d(TAG, "onChanged: users.size() "  + users.size());
                                 if(isInited==true) {
                                     isLoading = false;
-                                    adapter.removeLoading();
+//                                    adapter.removeLoading();
                                     adapter.setItems((ArrayList<User>) users);
                                     adapter.notifyDataSetChanged();
                                 }
