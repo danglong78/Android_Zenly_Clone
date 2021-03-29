@@ -17,6 +17,7 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -133,6 +134,7 @@ public class ChatListFragment extends Fragment implements ChatListAdapter.OnChat
         Conversation aConv = madapter.getConv(position);
         String name = aConv.getName();
         String id = aConv.getID();
+        Log.d("Them ID ne",id);
         args.putString("name",name);
         args.putString("id",id);
         navController.navigate(R.id.action_chatListFragment_to_chatFragment,args);

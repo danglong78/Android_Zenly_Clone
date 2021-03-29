@@ -1,5 +1,6 @@
 package adapter;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,6 +54,8 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.BaseMessageVie
             this.senderId = senderId;
             this.items = new ArrayList<>();
             ArrayList<Message> Mess = listMess.getValue();
+            Log.d("in chat room","thiet lap adapter");
+            Log.d("in chat room",Integer.toString(Mess.size()));
             for(Message aMess : Mess){
                 items.add(new Wrapper(aMess));
             }
@@ -83,13 +86,13 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.BaseMessageVie
         @Override
         public void onBindViewHolder(@NonNull BaseMessageViewHolder holder, int position) {
             Wrapper wrapper = items.get(position);
-
             if (wrapper.item instanceof Message) {
                 ((BaseMessageViewHolder) holder).isSelected = wrapper.isSelected;
     //            holder.itemView.setOnLongClickListener(getMessageLongClickListener(wrapper));
     //            holder.itemView.setOnClickListener(getMessageClickListener(wrapper));
             }
-
+            Log.d("in chat room","Chuan bi vo");
+            Log.d("in chat room",wrapper.item.toString());
             holder.onBind(wrapper.item);
         }
 
@@ -169,7 +172,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.BaseMessageVie
         }
 
 
-        public static abstract class BaseMessageViewHolder extends RecyclerView.ViewHolder {
+        public static abstract class BaseMessageViewHolder<virtual> extends RecyclerView.ViewHolder {
 
             private boolean isSelected;
 

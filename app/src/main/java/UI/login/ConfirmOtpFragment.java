@@ -170,7 +170,7 @@ public class ConfirmOtpFragment extends Fragment {
                                             newUser.setName(prefs.getString("name", ""));
                                             newUser.setUID(FirebaseAuth.getInstance().getUid());
                                             newUser.setAvatarURL("0e974d50-8978-11eb-8dcd-0242ac130003.png");
-                                            newUser.setPhone(prefs.getString("phone", ""));
+                                            newUser.setPhone(prefs.getString("codePhone", "")+prefs.getString("phone", ""));
                                             newUser.setNewUserConv(ConversationRepository.getInstance().creteServerConv());
                                             DocumentReference newUserRef = UserRepository.getInstance().getUserReference(FirebaseAuth.getInstance().getUid());
 

@@ -74,6 +74,21 @@ public class MainActivity extends AppCompatActivity implements MainCallBacks {
 
                 break;
             }
+            case FRIEND:
+            {
+                InputMethodManager inputMethodManager =
+                        (InputMethodManager) getSystemService(
+                                INPUT_METHOD_SERVICE);
+                if (getCurrentFocus() != null) {
+                    inputMethodManager.hideSoftInputFromWindow(
+                            getCurrentFocus().getWindowToken(), 0);
+                }
+                NavOptions.Builder navBuilder = new NavOptions.Builder();
+                NavOptions navOptions = navBuilder.setPopUpTo(R.id.addFriendFragment2, true).build();
+                navController.navigate(R.id.addFriendFragment2, null, navOptions);
+                tag = FragmentTag.OTHERS;
+                break;
+            }
 
         }
     }

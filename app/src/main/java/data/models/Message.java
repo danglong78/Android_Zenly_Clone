@@ -8,15 +8,18 @@ public class Message {
     private String ID;
     private String mess;
     private Timestamp time;
+    private String convID;
 
-    public Message(User sender, String ID, String mess, Timestamp time) {
+    public Message() {
+    }
+
+    public Message(User sender, String ID, String mess, Timestamp time, String convID) {
         this.sender = sender;
         this.ID = ID;
         this.mess = mess;
         this.time = time;
+        this.convID = convID;
     }
-
-    public Message(){};
 
     public User getSender() {
         return sender;
@@ -48,5 +51,24 @@ public class Message {
 
     public void setTime(Timestamp time) {
         this.time = time;
+    }
+
+    public String getConvID() {
+        return convID;
+    }
+
+    public void setConvID(String convID) {
+        this.convID = convID;
+    }
+
+    @Override
+    public String toString() {
+        return "Message{" +
+                "sender=" + sender +
+                ", ID='" + ID + '\'' +
+                ", mess='" + mess + '\'' +
+                ", time=" + time +
+                ", convID='" + convID + '\'' +
+                '}';
     }
 }

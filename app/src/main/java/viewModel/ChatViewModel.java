@@ -1,6 +1,7 @@
 package viewModel;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
@@ -23,7 +24,17 @@ public class ChatViewModel extends ViewModel {
     public void init(String convID, Context context, LifecycleOwner lifecycleOwner){
         mRepo = MessageRepository.getInstance();
         messages = new MutableLiveData<ArrayList<Message>>();
-        messages = mRepo.getListMess(convID,isInited);
+        messages = mRepo.getListMess(convID);
+        messages.observe(lifecycleOwner, new Observer<ArrayList<Message>>(){
+            @Override
+            public void onChanged(ArrayList<Message> mess) {
+                if(mess!=null){
+                    Log.d(TAG, "load xong mess list");
+                    isInited.postValue(true);
+                    messages.removeObserver(this);
+                }
+            }
+        });
     }
 
     public LiveData<Boolean> getIsInited() {
