@@ -35,6 +35,7 @@ public class FriendViewModel extends ViewModel {
             friendsRefList = repository.getListUserReference();
             friendsList = repository.getListUser();
             repository.getAll();
+            checkInit = true;
         }
     }
 
@@ -48,4 +49,13 @@ public class FriendViewModel extends ViewModel {
         return friendsList;
     }
 
+    public void acceptFriendRequest(String friendUID){
+        repository.addToOtherRepository(friendUID);
+        repository.addToMyRepository(friendUID);
+    }
+
+    public void deleteFriend(String friendUID){
+        repository.removeFromMyRepository(friendUID);
+        repository.removeFromOtherRepository(friendUID);
+    }
 }

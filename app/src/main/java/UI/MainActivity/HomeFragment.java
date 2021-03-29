@@ -1,5 +1,6 @@
 package UI.MainActivity;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -37,6 +38,7 @@ import java.util.concurrent.TimeUnit;
 
 import ultis.FragmentTag;
 import ultis.UpdateLocationWorker;
+import viewModel.FriendViewModel;
 import viewModel.LoginViewModel;
 import viewModel.MapViewModel;
 import viewModel.RequestLocationViewModel;
@@ -52,6 +54,7 @@ public class HomeFragment extends Fragment {
     RequestLocationViewModel requestLocationViewModel;
     UserViewModel userViewModel;
     MapViewModel mapViewModel;
+    FriendViewModel friendViewModel;
 
     Button chatBtn, userBtn, mapBtn, friendBtn;
     DrawerLayout drawerLayout;
@@ -105,6 +108,8 @@ public class HomeFragment extends Fragment {
             mapViewModel = new ViewModelProvider(requireActivity()).get(MapViewModel.class);
             mapViewModel.setActivity(getActivity());
 
+            friendViewModel = new ViewModelProvider(requireActivity()).get(FriendViewModel.class);
+
             if (userViewModel.getIsInited().getValue() == null) {
                 userViewModel.getIsInited().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
                     @Override
@@ -112,6 +117,8 @@ public class HomeFragment extends Fragment {
                         if (isInited) {
                             Log.d(TAG, "onChanged: observe inited user event");
                             mapViewModel.init(getViewLifecycleOwner());
+                            friendViewModel.init(getActivity());
+
                             runLocationUpdateWorker(userViewModel.getHostUser().getValue().getUID());
 
                             userViewModel.getIsInited().removeObserver(this);

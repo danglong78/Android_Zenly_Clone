@@ -40,7 +40,6 @@ public class ListUsersRepository {
     protected CollectionReference listRef;
     protected MutableLiveData<List<UserRef>> listUserRef;
     protected MutableLiveData<List<User>> listUser;
-    private List<User> listTemp;
 
     protected DocumentSnapshot lastPaginated;
 
@@ -68,8 +67,6 @@ public class ListUsersRepository {
 
         listUser = new MutableLiveData<List<User>>();
 
-        listTemp = new ArrayList<>();
-
         lastPaginated = null;
     }
 
@@ -81,7 +78,72 @@ public class ListUsersRepository {
         return listUserRef;
     }
 
-    private void processSnapshots(QuerySnapshot snapshots, boolean isPagination) {
+    private void handleREMOVED(List<UserRef> newRefList, DocumentChange dc){
+        Log.d(TAG, "handleREMOVED: " + COLLECTION + " " + UserRef.toUserRef(dc));
+        UserRef removeUserRef = UserRef.toUserRef(dc);
+        newRefList.remove(removeUserRef);
+        removeList(toUID(removeUserRef.getRef().getPath()));
+    }
+
+    private void handleMODIFIED(List<UserRef> newRefList, DocumentChange dc) {
+        Log.d(TAG, "handleMODIFIED: " + COLLECTION + " " + UserRef.toUserRef(dc));
+        UserRef modifyUserRef = UserRef.toUserRef(dc);
+        newRefList.remove(modifyUserRef);
+
+        Log.d(TAG, "onEventMODIFIED: " + COLLECTION + " " + modifyUserRef.getRef().getPath());
+        if (modifyUserRef.getHidden())
+            removeList(toUID(modifyUserRef.getRef().getPath()));
+
+        newRefList.add(modifyUserRef);
+    }
+
+    private void handleADDED(List<UserRef> newRefList, DocumentChange dc) {
+        Log.d(TAG, "handleADDED: " + COLLECTION + " " + UserRef.toUserRef(dc));
+        UserRef addUserRef = UserRef.toUserRef(dc);
+
+        if (!newRefList.contains(addUserRef)) {
+            newRefList.add(addUserRef);
+        }
+
+        if (!addUserRef.getHidden())
+            addUserRef.getRef().get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot document = task.getResult();
+                        if (document.exists()) {
+                            User addUser = document.toObject(User.class);
+
+                            if (isInited) {
+                                Log.d(TAG, "processSnapshots: " + COLLECTION + " " + UID + " add " + addUser.getUID());
+                                listUser.getValue().add(addUser);
+                                listUser.postValue(listUser.getValue());
+                            } else {
+                                Log.d(TAG, "processSnapshots: " + COLLECTION + " " + UID + " init " + addUser.getUID());
+                                List<User> newList = new ArrayList<>();
+                                newList.add(addUser);
+                                listUser.setValue(newList);
+                                isInited = true;
+                            }
+
+                            String check = "";
+                            for (User u : listUser.getValue()) {
+                                check += u.getUID() + " ";
+                            }
+                            Log.d(TAG, "processSnapshots: listUser " + check);
+
+
+                        } else {
+                            Log.d(TAG, "No such document");
+                        }
+                    } else {
+                        Log.d(TAG, "get failed with ", task.getException());
+                    }
+                }
+            });
+    }
+
+    private void processAllSnapshots(QuerySnapshot snapshots) {
         List<UserRef> newRefList = null;
 
         if (listUserRef.getValue() == null)
@@ -92,70 +154,42 @@ public class ListUsersRepository {
         for (DocumentChange dc : snapshots.getDocumentChanges()) {
             switch (dc.getType()) {
                 case ADDED:
-                    Log.d(TAG, "ADD: " + COLLECTION + " " + UserRef.toUserRef(dc));
-                    UserRef addUserRef = UserRef.toUserRef(dc);
-
-                    if (!newRefList.contains(addUserRef)) {
-                        newRefList.add(addUserRef);
-                    }
-
-                    if (!addUserRef.getHidden())
-                        addUserRef.getRef().get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                if (task.isSuccessful()) {
-                                    DocumentSnapshot document = task.getResult();
-                                    if (document.exists()) {
-                                        User addUser = document.toObject(User.class);
-
-                                        if (isInited) {
-                                            Log.d(TAG, "processSnapshots: " + COLLECTION + " " + UID + " add " + addUser.getUID());
-                                            listUser.getValue().add(addUser);
-                                            listUser.postValue(listUser.getValue());
-                                        } else {
-                                            Log.d(TAG, "processSnapshots: " + COLLECTION + " " + UID + " init " + addUser.getUID());
-                                            List<User> newList = new ArrayList<>();
-                                            newList.add(addUser);
-                                            listUser.setValue(newList);
-                                            isInited = true;
-                                        }
-
-                                        String check = "";
-                                        for(User u : listUser.getValue()){
-                                            check += u.getUID() + " ";
-                                        }
-                                        Log.d(TAG, "processSnapshots: listUser " + check);
-
-
-                                    } else {
-                                        Log.d(TAG, "No such document");
-                                    }
-                                } else {
-                                    Log.d(TAG, "get failed with ", task.getException());
-                                }
-                            }
-                        });
+                    handleADDED(newRefList, dc);
                     break;
                 case MODIFIED:
-                    Log.d(TAG, "MODIFIED: " + COLLECTION + " " + UserRef.toUserRef(dc));
-                    UserRef modifyUserRef = UserRef.toUserRef(dc);
-                    newRefList.remove(modifyUserRef);
-
-                    Log.d(TAG, "onEventMODIFIED: " + COLLECTION + " " + modifyUserRef.getRef().getPath());
-                    if (modifyUserRef.getHidden())
-                        removeList(toUID(modifyUserRef.getRef().getPath()));
-
-                    newRefList.add(modifyUserRef);
+                    handleMODIFIED(newRefList, dc);
                     break;
                 case REMOVED:
-                    Log.d(TAG, "REMOVED: " + COLLECTION + " " + UserRef.toUserRef(dc));
-                    UserRef removeUserRef = UserRef.toUserRef(dc);
-                    newRefList.remove(removeUserRef);
-                    removeList(toUID(removeUserRef.getRef().getPath()));
+                    handleREMOVED(newRefList, dc);
                     break;
             }
         }
 
+        listUserRef.postValue(newRefList);
+//        Log.d(TAG, "onEvent: " + COLLECTION + " "   + listUserRef.getValue().size());
+    }
+
+    private void processPaginationSnapshots(QuerySnapshot snapshots) {
+        List<UserRef> newRefList = null;
+
+        if (listUserRef.getValue() == null)
+            newRefList = new ArrayList<UserRef>();
+        else newRefList = listUserRef.getValue();
+
+
+        for (DocumentChange dc : snapshots.getDocumentChanges()) {
+            switch (dc.getType()) {
+                case ADDED:
+                    handleADDED(newRefList, dc);
+                    break;
+                case MODIFIED:
+                    // Skip
+                    break;
+                case REMOVED:
+                    // Skip
+                    break;
+            }
+        }
 
         listUserRef.postValue(newRefList);
 //        Log.d(TAG, "onEvent: " + COLLECTION + " "   + listUserRef.getValue().size());
@@ -170,7 +204,7 @@ public class ListUsersRepository {
                     return;
                 }
 
-                processSnapshots(snapshots, false);
+                processAllSnapshots(snapshots);
             }
         });
     }
@@ -184,6 +218,7 @@ public class ListUsersRepository {
     }
 
     private void addToMyRepository(String addUID, boolean hidden) {
+        Log.d(TAG, "addToMyRepository: Runned");
         UserRef addUserRef = new UserRef(mDb.document(USER_COLLECTION + "/" + addUID), hidden);
         Log.d(TAG, "add: create " + COLLECTION + " " + addUserRef);
 
@@ -193,12 +228,10 @@ public class ListUsersRepository {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                        Log.d(TAG, "DocumentSnapshot add: " + COLLECTION + " " + document.getData());
+                        Log.d(TAG, "addToMyRepository doc.exist(): " + COLLECTION + " " + document.getData());
                     } else {
-                        Log.d(TAG, "No such document");
+                        Log.d(TAG, "addToMyRepository: " + COLLECTION + " " + UID + " add " + addUID);
                         listRef.document(addUID).set(addUserRef);
-
-                        Log.d(TAG, COLLECTION + " " + UID + " add " + addUID);
                     }
                 } else {
                     Log.d(TAG, "get failed with ", task.getException());
@@ -208,20 +241,20 @@ public class ListUsersRepository {
     }
 
     public void addToOtherRepository(String otherUID) {
+        Log.d(TAG, "addToOtherRepository: Runned");
         CollectionReference ref = getListRef(otherUID);
         UserRef myUserRef = new UserRef(mDb.document(USER_COLLECTION + "/" + UID), false);
 
-        ref.document(otherUID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        ref.document(UID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                        Log.d(TAG, "DocumentSnapshot add: " + COLLECTION + " " + document.getData());
+                        Log.d(TAG, "addToOtherRepository doc.exist(): " + COLLECTION + " " + document.getData());
                     } else {
-                        Log.d(TAG, "No such document");
-                        ref.document(otherUID).set(myUserRef);
-                        Log.d(TAG, UID + " added by " + otherUID);
+                        ref.document(UID).set(myUserRef);
+                        Log.d(TAG, "addToOtherRepository: " + COLLECTION +" "+ UID + " added by " + otherUID);
                     }
                 } else {
                     Log.d(TAG, "get failed with ", task.getException());
@@ -230,13 +263,18 @@ public class ListUsersRepository {
         });
     }
 
-    public void remove(String removeUID) {
+    public void removeFromMyRepository(String removeUID) {
         listRef.document(removeUID).delete();
         Log.d(TAG, "remove: " + COLLECTION + " " + UID + " remove " + removeUID);
     }
 
-    public void removeOnPaginations(String removeUID) {
-        remove(removeUID);
+    public void removeFromOtherRepository(String otherUID){
+        CollectionReference ref = getListRef(otherUID);
+        ref.document(UID).delete();
+    }
+
+    public void removeFromPaginations(String removeUID) {
+        removeFromMyRepository(removeUID);
         removeList(removeUID);
         Log.d(TAG, "removeOnPaginations: " + COLLECTION + " " + UID + " remove " + removeUID);
     }
@@ -258,7 +296,7 @@ public class ListUsersRepository {
         listUser.postValue(list);
     }
 
-    public void getPaginations() {
+    public void getPagination() {
         Query query = null;
 
         if (lastPaginated == null) {
@@ -273,7 +311,41 @@ public class ListUsersRepository {
                 if (snapshots.size() != 0)
                     lastPaginated = snapshots.getDocuments().get((snapshots.size() - 1));
 
-                processSnapshots(snapshots, true);
+                processPaginationSnapshots(snapshots);
+            }
+        });
+    }
+
+    public void listenPaginationChange(){
+        listRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot snapshots, @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    Log.w(TAG, "listen:error", e);
+                    return;
+                }
+
+                List<UserRef> newRefList = null;
+
+                if (listUserRef.getValue() == null)
+                    newRefList = new ArrayList<UserRef>();
+                else newRefList = listUserRef.getValue();
+
+                for (DocumentChange dc : snapshots.getDocumentChanges()) {
+                    switch (dc.getType()) {
+                        case ADDED:
+                            // Skip
+                            break;
+                        case MODIFIED:
+                            handleMODIFIED(newRefList, dc);
+                            break;
+                        case REMOVED:
+                            handleREMOVED(newRefList, dc);
+                            break;
+                    }
+                }
+
+                listUserRef.postValue(newRefList);
             }
         });
     }

@@ -26,6 +26,7 @@ import adapter.FriendListAdapter;
 import adapter.FriendRequestAdapter;
 import data.models.User;
 import viewModel.FriendSuggestViewModel;
+import viewModel.FriendViewModel;
 import viewModel.InvitationViewModel;
 import viewModel.LoginViewModel;
 import viewModel.RequestLocationViewModel;
@@ -33,7 +34,8 @@ import viewModel.RequestLocationViewModel;
 
 public class FriendRequestFragment extends Fragment implements FriendRequestAdapter.FriendRequestCallback {
 
-    InvitationViewModel invitationViewModel;
+    private InvitationViewModel invitationViewModel;
+    private FriendViewModel friendViewModel;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -54,36 +56,39 @@ public class FriendRequestFragment extends Fragment implements FriendRequestAdap
 
 
         invitationViewModel = new ViewModelProvider(requireActivity()).get(InvitationViewModel.class);
-
+        friendViewModel = new ViewModelProvider(requireActivity()).get(FriendViewModel.class);
 
         invitationViewModel.getInvitationsList().observe(getViewLifecycleOwner(), new Observer<List<User>>() {
             @Override
             public void onChanged(List<User> users) {
-                FriendRequestAdapter adapter= new FriendRequestAdapter(requireActivity(), (ArrayList<User>) invitationViewModel.getInvitationsList().getValue(),FriendRequestFragment.this);
+                FriendRequestAdapter adapter = new FriendRequestAdapter(requireActivity(), (ArrayList<User>) invitationViewModel.getInvitationsList().getValue(), FriendRequestFragment.this);
                 RecyclerView recyclerView = view.findViewById(R.id.friend_recycler_view);
                 recyclerView.setAdapter(adapter);
                 recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-            }});
-        
+            }
+        });
+
 
     }
 
     @Override
-    public void onAddButtonClick(String FriendUID) {
+    public void onAddButtonClick(String friendUID) {
         //TODO ACCEPT FRIEND REQUEST FUNCTION
+        friendViewModel.acceptFriendRequest(friendUID);
+        invitationViewModel.deleteInvitation(friendUID);
     }
 
     @Override
-    public void onDelButtonClick(String FriendUID) {
+    public void onDelButtonClick(String friendUID) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage("Are you sure you want delete this one ?");
-        builder.setNegativeButton("No",null);
+        builder.setNegativeButton("No", null);
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-               //TODO DELETE FRIEND REQUEST FUNCTION
-
+                //TODO DELETE FRIEND REQUEST FUNCTION
+                invitationViewModel.deleteInvitation(friendUID);
             }
         });
         builder.create().show();

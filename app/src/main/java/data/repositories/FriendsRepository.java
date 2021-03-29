@@ -17,5 +17,4 @@ public class FriendsRepository extends ListUsersRepository {
         }
         return mInstance;
     }
-
 }

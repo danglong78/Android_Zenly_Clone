@@ -17,7 +17,7 @@ import data.models.UserRef;
 import data.repositories.SuggestFriendRepository;
 
 
-public class    FriendSuggestViewModel extends ViewModel {
+public class FriendSuggestViewModel extends ViewModel {
     private final String TAG = "FriendSuggestViewModel";
     private final String SUGGESTIONS_COLLECTION = "Suggestions";
 
@@ -40,7 +40,8 @@ public class    FriendSuggestViewModel extends ViewModel {
             repository.initContactSuggestFriendList(context, hostPhone);
             suggestFriendRefList = repository.getListUserReference();
             suggestFriendList = repository.getListUser();
-            repository.getPaginations();
+            repository.getPagination();
+            repository.listenPaginationChange();
             checkInit = true;
         }
     }
@@ -60,6 +61,6 @@ public class    FriendSuggestViewModel extends ViewModel {
     }
 
     public void load() {
-        repository.getPaginations();
+        repository.getPagination();
     }
 }

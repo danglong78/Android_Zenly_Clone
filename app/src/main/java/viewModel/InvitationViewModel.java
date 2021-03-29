@@ -20,6 +20,7 @@ public class InvitationViewModel extends ViewModel {
     private final String INVITATIONS_COLLECTION = "Invitations";
 
     InvitationsRepository repository;
+
     private MutableLiveData<List<UserRef>> invitationsRefList;
     private MutableLiveData<List<User>> invitaionsList;
 
@@ -34,7 +35,9 @@ public class InvitationViewModel extends ViewModel {
             repository = InvitationsRepository.getInstance(INVITATIONS_COLLECTION, hostUser);
             invitationsRefList = repository.getListUserReference();
             invitaionsList = repository.getListUser();
-            repository.getAll();
+            repository.getPagination();
+            repository.listenPaginationChange();
+            checkInit = true;
         }
     }
 
@@ -55,6 +58,6 @@ public class InvitationViewModel extends ViewModel {
 
     public void deleteInvitation(String UID){
         Log.d(TAG, "deleteInvitation: ");
-        repository.removeOnPaginations(UID);
+        repository.removeFromPaginations(UID);
     }
 }
