@@ -40,6 +40,8 @@ android {
 }
 
 dependencies {
+    def work_version = "2.5.0"
+
 
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.google.android.material:material:1.3.0'
@@ -70,6 +72,9 @@ dependencies {
     // Utilities for Maps SDK for Android (requires Google Play Services)
     implementation 'com.google.maps.android:android-maps-utils:2.2.1'
     implementation 'com.google.android:flexbox:0.2.5'
+
+    // Work Manager
+    implementation "androidx.work:work-runtime:$work_version"
 }
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
