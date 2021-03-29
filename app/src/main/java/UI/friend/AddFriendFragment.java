@@ -17,7 +17,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-import androidx.paging.PagedList;
+
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -68,7 +68,6 @@ public class AddFriendFragment extends Fragment implements FriendSuggestListAdap
 //    public static AddFriendFragment newInstance() {
 //        return new AddFriendFragment();
 //    }
-    private PagedList<User> suggestFriendList;
     RecyclerView friendSuggestRecyclerView;
     FriendSuggestListAdapter adapter;
     private int currentPage = PAGE_START;

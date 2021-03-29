@@ -15,8 +15,7 @@ public class DateFormatter {
 
     public static String format(Date date, String format) {
         if (date == null) return "";
-        return new SimpleDateFormat(format, Locale.getDefault())
-                .format(date);
+        return new SimpleDateFormat(format, Locale.getDefault()).format(date);
     }
 
     public static boolean isSameDay(Date date1, Date date2) {
