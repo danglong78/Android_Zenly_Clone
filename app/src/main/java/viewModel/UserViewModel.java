@@ -53,6 +53,7 @@ public class UserViewModel extends ViewModel {
             @Override
             public void onChanged(User user) {
                 Log.d(TAG, "onChanged: user and user location are inited");
+                Log.d(TAG, "onChanged: " + mUser.getValue().toString());
                 isInited.postValue(true);
 
                 mUser.removeObserver(this);

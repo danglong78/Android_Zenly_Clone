@@ -83,6 +83,8 @@ public class AddFriendFragment extends Fragment implements FriendSuggestListAdap
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        Log.d(TAG, "onViewCreated: order test");
+        
         super.onViewCreated(view, savedInstanceState);
 
         friendSuggestViewModel = new ViewModelProvider(requireActivity()).get(FriendSuggestViewModel.class);
@@ -99,18 +101,22 @@ public class AddFriendFragment extends Fragment implements FriendSuggestListAdap
         swipeRefresh.setOnRefreshListener(this);
         Log.d(TAG, String.valueOf(friendSuggestRecyclerView.getId()));
         UserViewModel userViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
-        userViewModel.getIsInited().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
 
-                if (loginviewModel.getAuthentication().getValue() && requestLocationViewModel.getHasPermission().getValue()) {
-                    if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_CONTACTS) ==
-                            PackageManager.PERMISSION_GRANTED) {
+        Log.d(TAG, "onViewCreated: " + userViewModel.getIsInited().getValue());
+        if (userViewModel.getIsInited().getValue() == null) {
+            userViewModel.getIsInited().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+                @Override
+                public void onChanged(Boolean aBoolean) {
 
-                        friendSuggestViewModel.init(getActivity());
-                        invitationViewModel.init(getActivity());
+                    Log.d(TAG, "onChanged: userViewModel.getIsInited() " + userViewModel.getIsInited().getValue());
+                    if (loginviewModel.getAuthentication().getValue() && requestLocationViewModel.getHasPermission().getValue()) {
+                        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_CONTACTS) ==
+                                PackageManager.PERMISSION_GRANTED) {
 
-                        Log.d(TAG, "Dang chay ne");
+                            friendSuggestViewModel.init(getActivity());
+                            invitationViewModel.init(getActivity());
+
+                            Log.d(TAG, "Dang chay ne");
 
 //                    RecyclerView recentFriendRecyclerView = view.findViewById(R.id.recent_friend_recycler_view);
 
@@ -172,12 +178,12 @@ public class AddFriendFragment extends Fragment implements FriendSuggestListAdap
                     } else {
                         requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, CONTACT_REQUEST_ID);
                     }
-                    userViewModel.getIsInited().removeObserver(this);
+
                 }
 
-            }
+            });
+        }
 
-        });
 
 //            friendSuggestRecyclerView = view.findViewById(R.id.suggest_friend_recycler_view);
 //        if(loginviewModel.getAuthentication().getValue() && requestLocationViewModel.getHasPermission().getValue()) {

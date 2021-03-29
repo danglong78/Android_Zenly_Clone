@@ -1,6 +1,5 @@
 package UI.MainActivity;
 
-
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -14,6 +13,13 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
+import androidx.work.BackoffPolicy;
+import androidx.work.Constraints;
+import androidx.work.Data;
+import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.NetworkType;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
 
 
 import android.util.Log;
@@ -27,7 +33,10 @@ import android.widget.Button;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.study.android_zenly.R;
 
+import java.util.concurrent.TimeUnit;
+
 import ultis.FragmentTag;
+import ultis.UpdateLocationWorker;
 import viewModel.LoginViewModel;
 import viewModel.MapViewModel;
 import viewModel.RequestLocationViewModel;
@@ -87,6 +96,7 @@ public class HomeFragment extends Fragment {
 
     @Override
     public void onStart() {
+        Log.d(TAG, "onStart: order test");
         super.onStart();
         if(loginviewModel.getAuthentication().getValue() ) {
             userViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
@@ -95,24 +105,49 @@ public class HomeFragment extends Fragment {
             mapViewModel = new ViewModelProvider(requireActivity()).get(MapViewModel.class);
             mapViewModel.setActivity(getActivity());
 
-            userViewModel.getIsInited().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
-                @Override
-                public void onChanged(Boolean isInited) {
-                    if (isInited) {
+            if (userViewModel.getIsInited().getValue() == null) {
+                userViewModel.getIsInited().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+                    @Override
+                    public void onChanged(Boolean isInited) {
+                        if (isInited) {
+                            Log.d(TAG, "onChanged: observe inited user event");
+                            mapViewModel.init(getViewLifecycleOwner());
+                            runLocationUpdateWorker(userViewModel.getHostUser().getValue().getUID());
 
-                        mapViewModel.init(getViewLifecycleOwner());
-
-
-
-
-                        userViewModel.getIsInited().removeObserver(this);
+                            userViewModel.getIsInited().removeObserver(this);
+                        }
                     }
-                }
-            });
+                });
+            }
+
         }
         if(bottomSheetBehavior.getState()==BottomSheetBehavior.STATE_EXPANDED) {
             bottomSheetMotionLayout.setProgress(1);
         }
+    }
+
+    private void runLocationUpdateWorker(String userUID) {
+        // Create Network constraint
+        Constraints constraints = new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
+
+        PeriodicWorkRequest periodicWork =
+                new PeriodicWorkRequest.Builder(UpdateLocationWorker.class, 15, TimeUnit.MINUTES)
+                        .addTag("Update Location Worker")
+                        .setConstraints(constraints)
+                        .setInputData(new Data.Builder()
+                                .putString("userUID", userUID)
+                                .build())
+                        // setting a backoff on case the work needs to retry
+                        .setBackoffCriteria(BackoffPolicy.LINEAR, PeriodicWorkRequest.MIN_BACKOFF_MILLIS, TimeUnit.MILLISECONDS)
+                        .build();
+
+        WorkManager.getInstance(getActivity()).enqueueUniquePeriodicWork(
+                "Update Location Worker",
+                ExistingPeriodicWorkPolicy.KEEP, //Existing Periodic Work policy
+                periodicWork //work request
+        );
     }
 
     private void bindingView(View view) {
