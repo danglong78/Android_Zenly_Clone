@@ -4,4 +4,5 @@ public enum FragmentTag {
     CHAT,
     SETTINGS,
     OTHERS,
+    FRIEND,
 }

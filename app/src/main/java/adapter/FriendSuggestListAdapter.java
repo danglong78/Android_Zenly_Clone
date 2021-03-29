@@ -32,18 +32,10 @@ public class FriendSuggestListAdapter  extends RecyclerView.Adapter<FriendSugges
     private String userUID;
     private AddFriendsFragmentCallback listener;
     private Context context;
-    public FriendSuggestListAdapter(Context context,AddFriendsFragmentCallback listener) {
-        list = new ArrayList<>();
-        this.context = context;
-        storage = FirebaseStorage.getInstance();
-        list.add(new User(null,"Dang Minh Hoang Long","123","0e9748c8-8978-11eb-8dcd-0242ac130003.png",null,null,null));
-        list.add(new User(null,"Ho Dai Tri","123","0e974b5c-8978-11eb-8dcd-0242ac130003.png",null,null,null));
-        list.add(new User(null,"Tran Thanh Tam","123","0e974d50-8978-11eb-8dcd-0242ac130003.png",null,null,null));
-        list.add(new User(null,"Huynh Lam Hoang Dai","123","0e974e36-8978-11eb-8dcd-0242ac130003.jpg",null,null,null));
-    }
 
-    public FriendSuggestListAdapter(Context context, ArrayList<User> list,AddFriendsFragmentCallback listener){
-        this.list = list;
+
+    public FriendSuggestListAdapter(Context context,AddFriendsFragmentCallback listener){
+        this.list = new ArrayList<>();
         storage = FirebaseStorage.getInstance();
         this.context = context;
         SharedPreferences prefs = context.getSharedPreferences("user_info",Context.MODE_PRIVATE);
@@ -112,7 +104,9 @@ public class FriendSuggestListAdapter  extends RecyclerView.Adapter<FriendSugges
     public User getItem(int position) {
         return list.get(position);
     }
-
+    public void setItems(ArrayList<User> list) {
+        this.list=list;
+    }
     public void addItems(ArrayList<User> postItems) {
         list.addAll(postItems);
         notifyDataSetChanged();
