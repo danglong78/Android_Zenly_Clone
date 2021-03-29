@@ -7,6 +7,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -23,10 +24,17 @@ import java.util.List;
 import adapter.FriendListAdapter;
 import adapter.FriendRequestAdapter;
 import data.models.User;
+import viewModel.FriendSuggestViewModel;
+import viewModel.InvitationViewModel;
+import viewModel.LoginViewModel;
+import viewModel.RequestLocationViewModel;
 
 
 public class FriendRequestFragment extends Fragment implements FriendRequestAdapter.FriendRequestCallback {
 
+    InvitationViewModel invitationViewModel;
+    LoginViewModel loginviewModel;
+    RequestLocationViewModel requestLocationViewModel;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -38,12 +46,18 @@ public class FriendRequestFragment extends Fragment implements FriendRequestAdap
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        List<User> list= new ArrayList<>();
-        list.add(new User(null,"Dang Minh Hoang Long","123","0e9748c8-8978-11eb-8dcd-0242ac130003.png",null,null,null));
-        list.add(new User(null,"Ho Dai Tri","123","0e974b5c-8978-11eb-8dcd-0242ac130003.png",null,null,null));
-        list.add(new User(null,"Tran Thanh Tam","123","0e974d50-8978-11eb-8dcd-0242ac130003.png",null,null,null));
-        list.add(new User(null,"Huynh Lam Hoang Dai","123","0e974e36-8978-11eb-8dcd-0242ac130003.jpg",null,null,null));
-        FriendRequestAdapter adapter= new FriendRequestAdapter(requireActivity(), (ArrayList<User>) list,this);
+
+//        List<User> list= new ArrayList<>();
+//        list.add(new User(null,"Dang Minh Hoang Long","123","0e9748c8-8978-11eb-8dcd-0242ac130003.png",null,null,null));
+//        list.add(new User(null,"Ho Dai Tri","123","0e974b5c-8978-11eb-8dcd-0242ac130003.png",null,null,null));
+//        list.add(new User(null,"Tran Thanh Tam","123","0e974d50-8978-11eb-8dcd-0242ac130003.png",null,null,null));
+//        list.add(new User(null,"Huynh Lam Hoang Dai","123","0e974e36-8978-11eb-8dcd-0242ac130003.jpg",null,null,null));
+
+
+
+
+
+        FriendRequestAdapter adapter= new FriendRequestAdapter(requireActivity(), (ArrayList<User>) invitationViewModel.getInvitationsList().getValue(),this);
         RecyclerView recyclerView = view.findViewById(R.id.friend_recycler_view);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));

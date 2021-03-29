@@ -59,6 +59,7 @@ public class AddFriendFragment extends Fragment implements FriendSuggestListAdap
     private InvitationViewModel invitationViewModel;
     private LoginViewModel loginviewModel;
     private RequestLocationViewModel requestLocationViewModel;
+    private UserViewModel userViewModel;
 
     TextView friendListText,friendRequestText;
 
@@ -91,6 +92,7 @@ public class AddFriendFragment extends Fragment implements FriendSuggestListAdap
         invitationViewModel = new ViewModelProvider(requireActivity()).get(InvitationViewModel.class);
         loginviewModel = new ViewModelProvider(requireActivity()).get(LoginViewModel.class);
         requestLocationViewModel = new ViewModelProvider(requireActivity()).get(RequestLocationViewModel.class);
+        userViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
 
         loginviewModel.init(getActivity());
         requestLocationViewModel.init(getActivity());
@@ -100,7 +102,7 @@ public class AddFriendFragment extends Fragment implements FriendSuggestListAdap
         swipeRefresh = view.findViewById(R.id.swipeRefresh);
         swipeRefresh.setOnRefreshListener(this);
         Log.d(TAG, String.valueOf(friendSuggestRecyclerView.getId()));
-        UserViewModel userViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
+
 
         Log.d(TAG, "onViewCreated: " + userViewModel.getIsInited().getValue());
         if (userViewModel.getIsInited().getValue() == null) {
@@ -137,7 +139,7 @@ public class AddFriendFragment extends Fragment implements FriendSuggestListAdap
                             protected void loadMoreItems() {
                                 isLoading = true;
                                 currentPage++;
-                                doApiCall();
+
                             }
                             @Override
                             public boolean isLastPage() {
@@ -181,7 +183,7 @@ public class AddFriendFragment extends Fragment implements FriendSuggestListAdap
 
                 }
 
-            });
+            }});
         }
 
 
@@ -240,7 +242,7 @@ public class AddFriendFragment extends Fragment implements FriendSuggestListAdap
 //
 //
 //        }
-        doApiCall();
+//        doApiCall();
     }
 
     @Override
@@ -302,40 +304,40 @@ public class AddFriendFragment extends Fragment implements FriendSuggestListAdap
                     intent.setData(uri);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
-                    ;
+
                 }
 
             }).show();
         }
 
     }
-    private void doApiCall() {
-        final ArrayList<User> items = new ArrayList<>();
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                //TODO thêm user ở đây, thay cái vòng lặp thành hàm thêm
-                for (int i = 0; i < 10; i++) {
-                    itemCount++;
-                    User postItem = new User(null,"Huynh Lam Hoang Dai","123","0e974e36-8978-11eb-8dcd-0242ac130003.jpg",null,null,null);
-                    items.add(postItem);
-
-                }
-                //TODO thêm user ở đây
-
-                if (currentPage != PAGE_START) adapter.removeLoading();
-                adapter.addItems(items);
-                swipeRefresh.setRefreshing(false);
-                // check weather is last page or not
-                if (currentPage < totalPage) {
-                    adapter.addLoading();
-                } else {
-                    isLastPage = true;
-                }
-                isLoading = false;
-            }
-        }, 1500);
-    }
+//    private void doApiCall() {
+//        final ArrayList<User> items = new ArrayList<>();
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                //TODO thêm user ở đây, thay cái vòng lặp thành hàm thêm
+//                for (int i = 0; i < 10; i++) {
+//                    itemCount++;
+//                    User postItem = new User(null,"Huynh Lam Hoang Dai","123","0e974e36-8978-11eb-8dcd-0242ac130003.jpg",null,null,null);
+//                    items.add(postItem);
+//
+//                }
+//                //TODO thêm user ở đây
+//
+//                if (currentPage != PAGE_START) adapter.removeLoading();
+//                adapter.addItems(items);
+//                swipeRefresh.setRefreshing(false);
+//                // check weather is last page or not
+//                if (currentPage < totalPage) {
+//                    adapter.addLoading();
+//                } else {
+//                    isLastPage = true;
+//                }
+//                isLoading = false;
+//            }
+//        }, 1500);
+//    }
 
     @Override
     public void onRefresh() {
@@ -343,6 +345,6 @@ public class AddFriendFragment extends Fragment implements FriendSuggestListAdap
         currentPage = PAGE_START;
         isLastPage = false;
         adapter.clear();
-        doApiCall();
+//        doApiCall();
     }
 }

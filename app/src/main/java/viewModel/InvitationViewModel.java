@@ -52,4 +52,9 @@ public class InvitationViewModel extends ViewModel {
         Log.d(TAG, "sendInvitation: ");
         repository.addToOtherRepository(UID);
     }
+
+    public void deleteInvitation(String UID){
+        Log.d(TAG, "deleteInvitation: ");
+        repository.removeOnPaginations(UID);
+    }
 }
