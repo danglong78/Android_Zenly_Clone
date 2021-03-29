@@ -129,7 +129,13 @@ public class ChatListFragment extends Fragment implements ChatListAdapter.OnChat
         homeFragmentMotionLayout.setProgress(1);
         MainActivity activity = (MainActivity) getActivity();
         activity.setFragmentTag(FragmentTag.CHAT,homeFragmentMotionLayout,navController);
-        navController.navigate(R.id.action_chatListFragment_to_chatFragment);
+        Bundle args = new Bundle();
+        Conversation aConv = madapter.getConv(position);
+        String name = aConv.getName();
+        String id = aConv.getID();
+        args.putString("name",name);
+        args.putString("id",id);
+        navController.navigate(R.id.action_chatListFragment_to_chatFragment,args);
     }
 
     @Override

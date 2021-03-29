@@ -185,4 +185,8 @@ public class ChatListAdapter  extends RecyclerView.Adapter<ChatListAdapter.ViewH
         notifyItemRemoved(position);
     }
 
+    public Conversation getConv(int pos){
+        return convList.get(pos);
+    }
+
 }

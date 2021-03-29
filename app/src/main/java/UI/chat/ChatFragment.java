@@ -37,9 +37,10 @@ public class ChatFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         RecyclerView recyclerView= view.findViewById(R.id.message_list_recyclerview);
-        Conversation aConv = (Conversation)savedInstanceState.get("Conversation");
+        String id = savedInstanceState.getString("id");
+        String name = savedInstanceState.getString("name");
         ChatViewModel mChatListViewModel = new ViewModelProvider(requireActivity()).get(ChatViewModel.class);
-        mChatListViewModel.init(aConv.getID(),getActivity(),getViewLifecycleOwner());
+        mChatListViewModel.init(id,getActivity(),getViewLifecycleOwner());
         mChatListViewModel.getIsInited().observe(getViewLifecycleOwner(), new Observer<Boolean>(){
 
             @Override

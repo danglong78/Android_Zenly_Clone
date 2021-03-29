@@ -1,13 +1,15 @@
 package data.models;
 
 import android.graphics.Bitmap;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.google.firebase.firestore.Exclude;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class Conversation {
+public class Conversation implements Parcelable {
     @Exclude
     private Bitmap avatar;
 
@@ -27,6 +29,38 @@ public class Conversation {
     }
 
     public Conversation(){}
+
+    protected Conversation(Parcel in) {
+        avatar = in.readParcelable(Bitmap.class.getClassLoader());
+        ID = in.readString();
+        name = in.readString();
+        avatarURL = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(avatar, flags);
+        dest.writeString(ID);
+        dest.writeString(name);
+        dest.writeString(avatarURL);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<Conversation> CREATOR = new Creator<Conversation>() {
+        @Override
+        public Conversation createFromParcel(Parcel in) {
+            return new Conversation(in);
+        }
+
+        @Override
+        public Conversation[] newArray(int size) {
+            return new Conversation[size];
+        }
+    };
 
     public Bitmap getAvatar() {
         return avatar;
