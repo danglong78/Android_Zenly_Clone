@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import data.models.Conversation;
+import data.models.Message;
 import data.models.User;
 import ultis.MyCallBack;
 
@@ -131,5 +132,17 @@ public class ConversationRepository {
             }
         });
         return convRef.getId();
+    }
+
+    public MutableLiveData<Boolean> setRecentMess(Message aMess,String conID){
+        DocumentReference conRef = mDb.collection(CONV_COLLECTION).document(conID);
+        MutableLiveData<Boolean> res = new MutableLiveData<Boolean>();
+        conRef.update("recentMessage",aMess).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                res.postValue(true);
+            }
+        });
+        return res;
     }
 }

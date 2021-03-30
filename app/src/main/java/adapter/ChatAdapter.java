@@ -14,7 +14,12 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.study.android_zenly.R;
@@ -26,13 +31,14 @@ import java.util.Date;
 import java.util.List;
 
 import data.models.Message;
+import data.models.User;
 import ultis.DateFormatter;
 
 public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.BaseMessageViewHolder> {
     private static final int VIEW_TYPE_INCOMING_MESSAGE = 0x00;
     private static final int VIEW_TYPE_OUTCOMING_MESSAGE = 0x01;
     private static final int VIEW_TYPE_DATE_HEADER = 0x02;
-    private final DocumentReference senderId;
+    private final String senderId;
     private StorageReference ref;
     private FirebaseStorage storage;
     private RecyclerView.LayoutManager layoutManager;
@@ -41,7 +47,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.BaseMessageVie
 
     private final List<Wrapper> items;
 
-    public ChatAdapter(DocumentReference senderId) {
+    public ChatAdapter(String senderId) {
         this.senderId = senderId;
         this.items = new ArrayList<>();
 //            User x= new User(null,"Dang Minh Hoang Long","123","0e9748c8-8978-11eb-8dcd-0242ac130003.png",null,null,null);
@@ -50,10 +56,14 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.BaseMessageVie
 //            items.add(new Wrapper(new Message(y,"1","Hi", Timestamp.now())));
     }
 
-    public ChatAdapter(Context context, DocumentReference senderId) {
+    public ChatAdapter(Context context, String senderId) {
         this.senderId = senderId;
         this.items = new ArrayList<>();
         this.context = context;
+    }
+
+    public void deleteAll(){
+        items.clear();
     }
 
     @NonNull
@@ -99,7 +109,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.BaseMessageVie
         Wrapper wrapper = items.get(position);
         if (wrapper.item instanceof Message) {
             Message message = (Message) wrapper.item;
-            if (message.getSender().equals(senderId)) {
+            if (message.getSenderID().equals(senderId)) {
                 return VIEW_TYPE_OUTCOMING_MESSAGE;
             } else {
                 return VIEW_TYPE_INCOMING_MESSAGE;
@@ -181,7 +191,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.BaseMessageVie
         if (items.size() <= prevPosition) return false;
 
         if (items.get(prevPosition).item instanceof Message) {
-            return ((Message) items.get(prevPosition).item).getSender().equals(id);
+            return ((Message) items.get(prevPosition).item).getSenderID().equals(id);
         } else return false;
     }
 
@@ -261,18 +271,26 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.BaseMessageVie
             bubble.setSelected(isSelected());
             text.setText(message.getMess());
             time.setText(DateFormatter.format(message.getTime().toDate(), DateFormatter.Template.TIME));
-            boolean isAvatarExists =!message.getSender().getAvatarURL().isEmpty();
-            if (isAvatarExists ) {
-                StorageReference ref = FirebaseStorage.getInstance().getReference().child("avatars").child(message.getSender().getAvatarURL());
-                if (ref != null) {
-                    ref.getDownloadUrl().addOnSuccessListener(uri -> {
-                        String imageURL = uri.toString();
-                        Glide.with(context)
-                                .load(imageURL)
-                                .into(userAvatar);
-                    });
+            String sender = message.getSenderID();
+            DocumentReference docRef = FirebaseFirestore.getInstance().collection("Users").document(sender);
+            docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    String avtURL = documentSnapshot.getData().get("avataURL").toString();
+                    boolean isAvatarExists =!avtURL.isEmpty();
+                    if (isAvatarExists ) {
+                        StorageReference ref = FirebaseStorage.getInstance().getReference().child("avatars").child(avtURL);
+                        if (ref != null) {
+                            ref.getDownloadUrl().addOnSuccessListener(uri -> {
+                                String imageURL = uri.toString();
+                                Glide.with(context)
+                                        .load(imageURL)
+                                        .into(userAvatar);
+                            });
+                        }
+                    }
                 }
-            }
+            });
         }
 
     }

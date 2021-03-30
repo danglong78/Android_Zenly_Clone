@@ -4,29 +4,30 @@ import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentReference;
 
 public class Message {
-    private User sender;
+    private String senderID;
     private String ID;
     private String mess;
     private Timestamp time;
     private String convID;
 
-    public Message() {
-    }
-
-    public Message(User sender, String ID, String mess, Timestamp time, String convID) {
-        this.sender = sender;
+    public Message(String senderID, String ID, String mess, Timestamp time, String convID) {
+        this.senderID = senderID;
         this.ID = ID;
         this.mess = mess;
         this.time = time;
         this.convID = convID;
     }
 
-    public User getSender() {
-        return sender;
+    public Message() {
     }
 
-    public void setSender(User sender) {
-        this.sender = sender;
+
+    public String getSenderID() {
+        return senderID;
+    }
+
+    public void setSenderID(String senderID) {
+        this.senderID = senderID;
     }
 
     public String getID() {
@@ -64,7 +65,7 @@ public class Message {
     @Override
     public String toString() {
         return "Message{" +
-                "sender=" + sender +
+                "senderID='" + senderID + '\'' +
                 ", ID='" + ID + '\'' +
                 ", mess='" + mess + '\'' +
                 ", time=" + time +
