@@ -79,6 +79,7 @@ public class MessageRepository {
                         }
 
                         if(queryDocumentSnapshots != null){
+                            listMess.clear();
                             for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                                 listMess.add(doc.toObject(Message.class));
                             }
@@ -93,6 +94,7 @@ public class MessageRepository {
                             mess.postValue(listMess);
                             adapter.deleteAll();
                             Log.d("send Mess","delete adapter");
+                            Log.d("send Mess",Integer.toString(adapter.getItemCount()));
                             adapter.addToEnd(listMess,false);
                             Log.d("send Mess","add to adapter again");
                             adapter.notifyDataSetChanged();

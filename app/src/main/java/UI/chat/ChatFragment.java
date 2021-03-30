@@ -105,6 +105,7 @@ public class ChatFragment extends Fragment {
                 public void onChanged(Boolean val) {
                     if(val){
                         inputChat.setText("");
+                        Log.d("dem",Integer.toString(adapter.getItemCount()));
                         recyclerView.setAdapter(adapter);
                     }
                 }
