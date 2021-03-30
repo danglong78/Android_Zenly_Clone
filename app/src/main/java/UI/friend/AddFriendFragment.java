@@ -47,6 +47,7 @@ import data.models.User;
 import ultis.FragmentTag;
 import ultis.PaginationListener;
 import viewModel.FriendSuggestViewModel;
+import viewModel.FriendViewModel;
 import viewModel.InvitationViewModel;
 import viewModel.InvitingViewModel;
 import viewModel.LoginViewModel;
@@ -55,7 +56,7 @@ import viewModel.UserViewModel;
 
 import static ultis.PaginationListener.PAGE_START;
 
-public class AddFriendFragment extends Fragment implements FriendSuggestListAdapter.AddFriendsFragmentCallback{
+public class AddFriendFragment extends Fragment implements FriendSuggestListAdapter.AddFriendsFragmentCallback,RecentFriendListAdapter.Callback{
 
     private final String TAG = "AddFriendFragment";
     private final int CONTACT_REQUEST_ID = 10;
@@ -66,6 +67,7 @@ public class AddFriendFragment extends Fragment implements FriendSuggestListAdap
     private RequestLocationViewModel requestLocationViewModel;
     private UserViewModel userViewModel;
     private InvitingViewModel invitingViewModel;
+    private FriendViewModel friendViewModel;
 
     TextView friendListText, friendRequestText;
     SwipeRefreshLayout swiperefreshlayout;
@@ -93,6 +95,7 @@ public class AddFriendFragment extends Fragment implements FriendSuggestListAdap
         requestLocationViewModel = new ViewModelProvider(requireActivity()).get(RequestLocationViewModel.class);
         userViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
         invitingViewModel = new ViewModelProvider(requireActivity()).get(InvitingViewModel.class);
+        friendViewModel =  new ViewModelProvider(requireActivity()).get(FriendViewModel.class);
 
         loginviewModel.init(getActivity());
         requestLocationViewModel.init(getActivity());
@@ -119,6 +122,7 @@ public class AddFriendFragment extends Fragment implements FriendSuggestListAdap
                         friendSuggestViewModel.init(getActivity());
                         invitationViewModel.init(getActivity());
                         invitingViewModel.init(getActivity());
+                        friendViewModel.init(requireActivity(), getViewLifecycleOwner());
 
                         Log.d(TAG, "Dang chay ne");
 
@@ -139,17 +143,16 @@ public class AddFriendFragment extends Fragment implements FriendSuggestListAdap
                             }
                         });
 
-                        RecentFriendListAdapter recentFriendAdapter = new RecentFriendListAdapter();
+
+
+                        RecentFriendListAdapter recentFriendAdapter = new RecentFriendListAdapter(requireActivity(),AddFriendFragment.this);
                         recentFriendRecyclerView.setAdapter(recentFriendAdapter);
                         recentFriendRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
-                        friendSuggestViewModel.getSuggestFriendList().observe(getViewLifecycleOwner(), new Observer<List<User>>() {
+                        friendViewModel.getFriendsList().observe(getViewLifecycleOwner(), new Observer<List<User>>() {
                             @Override
                             public void onChanged(List<User> users) {
-                                swiperefreshlayout.setRefreshing(false);
-                                adapter.setItems((ArrayList<User>) users);
-                                adapter.notifyDataSetChanged();
-
-                            }
+                                recentFriendAdapter.setList((ArrayList<User>) users);
+                                recentFriendAdapter.notifyDataSetChanged();                            }
                         });
 
 
@@ -254,4 +257,8 @@ public class AddFriendFragment extends Fragment implements FriendSuggestListAdap
 
     }
 
+    @Override
+    public void onClick(String UID) {
+
+    }
 }
