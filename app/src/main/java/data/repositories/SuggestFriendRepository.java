@@ -147,7 +147,7 @@ public class SuggestFriendRepository extends ListUsersRepository {
 
     public void modify(String modifyUID, boolean hidden) {
         listRef.document(modifyUID).update("hidden", hidden);
-        removeList(modifyUID);
+        removeList(modifyUID, listUser);
         Log.d(TAG, "modify: " + UID + " modify " + modifyUID + " " + hidden);
     }
 

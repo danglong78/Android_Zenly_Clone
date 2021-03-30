@@ -47,6 +47,7 @@ import ultis.FragmentTag;
 import ultis.PaginationListener;
 import viewModel.FriendSuggestViewModel;
 import viewModel.InvitationViewModel;
+import viewModel.InvitingViewModel;
 import viewModel.LoginViewModel;
 import viewModel.RequestLocationViewModel;
 import viewModel.UserViewModel;
@@ -63,6 +64,7 @@ public class AddFriendFragment extends Fragment implements FriendSuggestListAdap
     private LoginViewModel loginviewModel;
     private RequestLocationViewModel requestLocationViewModel;
     private UserViewModel userViewModel;
+    private InvitingViewModel invitingViewModel;
 
     TextView friendListText, friendRequestText;
 
@@ -93,6 +95,7 @@ public class AddFriendFragment extends Fragment implements FriendSuggestListAdap
         loginviewModel = new ViewModelProvider(requireActivity()).get(LoginViewModel.class);
         requestLocationViewModel = new ViewModelProvider(requireActivity()).get(RequestLocationViewModel.class);
         userViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
+        invitingViewModel = new ViewModelProvider(requireActivity()).get(InvitingViewModel.class);
 
         loginviewModel.init(getActivity());
         requestLocationViewModel.init(getActivity());
@@ -118,6 +121,7 @@ public class AddFriendFragment extends Fragment implements FriendSuggestListAdap
 
                         friendSuggestViewModel.init(getActivity());
                         invitationViewModel.init(getActivity());
+                        invitingViewModel.init(getActivity());
 
                         Log.d(TAG, "Dang chay ne");
 
@@ -215,6 +219,7 @@ public class AddFriendFragment extends Fragment implements FriendSuggestListAdap
         Log.d(TAG, "onAddButtonClick: ");
         invitationViewModel.sendInvitation(friendUID);
         friendSuggestViewModel.hideSuggest(friendUID);
+        invitingViewModel.addToMyInviting(friendUID);
     }
 
     @Override
@@ -228,7 +233,6 @@ public class AddFriendFragment extends Fragment implements FriendSuggestListAdap
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 friendSuggestViewModel.hideSuggest(suggestUID);
-
             }
         });
         builder.create().show();

@@ -28,6 +28,7 @@ import data.models.User;
 import viewModel.FriendSuggestViewModel;
 import viewModel.FriendViewModel;
 import viewModel.InvitationViewModel;
+import viewModel.InvitingViewModel;
 import viewModel.LoginViewModel;
 import viewModel.RequestLocationViewModel;
 
@@ -36,6 +37,7 @@ public class FriendRequestFragment extends Fragment implements FriendRequestAdap
 
     private InvitationViewModel invitationViewModel;
     private FriendViewModel friendViewModel;
+    private InvitingViewModel invitingViewModel;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -54,7 +56,7 @@ public class FriendRequestFragment extends Fragment implements FriendRequestAdap
 //        list.add(new User(null,"Tran Thanh Tam","123","0e974d50-8978-11eb-8dcd-0242ac130003.png",null,null,null));
 //        list.add(new User(null,"Huynh Lam Hoang Dai","123","0e974e36-8978-11eb-8dcd-0242ac130003.jpg",null,null,null));
 
-
+        invitingViewModel = new ViewModelProvider(requireActivity()).get(InvitingViewModel.class);
         invitationViewModel = new ViewModelProvider(requireActivity()).get(InvitationViewModel.class);
         friendViewModel = new ViewModelProvider(requireActivity()).get(FriendViewModel.class);
 
@@ -75,7 +77,7 @@ public class FriendRequestFragment extends Fragment implements FriendRequestAdap
     public void onAddButtonClick(String friendUID) {
         //TODO ACCEPT FRIEND REQUEST FUNCTION
         friendViewModel.acceptFriendRequest(friendUID);
-        invitationViewModel.deleteInvitation(friendUID);
+        invitationViewModel.removeMyInvitation(friendUID);
     }
 
     @Override
@@ -88,7 +90,8 @@ public class FriendRequestFragment extends Fragment implements FriendRequestAdap
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //TODO DELETE FRIEND REQUEST FUNCTION
-                invitationViewModel.deleteInvitation(friendUID);
+                invitationViewModel.removeMyInvitation(friendUID);
+                invitingViewModel.removeFriendInviting(friendUID);
             }
         });
         builder.create().show();

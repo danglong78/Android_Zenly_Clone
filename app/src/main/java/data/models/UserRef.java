@@ -1,18 +1,21 @@
 package data.models;
 
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 
 public class UserRef {
     private DocumentReference ref;
     private boolean hidden = false;
+    private Timestamp time;
 
     public UserRef(){
     }
 
-    public UserRef(DocumentReference ref, boolean hidden) {
+    public UserRef(DocumentReference ref, boolean hidden, Timestamp time) {
         this.ref = ref;
         this.hidden = hidden;
+        this.time = time;
     }
 
     public void setHidden(boolean hidden){
@@ -26,6 +29,8 @@ public class UserRef {
     public boolean getHidden(){
         return hidden;
     }
+
+    public Timestamp getTime(){return time;}
 
     public boolean equals(Object obj) {
         if (obj instanceof UserRef) {
