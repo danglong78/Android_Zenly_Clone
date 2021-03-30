@@ -276,7 +276,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.BaseMessageVie
             docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
-                    String avtURL = documentSnapshot.getData().get("avataURL").toString();
+                    String avtURL = documentSnapshot.getData().get("avatarURL").toString();
                     boolean isAvatarExists =!avtURL.isEmpty();
                     if (isAvatarExists ) {
                         StorageReference ref = FirebaseStorage.getInstance().getReference().child("avatars").child(avtURL);
@@ -292,7 +292,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.BaseMessageVie
                 }
             });
         }
-
     }
 
     public static class OutcomingMessageViewHolder
