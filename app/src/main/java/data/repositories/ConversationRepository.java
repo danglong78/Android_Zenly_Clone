@@ -4,6 +4,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -13,13 +14,20 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
+import adapter.ChatListAdapter;
 import data.models.Conversation;
 import data.models.Message;
 import data.models.User;
@@ -85,35 +93,50 @@ public class ConversationRepository {
         });
     }
 
-    public MutableLiveData<ArrayList<Conversation>> getListConv(ArrayList<String> listID){
+    public MutableLiveData<ArrayList<Conversation>> getListConv(RecyclerView nav_drawer_recycler_view,ListenerRegistration listConvListener, ChatListAdapter madapter, ArrayList<String> listID){
         CollectionReference convRef = mDb.collection(CONV_COLLECTION);
         MutableLiveData<ArrayList<Conversation>> conv = new MutableLiveData<ArrayList<Conversation>>();
         ArrayList<Conversation> convList = new ArrayList<Conversation>();
-        convRef.whereIn("id",listID).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>(){
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful()){
-
-                    for(QueryDocumentSnapshot doc : task.getResult()){
-                        Conversation temp = doc.toObject(Conversation.class);
-                        int count=0;
-                        User u = new User();
-                        for(User aUser : temp.getMember()){
-                            count++;
-                            if(!aUser.getUID().equals(FirebaseAuth.getInstance().getUid())){
-                                u = aUser;
+        listConvListener = convRef.whereIn("id",listID)
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@javax.annotation.Nullable QuerySnapshot queryDocumentSnapshots, @javax.annotation.Nullable FirebaseFirestoreException e) {
+                        if (e != null) {
+                            Log.e("Load List Mess", "onEvent: Listen failed.", e);
+                            return;
+                        }if(queryDocumentSnapshots != null){
+                            convList.clear();
+                            for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                                Conversation temp = doc.toObject(Conversation.class);
+                                int count=0;
+                                User u = new User();
+                                for(User aUser : temp.getMember()){
+                                    count++;
+                                    if(!aUser.getUID().equals(FirebaseAuth.getInstance().getUid())){
+                                        u = aUser;
+                                    }
+                                }
+                                if(count<=2){
+                                    temp.setAvatarURL(u.getAvatarURL());
+                                    temp.setName(u.getName());
+                                }
+                                convList.add(temp);
+                            }
+                            Collections.sort(convList, new Comparator<Conversation>() {
+                                @Override
+                                public int compare(Conversation o1, Conversation o2) {
+                                    return o2.getRecentMessage().getTime().compareTo(o1.getRecentMessage().getTime());
+                                }
+                            });
+                            conv.postValue(convList);
+                            if(madapter!=null) {
+                                Log.d(TAG,"TriNe123");
+                                madapter.setConversationList(convList);
+                                nav_drawer_recycler_view.setAdapter(madapter);
                             }
                         }
-                        if(count<=2){
-                            temp.setAvatarURL(u.getAvatarURL());
-                            temp.setName(u.getName());
-                        }
-                        convList.add(temp);
                     }
-                    conv.postValue(convList);
-                }
-            }
-        });
+                });
         return conv;
     }
 

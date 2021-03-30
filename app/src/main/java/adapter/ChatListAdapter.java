@@ -38,23 +38,22 @@ public class ChatListAdapter  extends RecyclerView.Adapter<ChatListAdapter.ViewH
     private OnChatListListener onChatListListener;
     private static ConversationRepository convRepo = new ConversationRepository();
 
-    public ChatListAdapter(Context context,OnChatListListener onChatListListener) {
-        convList = new ArrayList<>();
-        this.onChatListListener= onChatListListener;
-        this.context = context;
-        storage= FirebaseStorage.getInstance();
-        convList.add(new Conversation(null,"123","Dang Minh Hoang Long","0e9748c8-8978-11eb-8dcd-0242ac130003.png",new Message(null,"1","Hello",Timestamp.now(),null),null));
-        convList.add(new Conversation(null,"123","Ho Dai Tri","0e974b5c-8978-11eb-8dcd-0242ac130003.png",new Message(null,"1","Hello",Timestamp.now(),null),null));
-        convList.add(new Conversation(null,"123","Tran Thanh Tam","0e974d50-8978-11eb-8dcd-0242ac130003.png",new Message(null,"1","Hello",Timestamp.now(),null),null));
-        convList.add(new Conversation(null,"123","Huynh Lam Hoang Dai","0e974e36-8978-11eb-8dcd-0242ac130003.jpg",new Message(null,"1","Hello",Timestamp.now(),null),null));
-        convListAll=new ArrayList<>(convList);
-    }
+//    public ChatListAdapter(Context context,OnChatListListener onChatListListener) {
+//        convList = new ArrayList<>();
+//        this.onChatListListener= onChatListListener;
+//        this.context = context;
+//        storage= FirebaseStorage.getInstance();
+//        convList.add(new Conversation(null,"123","Dang Minh Hoang Long","0e9748c8-8978-11eb-8dcd-0242ac130003.png",new Message(null,"1","Hello",Timestamp.now(),null),null));
+//        convList.add(new Conversation(null,"123","Ho Dai Tri","0e974b5c-8978-11eb-8dcd-0242ac130003.png",new Message(null,"1","Hello",Timestamp.now(),null),null));
+//        convList.add(new Conversation(null,"123","Tran Thanh Tam","0e974d50-8978-11eb-8dcd-0242ac130003.png",new Message(null,"1","Hello",Timestamp.now(),null),null));
+//        convList.add(new Conversation(null,"123","Huynh Lam Hoang Dai","0e974e36-8978-11eb-8dcd-0242ac130003.jpg",new Message(null,"1","Hello",Timestamp.now(),null),null));
+//        convListAll=new ArrayList<>(convList);
+//    }
 
-    public ChatListAdapter(ArrayList<Conversation> convList,Context context,OnChatListListener onChatListListener) {
+    public ChatListAdapter(Context context,OnChatListListener onChatListListener) {
         this.onChatListListener= onChatListListener;
         this.context = context;
         storage= FirebaseStorage.getInstance();
-        this.convList = convList;
     }
     @NonNull
     @Override
@@ -183,6 +182,16 @@ public class ChatListAdapter  extends RecyclerView.Adapter<ChatListAdapter.ViewH
         convList.remove(position);
 //        notifyDataSetChanged();
         notifyItemRemoved(position);
+    }
+
+    public void setConversationList(ArrayList<Conversation> listConv){
+        if(convList!=null){
+            convList.clear();
+            convList.addAll(listConv);
+        }else{
+            convList = new ArrayList<Conversation>();
+            convList.addAll(listConv);
+        }
     }
 
     public Conversation getConv(int pos){

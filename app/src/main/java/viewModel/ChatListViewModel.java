@@ -9,10 +9,14 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.firebase.firestore.ListenerRegistration;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import adapter.ChatListAdapter;
 import data.models.Conversation;
 import data.models.User;
 import data.repositories.ConversationRepository;
@@ -55,13 +59,13 @@ public class ChatListViewModel extends ViewModel {
         }
     }
 
-    public void init(UserViewModel mUserViewModel,Context context, LifecycleOwner lifecycleOwner){
+    public void init(RecyclerView nav_drawer_recycler_view,ListenerRegistration listConvListener, ChatListAdapter madapter, UserViewModel mUserViewModel, Context context, LifecycleOwner lifecycleOwner){
         mRepo = ConversationRepository.getInstance();
         convList  = new MutableLiveData<ArrayList<Conversation>>();
         User aUser = mUserViewModel.getHostUser().getValue();
         ArrayList<String> convID = aUser.getConversation();
         int count = convID.size();
-        convList = mRepo.getListConv(convID);
+        convList = mRepo.getListConv(nav_drawer_recycler_view,listConvListener,madapter,convID);
         convList.observe(lifecycleOwner, new Observer<ArrayList<Conversation>>(){
             @Override
             public void onChanged(ArrayList<Conversation> conversations) {
