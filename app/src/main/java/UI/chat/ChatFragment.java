@@ -3,6 +3,7 @@ package UI.chat;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -19,6 +20,7 @@ import android.widget.EditText;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.storage.FirebaseStorage;
 import com.study.android_zenly.R;
 
@@ -38,6 +40,8 @@ public class ChatFragment extends Fragment {
     private MainActivity activity;
     private Button sendBtn;
     private EditText inputChat;
+    private ChatViewModel mChatListViewModel;
+    private ListenerRegistration listMessListener;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -50,24 +54,19 @@ public class ChatFragment extends Fragment {
         RecyclerView recyclerView= view.findViewById(R.id.message_list_recyclerview);
         String id = getArguments().getString("id");
         String name = getArguments().getString("name");
-        ChatAdapter adapter = new ChatAdapter(requireActivity(), FirebaseFirestore.getInstance().collection("Users").document(FirebaseAuth.getInstance().getUid()));
+        ChatAdapter adapter = new ChatAdapter(requireActivity(), FirebaseAuth.getInstance().getUid());
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(),LinearLayoutManager.VERTICAL,true));
-        ChatViewModel mChatListViewModel = new ViewModelProvider(requireActivity()).get(ChatViewModel.class);
-        mChatListViewModel.init(id,getActivity(),getViewLifecycleOwner());
+        mChatListViewModel = new ViewModelProvider(requireActivity()).get(ChatViewModel.class);
+        mChatListViewModel.init(adapter,listMessListener,id,getActivity(),getViewLifecycleOwner());
         mChatListViewModel.getIsInited().observe(getViewLifecycleOwner(), new Observer<Boolean>(){
 
             @Override
             public void onChanged(Boolean isInited) {
                 if(isInited){
-                    adapter.addToEnd(mChatListViewModel.getMessList().getValue(),false);
-                    mChatListViewModel.getMessList().observe(getViewLifecycleOwner(), new Observer<ArrayList<Message>>(
-                    ) {
-                        @Override
-                        public void onChanged(ArrayList<Message> messages) {
-                            adapter.addToEnd(messages,false);
-                        }
-                    });
+
+//                    adapter.addToEnd(mChatListViewModel.getMessList().getValue(),false);
+                    adapter.notifyDataSetChanged();
                     mChatListViewModel.getIsInited().removeObserver(this);
                 }
             }
@@ -99,7 +98,17 @@ public class ChatFragment extends Fragment {
         sendBtn.setOnClickListener(v->{
             String message = inputChat.getText().toString();
 //            adapter.addToStart(tin nhan moi,false);
+            Log.d("send Mess",message);
+            MutableLiveData<Boolean> res = mChatListViewModel.SendMess(message,getActivity(),getViewLifecycleOwner());
+            res.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+                @Override
+                public void onChanged(Boolean val) {
+                    if(val){
+                        inputChat.setText("");
+                        recyclerView.setAdapter(adapter);
+                    }
+                }
+            });
         });
-
     }
 }

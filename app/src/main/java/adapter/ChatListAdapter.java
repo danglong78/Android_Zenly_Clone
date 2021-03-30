@@ -2,6 +2,7 @@ package adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -90,7 +91,6 @@ public class ChatListAdapter  extends RecyclerView.Adapter<ChatListAdapter.ViewH
                 Glide.with(context)
                         .load(imageURL)
                         .into(holder.getAvatar());
-
             });
         }
 
