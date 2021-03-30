@@ -31,8 +31,8 @@ public class FriendRequestAdapter extends RecyclerView.Adapter<FriendRequestAdap
     private FriendRequestCallback callback;
     private Context context;
 
-    public FriendRequestAdapter(Context context,ArrayList<User> list,FriendRequestCallback callback){
-        this.list = list;
+    public FriendRequestAdapter(Context context,FriendRequestCallback callback){
+        this.list=new ArrayList<>();
         storage = FirebaseStorage.getInstance();
         this.context = context;
         SharedPreferences prefs = context.getSharedPreferences("user_info",Context.MODE_PRIVATE);
@@ -77,6 +77,10 @@ public class FriendRequestAdapter extends RecyclerView.Adapter<FriendRequestAdap
                 callback.onDelButtonClick(list.get(position).getUID());
             }
         });
+    }
+    public void setUsers(ArrayList<User> list)
+    {
+        this.list=list;
     }
 
     @Override

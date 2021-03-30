@@ -1,7 +1,6 @@
 package adapter;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,43 +17,34 @@ import com.google.firebase.storage.StorageReference;
 import com.study.android_zenly.R;
 
 import java.util.ArrayList;
-import java.util.List;
+
 
 import data.models.User;
 
-public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.ViewHolder> {
+public class BlockedUserAdapter extends RecyclerView.Adapter<BlockedUserAdapter.ViewHolder> {
+    ArrayList<User> list;
+    Context context;
+    BlockedUserCallback callback;
 
-    private List<User> list;
-    private FirebaseStorage storage;
-    private StorageReference ref;
-    private String userUID;
-    private Context context;
-    private FriendListCallback callback;
-
-    public FriendListAdapter(Context context,FriendListCallback callback){
-        this.list = new ArrayList<>();
-        storage = FirebaseStorage.getInstance();
-        this.context = context;
-        SharedPreferences prefs = context.getSharedPreferences("user_info",Context.MODE_PRIVATE);
-        if ( (prefs != null) && (prefs.contains("uid")) ) {
-            userUID=prefs.getString("uid","");
-        }
-        this.callback = callback;
+    public BlockedUserAdapter(Context context,BlockedUserCallback callback)
+    {
+        this.context=context;
+        list= new ArrayList<User>();
+        this.callback=callback;
     }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.friend_list_item_layout, parent, false);
-
-        return new FriendListAdapter.ViewHolder(view);
+        return new ViewHolder(LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.blocked_user_list_item_layout, parent, false));
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.getUserNameTextView().setText(list.get(position).getName());
 
-        ref= storage.getReference().child("avatars").child(list.get(position).getAvatarURL());
+        StorageReference ref = FirebaseStorage.getInstance().getReference().child("avatars").child(list.get(position).getAvatarURL());
         if(ref!=null) {
             ref.getDownloadUrl().addOnSuccessListener(uri -> {
                 String imageURL = uri.toString();
@@ -63,42 +53,44 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Vi
                         .into(holder.getAvatar());
 
             });
+
         }
-        holder.getBtn().setOnClickListener(new View.OnClickListener() {
+        holder.getView().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                callback.onFriendSettingClick(list.get(position).getUID(),list.get(position).getName());
+                callback.onClick(list.get(position).getUID());
             }
         });
     }
-
-    public void setUsers(ArrayList<User> users) {
-        this.list = users;
+    public void setListUsers(ArrayList<User> users) {
+        this.list=users;
     }
 
     @Override
     public int getItemCount() {
-        return list.size();
+        return 0;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder{
         private TextView userNameText;
         private ImageView image;
-        private Button  settingBtn;
-
+        private View item;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             userNameText = (TextView) itemView.findViewById(R.id.userNameText);
             image=(ImageView) itemView.findViewById(R.id.avatar);
-            settingBtn= (Button)itemView.findViewById(R.id.settingBtn);
+            this.item=itemView;
+
         }
         public TextView getUserNameTextView() {
             return userNameText;
         }
         public ImageView getAvatar() {return image;}
-        public Button getBtn(){return settingBtn;}
+        public View getView(){
+            return item;
+        }
     }
-    public interface FriendListCallback {
-        public void onFriendSettingClick(String UID, String userName);
+    public interface BlockedUserCallback {
+        void onClick(String UID);
     }
 }

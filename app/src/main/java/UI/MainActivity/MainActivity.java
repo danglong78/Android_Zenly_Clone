@@ -53,17 +53,18 @@ public class MainActivity extends AppCompatActivity implements MainCallBacks {
                     inputMethodManager.hideSoftInputFromWindow(
                             getCurrentFocus().getWindowToken(), 0);
                 }
-                NavOptions.Builder navBuilder = new NavOptions.Builder();
-                NavOptions navOptions = navBuilder.setPopUpTo(R.id.chatListFragment, true).build();
-                navController.navigate(R.id.chatListFragment, null, navOptions);
+
+                navController.popBackStack();
                 tag = FragmentTag.OTHERS;
 
                 break;
             }
             case SETTINGS: {
-                super.onBackPressed();
+                navController.popBackStack();
 
 //                motionLayout.setTransition(R.id.hideRight,R.id.right);
+                motionLayout.setTransition(R.id.hideRight, R.id.right);
+
                 motionLayout.setProgress(1);
 
                 break;
@@ -83,9 +84,7 @@ public class MainActivity extends AppCompatActivity implements MainCallBacks {
                     inputMethodManager.hideSoftInputFromWindow(
                             getCurrentFocus().getWindowToken(), 0);
                 }
-                NavOptions.Builder navBuilder = new NavOptions.Builder();
-                NavOptions navOptions = navBuilder.setPopUpTo(R.id.addFriendFragment2, true).build();
-                navController.navigate(R.id.addFriendFragment2, null, navOptions);
+                navController.popBackStack();
                 tag = FragmentTag.OTHERS;
                 break;
             }

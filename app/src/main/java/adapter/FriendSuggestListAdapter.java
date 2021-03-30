@@ -119,10 +119,12 @@ public class FriendSuggestListAdapter  extends RecyclerView.Adapter<FriendSugges
     public void removeLoading() {
         isLoaderVisible = false;
         int position = list.size() - 1;
-        User item = getItem(position);
-        if (item != null) {
-            list.remove(position);
-            notifyItemRemoved(position);
+        if(list.size() > 0) {
+            User item = getItem(position);
+            if (item != null) {
+                list.remove(position);
+                notifyItemRemoved(position);
+        }
         }
     }
     public void clear() {

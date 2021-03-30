@@ -50,7 +50,7 @@ public class HomeFragment extends Fragment {
     private final String TAG = "HomeFragment";
 
 
-    NavController navController,chatnavController;
+    NavController navController,chatnavController,usernavController;
 
     LoginViewModel loginviewModel;
     RequestLocationViewModel requestLocationViewModel;
@@ -240,8 +240,13 @@ public class HomeFragment extends Fragment {
                             motionLayout.setTransition(R.id.start,R.id.hideLeft);
                         }
                     } else {
-                        motionLayout.setTransition(R.id.userButtonAnimation);
-
+                        if(usernavController.getCurrentDestination().getId()==R.id.userFragment )
+                        {
+                            motionLayout.setTransition(R.id.start,R.id.right);
+                        }
+                        else{
+                            motionLayout.setTransition(R.id.start,R.id.hideRight);
+                        }
                     }
                     motionLayout.setProgress(slideOffset);
 
@@ -271,6 +276,14 @@ public class HomeFragment extends Fragment {
                     ((MainActivity)getActivity()).setFragmentTag(FragmentTag.OTHERS,motionLayout,navController);
 
                 }
+                if (drawerView.getId() == R.id.navigation_view_right && usernavController.getCurrentDestination().getId()!=R.id.userFragment) {
+                    NavOptions.Builder navBuilder = new NavOptions.Builder();
+                    NavOptions navOptions = navBuilder.setPopUpTo(R.id.chatListFragment, true).build();
+                    usernavController.navigate(R.id.userFragment, null, navOptions);
+                    ((MainActivity)getActivity()).setFragmentTag(FragmentTag.OTHERS,motionLayout,navController);
+
+                }
+
             }
 
             @Override
@@ -313,6 +326,7 @@ public class HomeFragment extends Fragment {
     private void observeLoginAndLocationPermissions(View view) {
         navController = Navigation.findNavController(view);
         chatnavController= Navigation.findNavController(getActivity(),R.id.chat_nav_host_fragment);
+        usernavController = Navigation.findNavController(getActivity(),R.id.user_nav_host_fragment);
         loginviewModel = new ViewModelProvider(requireActivity()).get(LoginViewModel.class);
         loginviewModel.init(getActivity());
         loginviewModel.getAuthentication().observe(getViewLifecycleOwner(), (Observer<Boolean>) isAuthenticated -> {

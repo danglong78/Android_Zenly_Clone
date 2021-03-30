@@ -59,14 +59,15 @@ public class FriendRequestFragment extends Fragment implements FriendRequestAdap
         invitingViewModel = new ViewModelProvider(requireActivity()).get(InvitingViewModel.class);
         invitationViewModel = new ViewModelProvider(requireActivity()).get(InvitationViewModel.class);
         friendViewModel = new ViewModelProvider(requireActivity()).get(FriendViewModel.class);
-
+        FriendRequestAdapter adapter = new FriendRequestAdapter(requireActivity(), FriendRequestFragment.this);
+        RecyclerView recyclerView = view.findViewById(R.id.friend_recycler_view);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         invitationViewModel.getInvitationsList().observe(getViewLifecycleOwner(), new Observer<List<User>>() {
             @Override
             public void onChanged(List<User> users) {
-                FriendRequestAdapter adapter = new FriendRequestAdapter(requireActivity(), (ArrayList<User>) invitationViewModel.getInvitationsList().getValue(), FriendRequestFragment.this);
-                RecyclerView recyclerView = view.findViewById(R.id.friend_recycler_view);
-                recyclerView.setAdapter(adapter);
-                recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+                 adapter.setUsers((ArrayList<User>) users);
+
             }
         });
 

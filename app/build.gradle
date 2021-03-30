@@ -22,6 +22,7 @@ android {
                                'src/main/res/layouts/locationRequest',
                                'src/main/res/layouts/login',
                                'src/main/res/layouts/main',
+                               'src/main/res/layouts/user',
                                'src/main/res/layouts',
                                'src/main/res'
             ]

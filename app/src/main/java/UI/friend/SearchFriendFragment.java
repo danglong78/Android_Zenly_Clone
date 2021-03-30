@@ -46,11 +46,11 @@ public class SearchFriendFragment extends Fragment implements FriendInvitingList
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-//        List<User> list= new ArrayList<>();
-//        list.add(new User(null,"Dang Minh Hoang Long","123","0e9748c8-8978-11eb-8dcd-0242ac130003.png",null,null,null));
-//        list.add(new User(null,"Ho Dai Tri","123","0e974b5c-8978-11eb-8dcd-0242ac130003.png",null,null,null));
-//        list.add(new User(null,"Tran Thanh Tam","123","0e974d50-8978-11eb-8dcd-0242ac130003.png",null,null,null));
-//        list.add(new User(null,"Huynh Lam Hoang Dai","123","0e974e36-8978-11eb-8dcd-0242ac130003.jpg",null,null,null));
+
+        FriendListAdapter adapter = new FriendListAdapter(requireActivity(),SearchFriendFragment.this);
+        RecyclerView recyclerView = view.findViewById(R.id.friend_recycler_view);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         invitationViewModel = new ViewModelProvider(requireActivity()).get(InvitationViewModel.class);
 
@@ -58,12 +58,12 @@ public class SearchFriendFragment extends Fragment implements FriendInvitingList
         friendViewModel.getFriendsList().observe(getViewLifecycleOwner(), new Observer<List<User>>() {
             @Override
             public void onChanged(List<User> users) {
-                FriendListAdapter adapter = new FriendListAdapter(requireActivity(), (ArrayList<User>) friendViewModel.getFriendsList().getValue(), SearchFriendFragment.this);
-                RecyclerView recyclerView = view.findViewById(R.id.friend_recycler_view);
-                recyclerView.setAdapter(adapter);
-                recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+                adapter.setUsers( (ArrayList<User>)users);
+                adapter.notifyDataSetChanged();
             }
         });
+
+
 
 
 //        List<User> invitedList= new ArrayList<>();
@@ -83,6 +83,7 @@ public class SearchFriendFragment extends Fragment implements FriendInvitingList
                 RecyclerView invitedRecyclerView = view.findViewById(R.id.invitedRecyclerView);
                 invitedRecyclerView.setAdapter(adapter);
                 invitedRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+                adapter.notifyDataSetChanged();
             }
         });
 

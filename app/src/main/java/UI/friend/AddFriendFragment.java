@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.provider.Settings;
 import android.util.Log;
@@ -67,17 +68,13 @@ public class AddFriendFragment extends Fragment implements FriendSuggestListAdap
     private InvitingViewModel invitingViewModel;
 
     TextView friendListText, friendRequestText;
-
+    SwipeRefreshLayout swiperefreshlayout;
     //    public static AddFriendFragment newInstance() {
 //        return new AddFriendFragment();
 //    }
     RecyclerView friendSuggestRecyclerView;
     FriendSuggestListAdapter adapter;
-    private int currentPage = PAGE_START;
-    private int totalPage = 10;
-    private boolean isLoading = false;
-    private boolean isInited=false;
-    int itemCount = 0;
+
 
 
     @Override
@@ -125,7 +122,22 @@ public class AddFriendFragment extends Fragment implements FriendSuggestListAdap
 
                         Log.d(TAG, "Dang chay ne");
 
+                        swiperefreshlayout= view.findViewById(R.id.swiperefresh);
+                        swiperefreshlayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener(){
+                            @Override
+                            public void onRefresh() {
+                                friendSuggestViewModel.load();
+                                CountDownTimer countdown= new CountDownTimer(5000, 1000) {
 
+                                    public void onTick(long millisUntilFinished) {
+                                    }
+
+                                    public void onFinish() {
+                                        swiperefreshlayout.setRefreshing(false);
+                                    }
+                                }.start();
+                            }
+                        });
 
                         RecentFriendListAdapter recentFriendAdapter = new RecentFriendListAdapter();
                         recentFriendRecyclerView.setAdapter(recentFriendAdapter);
@@ -133,32 +145,10 @@ public class AddFriendFragment extends Fragment implements FriendSuggestListAdap
                         friendSuggestViewModel.getSuggestFriendList().observe(getViewLifecycleOwner(), new Observer<List<User>>() {
                             @Override
                             public void onChanged(List<User> users) {
-                                Log.d(TAG, "onChanged: isInited " + isInited );
-                                Log.d(TAG, "onChanged: users.size() "  + users.size());
-                                if(isInited==true) {
-                                    isLoading = false;
-//                                    adapter.removeLoading();
-                                    adapter.setItems((ArrayList<User>) users);
-                                    adapter.notifyDataSetChanged();
-                                }
-                                else
-                                {
-                                    adapter.setItems((ArrayList<User>) users);
-                                    adapter.notifyDataSetChanged();
-                                    isInited=true;
-                            }
-                        }});
-                        friendSuggestRecyclerView.addOnScrollListener(new PaginationListener(layoutManager) {
-                            @Override
-                            protected void loadMoreItems() {
-                                isLoading=true;
-                                adapter.addLoading();
-                                friendSuggestViewModel.load();
-                            }
+                                swiperefreshlayout.setRefreshing(false);
+                                adapter.setItems((ArrayList<User>) users);
+                                adapter.notifyDataSetChanged();
 
-                            @Override
-                            public boolean isLoading() {
-                                return isLoading;
                             }
                         });
 
@@ -191,6 +181,7 @@ public class AddFriendFragment extends Fragment implements FriendSuggestListAdap
                             }
                         });
 
+
                     } else {
                         requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, CONTACT_REQUEST_ID);
                     }
@@ -204,14 +195,6 @@ public class AddFriendFragment extends Fragment implements FriendSuggestListAdap
 
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-//        mViewModel = new ViewModelProvider(this).get(FriendSuggestViewModel.class);
-        // TODO: Use the ViewModel
-        Log.d(TAG, "onActivityCreated: Run roi nha");
-
-    }
 
 
     @Override
@@ -228,7 +211,7 @@ public class AddFriendFragment extends Fragment implements FriendSuggestListAdap
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage("Are you sure you want hide this one ?");
-        builder.setNegativeButton("No", null);
+        builder.setNegativeButton("No",null);
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -270,4 +253,5 @@ public class AddFriendFragment extends Fragment implements FriendSuggestListAdap
         }
 
     }
+
 }
