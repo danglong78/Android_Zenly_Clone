@@ -20,6 +20,7 @@
             android:layout_height="60dp"
             android:scaleType="centerCrop"
             android:layout_gravity="center"
+            android:id="@+id/avatar"
             app:srcCompat="@drawable/ic_baseline_account_circle_24"
             />
     </androidx.cardview.widget.CardView>
