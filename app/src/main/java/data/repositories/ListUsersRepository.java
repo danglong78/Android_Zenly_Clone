@@ -84,60 +84,7 @@ public class ListUsersRepository {
         return listUserRef;
     }
 
-    public MutableLiveData<List<UserLocation>> getUserLocationList(LifecycleOwner lifecycleOwner) {
-        MutableLiveData<List<UserLocation>> userLocationList = new MutableLiveData<List<UserLocation>>();
-        userLocationList.setValue(new ArrayList<UserLocation>());
-
-        listUserRef.observe(lifecycleOwner, new Observer<List<UserRef>>() {
-
-            @Override
-            public void onChanged(List<UserRef> userRefs) {
-                for (UserRef userRef : userRefs) {
-                    boolean isExisted = false;
-                    for (UserLocation userLocation : userLocationList.getValue()) {
-                        if (userLocation.getUserUID().equals(userRef.getRef().getId())) {
-                            isExisted = true;
-                            break;
-                        }
-                    }
-                    if (!isExisted) {
-                        mDb.collection("UserLocations").document(userRef.getRef().getId()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-
-                            @Override
-                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                if (task.isSuccessful()) {
-                                    Log.d(TAG, "onComplete: getUserLocationList " + task.getResult().toObject(UserLocation.class));
-                                    userLocationList.getValue().add(task.getResult().toObject(UserLocation.class));
-                                    userLocationList.postValue(userLocationList.getValue());
-                                }
-                            }
-                        });
-
-                        mDb.collection("UserLocations").document(userRef.getRef().getId()).addSnapshotListener(new EventListener<DocumentSnapshot>() {
-
-                            @Override
-                            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-                                UserLocation changedUserLocation = value.toObject(UserLocation.class);
-                                for (UserLocation userLocation : userLocationList.getValue()) {
-                                    if (userLocation.getUserUID().equals(changedUserLocation.getUserUID())) {
-                                        userLocation.setLocation(changedUserLocation.getLocation());
-                                        break;
-                                    }
-                                }
-
-                                userLocationList.postValue(userLocationList.getValue());
-                            }
-                        });
-                    }
-                }
-            }
-        });
-
-        return userLocationList;
-    }
-
-
-    protected void handleREMOVED(List<UserRef> newRefList, MutableLiveData<List<User>> listUser, DocumentChange dc){
+    protected void handleREMOVED(List<UserRef> newRefList, MutableLiveData<List<User>> listUser, DocumentChange dc) {
         Log.d(TAG, "handleREMOVED: " + COLLECTION + " " + UserRef.toUserRef(dc));
         UserRef removeUserRef = UserRef.toUserRef(dc);
 
@@ -199,7 +146,7 @@ public class ListUsersRepository {
                             User addUser = document.toObject(User.class);
 
                             Log.d(TAG, "processSnapshots: " + COLLECTION + " " + UID + " add " + addUser.getUID());
-                            if(!listUser.getValue().contains(addUser)){
+                            if (!listUser.getValue().contains(addUser)) {
                                 listUser.getValue().add(addUser);
                                 listUser.postValue(listUser.getValue());
                             }
@@ -252,7 +199,7 @@ public class ListUsersRepository {
         for (DocumentChange dc : snapshots.getDocumentChanges()) {
             switch (dc.getType()) {
                 case ADDED:
-                    handleADDED(newRefList, listUser ,dc);
+                    handleADDED(newRefList, listUser, dc);
                     break;
                 case MODIFIED:
                     handleMODIFIED(newRefList, listUser, dc);
@@ -352,7 +299,7 @@ public class ListUsersRepository {
                         Log.d(TAG, "addToOtherRepository doc.exist(): " + COLLECTION + " " + document.getData());
                     } else {
                         ref.document(UID).set(myUserRef);
-                        Log.d(TAG, "addToOtherRepository: " + COLLECTION +" "+ UID + " added by " + otherUID);
+                        Log.d(TAG, "addToOtherRepository: " + COLLECTION + " " + UID + " added by " + otherUID);
                     }
                 } else {
                     Log.d(TAG, "get failed with ", task.getException());
@@ -366,7 +313,7 @@ public class ListUsersRepository {
         Log.d(TAG, "remove: " + COLLECTION + " " + UID + " remove " + removeUID);
     }
 
-    public void removeFromOtherRepository(String otherUID){
+    public void removeFromOtherRepository(String otherUID) {
         CollectionReference ref = getListRef(otherUID);
         ref.document(UID).delete();
     }
@@ -411,7 +358,7 @@ public class ListUsersRepository {
 
                 Log.d(TAG, "getPagination: " + COLLECTION + " size() " + snapshots.size());
 
-                if (snapshots.size() != 0){
+                if (snapshots.size() != 0) {
                     lastPaginated = snapshots.getDocuments().get((snapshots.size() - 1));
                     //Log.d(TAG, "getPagination: " + COLLECTION + " lastPaginated " + lastPaginated);
                 }
@@ -422,7 +369,7 @@ public class ListUsersRepository {
         });
     }
 
-    public void listenPaginationChange (){
+    public void listenPaginationChange() {
         listRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot snapshots, @Nullable FirebaseFirestoreException e) {
