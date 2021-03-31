@@ -66,7 +66,6 @@ public class MapViewModel extends ViewModel {
     private LocationRequest locationRequest;
     private ClusterManagerRenderer mClusterManagerRenderer;
     private ClusterManager mClusterManager;
-    private List<ClusterMarker> mClusterMarkers = new ArrayList<ClusterMarker>();
 
     private Context activity;
     private MutableLiveData<Boolean> isInited = new MutableLiveData<Boolean>();
@@ -95,70 +94,71 @@ public class MapViewModel extends ViewModel {
         mUserLocation.observe(lifecycleOwner, new Observer<UserLocation>() {
             @Override
             public void onChanged(UserLocation userLocation) {
-                Log.d(TAG, "onChanged: user location is inited");
+                if (isInited.getValue() == null) {
+                    Log.d(TAG, "onChanged: user location is inited");
 
-                //  Add host marker
-                mHostMarker = new ClusterMarker(
-                        new LatLng(userLocation.getLocation().getLatitude(), userLocation.getLocation().getLongitude()),
-                        userLocation.getName(),
-                        "You are now here",
-                        userLocation.getUserUID(),
-                        userLocation.getImageURL()
-                );
-                mClusterManager.addItem(mHostMarker);
-                moveTo(new LatLng(userLocation.getLocation().getLatitude(), userLocation.getLocation().getLongitude()));
+                    //  Add host marker
+                    mHostMarker = new ClusterMarker(
+                            new LatLng(userLocation.getLocation().getLatitude(), userLocation.getLocation().getLongitude()),
+                            userLocation.getName(),
+                            "You are now here",
+                            userLocation.getUserUID(),
+                            userLocation.getImageURL()
+                    );
+                    mClusterManager.addItem(mHostMarker);
+                    Log.d(TAG, "addMarker: addItem host " + mHostMarker.getUserUID());
+                    moveTo(new LatLng(userLocation.getLocation().getLatitude(), userLocation.getLocation().getLongitude()));
 
-                // Add friend markers
-                FriendViewModel mFriendViewModel = new ViewModelProvider((FragmentActivity) activity).get(FriendViewModel.class);
-                mFriendLocationList = mFriendViewModel.getFriendLocationList();
-                mFriendLocationList.observe(lifecycleOwner, new Observer<List<UserLocation>>() {
+                    // Add friend markers
+                    FriendViewModel mFriendViewModel = new ViewModelProvider((FragmentActivity) activity).get(FriendViewModel.class);
+                    mFriendLocationList = mFriendViewModel.getFriendLocationList();
+                    mFriendLocationList.observe(lifecycleOwner, new Observer<List<UserLocation>>() {
 
-                    @Override
-                    public void onChanged(List<UserLocation> userLocations) {
-                        Log.d(TAG, "onChanged: userLocations " + userLocations.size());
-                        for (UserLocation userLocation : userLocations) {
-                            Log.d(TAG, "onChanged: userLocation " + userLocation.getUserUID());
-                            Boolean isExisted = false;
-                            for (ClusterMarker clusterMarker : mFriendMarkers) {
-                                if (userLocation.getUserUID().equals(clusterMarker.getUserUID())) {
-                                    isExisted = true;
-                                    break;
+                        @Override
+                        public void onChanged(List<UserLocation> userLocations) {
+                            Log.d(TAG, "onChanged: userLocations " + userLocations.size());
+                            for (UserLocation userLocation : userLocations) {
+                                if (userLocation.getUserUID().equals(mHostMarker.getUserUID())) continue;
+                                Log.d(TAG, "onChanged: " + userLocation.getUserUID());
+                                Log.d(TAG, "onChanged: userLocation " + userLocation.getUserUID());
+                                Boolean isExisted = false;
+                                for (ClusterMarker clusterMarker : mFriendMarkers) {
+                                    if (userLocation.getUserUID().equals(clusterMarker.getUserUID())) {
+                                        isExisted = true;
+                                        Log.d(TAG, "onChanged: already existed");
+                                        break;
+                                    }
                                 }
-                            }
 
-                            if (!isExisted) {
-                                ClusterMarker newFriendMarker = new ClusterMarker(
-                                        new LatLng(userLocation.getLocation().getLatitude(), userLocation.getLocation().getLongitude()),
-                                        userLocation.getName(),
-                                        "Your friend",
-                                        userLocation.getUserUID(),
-                                        userLocation.getImageURL());
-                                addMarker(userLocation, "Your Friend " + userLocation.getName());
-                            }
+                                if (!isExisted) {
+                                    addMarker(userLocation, "Your Friend " + userLocation.getName());
+                                    Log.d(TAG, "onChanged: Add new marker");
+                                }
 
-                            // Update location real time
-                            updateMarker(userLocation.getUserUID(), new LatLng(userLocation.getLocation().getLatitude(), userLocation.getLocation().getLongitude()));
+                                // Update location real time
+                                updateMarker(userLocation.getUserUID(), new LatLng(userLocation.getLocation().getLatitude(), userLocation.getLocation().getLongitude()));
+                            }
                         }
-                    }
-                });
+                    });
 
-                // Ghost mode
-                mFriendRefList = mFriendViewModel.getFriendsRefList();
-                mFriendRefList.observe(lifecycleOwner, new Observer<List<UserRef>>() {
-                    @Override
-                    public void onChanged(List<UserRef> userRefs) {
+                    // Ghost mode
+                    mFriendRefList = mFriendViewModel.getFriendsRefList();
+                    mFriendRefList.observe(lifecycleOwner, new Observer<List<UserRef>>() {
+                        @Override
+                        public void onChanged(List<UserRef> userRefs) {
 
-                    }
-                });
-
-
-                mClusterManager.cluster();
+                        }
+                    });
 
 
-                mHostUserLocationRef = UserRepository.getInstance().getUserLocationReference(userLocation.getUserUID());
+                    mClusterManager.cluster();
 
-                requestLocationUpdate(activity);
 
+                    mHostUserLocationRef = UserRepository.getInstance().getUserLocationReference(userLocation.getUserUID());
+
+                    requestLocationUpdate(activity);
+                    isInited.postValue(true);
+                }
                 mUserLocation.removeObserver(this);
             }
         });
@@ -286,7 +286,8 @@ public class MapViewModel extends ViewModel {
         );
 
         mClusterManager.addItem(newClusterMarker);
-        mClusterMarkers.add(newClusterMarker);
+        Log.d(TAG, "addMarker func: addItem " + newClusterMarker.getUserUID());
+        mFriendMarkers.add(newClusterMarker);
         mClusterManager.cluster();
     }
 
@@ -313,8 +314,9 @@ public class MapViewModel extends ViewModel {
     }
 
     public void updateMarker(String uid, LatLng newLocation) {
-        for (ClusterMarker marker : mClusterMarkers) {
+        for (ClusterMarker marker : mFriendMarkers) {
             if (marker.getUserUID().equals(uid)) {
+                Log.d(TAG, "updateMarker: " + marker.getUserUID());
                 marker.setPosition(newLocation);
                 mClusterManager.updateItem(marker);
                 mClusterManagerRenderer.updateClusterMarker(marker);

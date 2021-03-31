@@ -113,6 +113,22 @@ public class ListUsersRepository {
                                 }
                             }
                         });
+
+                        mDb.collection("UserLocations").document(userRef.getRef().getId()).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+
+                            @Override
+                            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                                UserLocation changedUserLocation = value.toObject(UserLocation.class);
+                                for (UserLocation userLocation : userLocationList.getValue()) {
+                                    if (userLocation.getUserUID().equals(changedUserLocation.getUserUID())) {
+                                        userLocation.setLocation(changedUserLocation.getLocation());
+                                        break;
+                                    }
+                                }
+
+                                userLocationList.postValue(userLocationList.getValue());
+                            }
+                        });
                     }
                 }
             }

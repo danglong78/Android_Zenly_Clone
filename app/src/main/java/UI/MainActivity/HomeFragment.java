@@ -116,8 +116,6 @@ public class HomeFragment extends Fragment {
                         if (isInited) {
                             Log.d(TAG, "onChanged: observe inited user event");
 
-                            mapViewModel.init(getViewLifecycleOwner());
-
                             runLocationUpdateWorker(userViewModel.getHostUser().getValue().getUID());
 
                             // Friends
