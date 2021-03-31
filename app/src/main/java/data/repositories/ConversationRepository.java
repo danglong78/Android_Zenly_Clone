@@ -129,11 +129,9 @@ public class ConversationRepository {
                                 }
                             });
                             conv.postValue(convList);
-                            if(madapter!=null) {
-                                Log.d(TAG,"TriNe123");
-                                madapter.setConversationList(convList);
-                                nav_drawer_recycler_view.setAdapter(madapter);
-                            }
+                            Log.d(TAG,"TriNe123");
+                            madapter.setConversationList(convList);
+                            nav_drawer_recycler_view.setAdapter(madapter);
                         }
                     }
                 });

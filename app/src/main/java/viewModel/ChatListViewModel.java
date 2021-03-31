@@ -87,4 +87,8 @@ public class ChatListViewModel extends ViewModel {
     public MutableLiveData<ArrayList<Conversation>> getConvList() {
         return convList;
     }
+
+    public void setIsInitedFalse(){
+        this.isInited.postValue(false);
+    }
 }

@@ -71,7 +71,6 @@ public class ChatListFragment extends Fragment implements ChatListAdapter.OnChat
             MainActivity activity = (MainActivity) getActivity();
             activity.setFragmentTag(FragmentTag.CHAT,homeFragmentMotionLayout,navController);
             navController.navigate(R.id.action_chatListFragment_to_searchChatFragment);
-
         });
         LoginViewModel loginviewModel = new ViewModelProvider(requireActivity()).get(LoginViewModel.class);
         RequestLocationViewModel requestLocationViewModel = new ViewModelProvider(requireActivity()).get(RequestLocationViewModel.class);
@@ -85,29 +84,27 @@ public class ChatListFragment extends Fragment implements ChatListAdapter.OnChat
             UserViewModel mUserViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
             ChatListAdapter.OnChatListListener onChatListListener = this;
             madapter = new ChatListAdapter(getActivity(),onChatListListener);
-            if(mUserViewModel.getIsInited().getValue()==null){
-                mUserViewModel.getIsInited().observe(getViewLifecycleOwner(),new Observer<Boolean>(){
-                    @Override
-                    public void onChanged(Boolean aBoolean) {
-                        if(aBoolean){
-                            mChatListViewModel = new ViewModelProvider(requireActivity()).get(ChatListViewModel.class);
-                            mChatListViewModel.init(nav_drawer_recycler_view,listConvListener,madapter,mUserViewModel,getActivity(),getViewLifecycleOwner());
-
-                            mChatListViewModel.getIsInited().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
-                                @Override
-                                public void onChanged(Boolean isInited) {
-                                    if (isInited) {
-                                        nav_drawer_recycler_view.setAdapter(madapter);
-                                        nav_drawer_recycler_view.setLayoutManager(new LinearLayoutManager(getActivity()));
-                                        mChatListViewModel.getIsInited().removeObserver(this);
-                                    }
+            mUserViewModel.getIsInited().observe(getViewLifecycleOwner(),new Observer<Boolean>(){
+                @Override
+                public void onChanged(Boolean aBoolean) {
+                    if(aBoolean){
+                        mChatListViewModel = new ViewModelProvider(requireActivity()).get(ChatListViewModel.class);
+                        mChatListViewModel.init(nav_drawer_recycler_view,listConvListener,madapter,mUserViewModel,getActivity(),getViewLifecycleOwner());
+                        mChatListViewModel.getIsInited().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+                            @Override
+                            public void onChanged(Boolean isInited) {
+                                if (isInited) {
+                                    nav_drawer_recycler_view.setAdapter(madapter);
+                                    nav_drawer_recycler_view.setLayoutManager(new LinearLayoutManager(getActivity()));
+                                    mChatListViewModel.getIsInited().removeObserver(this);
+                                    mChatListViewModel.setIsInitedFalse();
                                 }
-                            });
-                            mUserViewModel.getIsInited().removeObserver(this);
-                        }
+                            }
+                        });
+                        mUserViewModel.getIsInited().removeObserver(this);
                     }
-                });
-            }
+                }
+            });
         }
     }
     private int getStatusBarHeight() {
@@ -147,4 +144,5 @@ public class ChatListFragment extends Fragment implements ChatListAdapter.OnChat
         });
         builder.create().show();
     }
+
 }
