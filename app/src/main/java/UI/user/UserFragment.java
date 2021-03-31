@@ -25,6 +25,8 @@ import androidx.annotation.Nullable;
 import androidx.constraintlayout.motion.widget.MotionLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -37,9 +39,14 @@ import com.google.firebase.storage.StorageReference;
 import com.study.android_zenly.BuildConfig;
 import com.study.android_zenly.R;
 
+import java.util.List;
+
 import UI.MainActivity.MainActivity;
 import adapter.UserSettingApdater;
+import data.models.User;
 import ultis.FragmentTag;
+import viewModel.FriendViewModel;
+import viewModel.UserViewModel;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -51,6 +58,10 @@ public class UserFragment extends Fragment implements UserSettingApdater.UserSet
     Button ghostModeButton;
     private static final int REQUEST_CAMERA_REQUEST_CODE = 23;
     private static final int REQUEST_GALLERY_REQUEST_CODE = 32;
+    private UserViewModel userViewModel;
+    private FriendViewModel friendViewModel;
+    // blocks
+    RecyclerView recyclerview;
     MotionLayout homeFragmentMotionLayout;
     MainActivity activity;
 
@@ -125,7 +136,7 @@ public class UserFragment extends Fragment implements UserSettingApdater.UserSet
                                         fineLocationRationalSnackbar(Manifest.permission.READ_EXTERNAL_STORAGE,REQUEST_GALLERY_REQUEST_CODE));
                             } else {
                                 Intent pickPhoto = new Intent(Intent.ACTION_PICK,
-                                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                                 startActivityForResult(pickPhoto , 1);                            }
                             break;
                         }
@@ -148,14 +159,37 @@ public class UserFragment extends Fragment implements UserSettingApdater.UserSet
 
 
         });
-        RecyclerView recyclerview = view.findViewById(R.id.recyclerview);
-        UserSettingApdater adapter = new UserSettingApdater(prefs);
-        adapter.callback=this;
-        recyclerview.setAdapter(adapter);
-        recyclerview.setLayoutManager(new LinearLayoutManager(requireActivity()));
+        recyclerview = view.findViewById(R.id.recyclerview);
+
+//        userViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
+//        userViewModel.getHostUser().observe(getViewLifecycleOwner(), new Observer<User>() {
+//            @Override
+//            public void onChanged(User s) {
+//                updateProfile();
+//            }
+//        });
+//
+//        friendViewModel = new ViewModelProvider(requireActivity()).get(FriendViewModel.class);
+//        friendViewModel.init(requireActivity(), getViewLifecycleOwner());
+//        friendViewModel.getFriendsList().observe(getViewLifecycleOwner(), new Observer<List<User>>() {
+//            @Override
+//            public void onChanged(List<User> users) {
+//                updateProfile();
+//            }
+//        });
+
+        // blocks
 
 
     }
+
+    void updateProfile(){
+        UserSettingApdater adapter = new UserSettingApdater(userViewModel.getHostUser().getValue().getDob(), friendViewModel.getFriendsList().getValue().size(), 0 );
+        adapter.callback = UserFragment.this;
+        recyclerview.setAdapter(adapter);
+        recyclerview.setLayoutManager(new LinearLayoutManager(requireActivity()));
+    }
+
 
     @Override
     public void onListClick(int position) {

@@ -155,6 +155,13 @@ public class AddFriendFragment extends Fragment implements FriendSuggestListAdap
                                 recentFriendAdapter.notifyDataSetChanged();                            }
                         });
 
+                        friendSuggestViewModel.getSuggestFriendList().observe(getViewLifecycleOwner(), new Observer<List<User>>() {@Override
+                        public void onChanged(List<User> users) {
+                            swiperefreshlayout.setRefreshing(false);
+                            adapter.setItems((ArrayList<User>) users);
+                            adapter.notifyDataSetChanged();
+                        }});
+
 
                         Log.d(TAG, "Dang chay ne2");
                         NavController navController = Navigation.findNavController(requireActivity(), R.id.friend_nav_host_fragment);

@@ -45,7 +45,6 @@ public class ListUsersRepository {
     protected MutableLiveData<List<User>> listUser;
 
     protected DocumentSnapshot lastPaginated;
-    private boolean isUsingPagination = false;
 
     private CollectionReference getListRef(String UID) {
         Log.d(TAG, "getListRef: " + COLLECTION);
@@ -146,6 +145,14 @@ public class ListUsersRepository {
             newRefList.remove(removeUserRef);
 
         removeList(toUID(removeUserRef.getRef().getPath()), listUser);
+
+        if(listUserRef.getValue()!=null){
+            String x = "size() = " + listUserRef.getValue().size();
+            for(UserRef u : listUserRef.getValue()){
+                x += u.getRef().getPath() +" ";
+            }
+            Log.d(TAG, "listRefChange: " + COLLECTION + " " + x);
+        }
     }
 
     protected void handleMODIFIED(List<UserRef> newRefList, MutableLiveData<List<User>> listUser, DocumentChange dc) {
@@ -155,12 +162,22 @@ public class ListUsersRepository {
         if (newRefList != null)
             newRefList.remove(modifyUserRef);
 
+
         Log.d(TAG, "onEventMODIFIED: " + COLLECTION + " " + modifyUserRef.getRef().getPath());
         if (modifyUserRef.getHidden())
             removeList(toUID(modifyUserRef.getRef().getPath()), listUser);
+        
 
         if (newRefList != null)
             newRefList.add(modifyUserRef);
+
+        if(listUserRef.getValue()!=null){
+            String x = "size() = " + listUserRef.getValue().size();
+            for(UserRef u : listUserRef.getValue()){
+                x += u.getRef().getPath() +" ";
+            }
+            Log.d(TAG, "listRefChange: " + COLLECTION + " " + x);
+        }
     }
 
     protected void handleADDED(List<UserRef> newRefList, MutableLiveData<List<User>> listUser, DocumentChange dc) {
@@ -214,6 +231,14 @@ public class ListUsersRepository {
                     }
                 }
             });
+
+        if(listUserRef.getValue()!=null){
+            String x = "size() = " + listUserRef.getValue().size();
+            for(UserRef u : listUserRef.getValue()){
+                x += u.getRef().getPath() +" ";
+            }
+            Log.d(TAG, "listRefChange: " + COLLECTION + " " + x);
+        }
     }
 
     private void processAllSnapshots(QuerySnapshot snapshots) {
@@ -371,7 +396,6 @@ public class ListUsersRepository {
 
     public void getPagination() {
         Log.d(TAG, "getPagination: run " + COLLECTION);
-        isUsingPagination = true;
         Query query = null;
 
         if (lastPaginated == null) {
@@ -389,7 +413,7 @@ public class ListUsersRepository {
 
                 if (snapshots.size() != 0){
                     lastPaginated = snapshots.getDocuments().get((snapshots.size() - 1));
-                    Log.d(TAG, "getPagination: " + COLLECTION + " lastPaginated " + lastPaginated);
+                    //Log.d(TAG, "getPagination: " + COLLECTION + " lastPaginated " + lastPaginated);
                 }
 
 

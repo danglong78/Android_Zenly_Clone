@@ -15,13 +15,21 @@ import com.study.android_zenly.R;
 import java.util.Date;
 
 import ultis.DateFormatter;
+import viewModel.UserViewModel;
 
 public class UserSettingApdater extends RecyclerView.Adapter<UserSettingApdater.ViewHolder> {
     public  UserSettingCallback callback;
     private  SharedPreferences prefs;
-    public UserSettingApdater(SharedPreferences prefs) {}
+    private String dob;
+    private int numFriends;
+    private int numBlocks;
+
+
+    public UserSettingApdater(String dob, int numFriends, int numBlocks) {}
     {
-        this.prefs = prefs;
+        this.dob = dob;
+        this.numFriends = numFriends;
+        this.numBlocks = numBlocks;
     }
     @NonNull
     @Override
@@ -39,18 +47,20 @@ public class UserSettingApdater extends RecyclerView.Adapter<UserSettingApdater.
                     int day = prefs.getInt("day",1);
                     int month = prefs.getInt("month",1);
                     int year = prefs.getInt("year",2000);
-                    holder.getDescriptionText().setText(DateFormatter.format(new Date(year,month+1,day),"dd MMMM yyyy"));
+                    holder.getDescriptionText().setText(dob);
                 }
                 break;
             }
             case 1:
             {
                 holder.getTitleText().setText("Friends");
+                holder.getDescriptionText().setText(numFriends);
                 break;
             }
             case 2:
             {
                 holder.getTitleText().setText("Block User");
+                holder.getDescriptionText().setText(numBlocks);
                 break;
             }
 
@@ -91,4 +101,5 @@ public class UserSettingApdater extends RecyclerView.Adapter<UserSettingApdater.
     public interface UserSettingCallback{
          void onListClick(int position);
     }
+
 }

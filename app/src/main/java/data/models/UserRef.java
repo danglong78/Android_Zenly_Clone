@@ -35,7 +35,7 @@ public class UserRef {
     public boolean equals(Object obj) {
         if (obj instanceof UserRef) {
             UserRef o = (UserRef) obj;
-            return o.ref == this.ref;
+            return o.ref.getPath().equals(this.ref.getPath());
         }
         return false;
     }
