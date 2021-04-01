@@ -15,7 +15,6 @@ import com.study.android_zenly.R;
 import java.util.Date;
 
 import ultis.DateFormatter;
-import viewModel.UserViewModel;
 
 public class UserSettingApdater extends RecyclerView.Adapter<UserSettingApdater.ViewHolder> {
     public  UserSettingCallback callback;
@@ -25,7 +24,7 @@ public class UserSettingApdater extends RecyclerView.Adapter<UserSettingApdater.
     private int numBlocks;
 
 
-    public UserSettingApdater(String dob, int numFriends, int numBlocks) {}
+    public UserSettingApdater(String dob, int numFriends, int numBlocks)
     {
         this.dob = dob;
         this.numFriends = numFriends;
@@ -43,24 +42,19 @@ public class UserSettingApdater extends RecyclerView.Adapter<UserSettingApdater.
         switch (position){
             case 0:{
                 holder.getTitleText().setText("Birthdays");
-                if ( (prefs != null) && prefs.contains("day")&& prefs.contains("month")&& prefs.contains("year") ) {
-                    int day = prefs.getInt("day",1);
-                    int month = prefs.getInt("month",1);
-                    int year = prefs.getInt("year",2000);
-                    holder.getDescriptionText().setText(dob);
-                }
+                holder.getDescriptionText().setText(dob);
                 break;
             }
             case 1:
             {
                 holder.getTitleText().setText("Friends");
-                holder.getDescriptionText().setText(numFriends);
+                holder.getDescriptionText().setText(String.valueOf(numFriends));
                 break;
             }
             case 2:
             {
                 holder.getTitleText().setText("Block User");
-                holder.getDescriptionText().setText(numBlocks);
+                holder.getDescriptionText().setText(String.valueOf(numBlocks));
                 break;
             }
 
@@ -92,7 +86,7 @@ public class UserSettingApdater extends RecyclerView.Adapter<UserSettingApdater.
             return text;
         }
         public TextView getDescriptionText() {
-            return text;
+            return text2;
         }
         public  View getView(){
             return view;
@@ -101,5 +95,4 @@ public class UserSettingApdater extends RecyclerView.Adapter<UserSettingApdater.
     public interface UserSettingCallback{
          void onListClick(int position);
     }
-
 }

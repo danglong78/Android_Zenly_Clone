@@ -39,11 +39,13 @@ import com.google.firebase.storage.StorageReference;
 import com.study.android_zenly.BuildConfig;
 import com.study.android_zenly.R;
 
+import java.util.Date;
 import java.util.List;
 
 import UI.MainActivity.MainActivity;
 import adapter.UserSettingApdater;
 import data.models.User;
+import ultis.DateFormatter;
 import ultis.FragmentTag;
 import viewModel.FriendViewModel;
 import viewModel.UserViewModel;
@@ -64,7 +66,7 @@ public class UserFragment extends Fragment implements UserSettingApdater.UserSet
     RecyclerView recyclerview;
     MotionLayout homeFragmentMotionLayout;
     MainActivity activity;
-
+    SharedPreferences prefs;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -80,7 +82,7 @@ public class UserFragment extends Fragment implements UserSettingApdater.UserSet
         super.onViewCreated(view, savedInstanceState);
         userName = (TextView) view.findViewById(R.id.userName);
         navController= Navigation.findNavController(view);
-        SharedPreferences prefs = getActivity().getSharedPreferences("user_infor", Context.MODE_PRIVATE);
+        prefs = getActivity().getSharedPreferences("user_infor", Context.MODE_PRIVATE);
         if ((prefs != null) && (prefs.contains("name"))) {
             String temp = prefs.getString("name", "");
             userName.setText(temp);
@@ -159,9 +161,11 @@ public class UserFragment extends Fragment implements UserSettingApdater.UserSet
 
 
         });
-        recyclerview = view.findViewById(R.id.recyclerview);
+        userViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
+        friendViewModel = new ViewModelProvider(requireActivity()).get(FriendViewModel.class);
 
-//        userViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
+        recyclerview = view.findViewById(R.id.recyclerview);
+        updateProfile();
 //        userViewModel.getHostUser().observe(getViewLifecycleOwner(), new Observer<User>() {
 //            @Override
 //            public void onChanged(User s) {
@@ -169,7 +173,6 @@ public class UserFragment extends Fragment implements UserSettingApdater.UserSet
 //            }
 //        });
 //
-//        friendViewModel = new ViewModelProvider(requireActivity()).get(FriendViewModel.class);
 //        friendViewModel.init(requireActivity(), getViewLifecycleOwner());
 //        friendViewModel.getFriendsList().observe(getViewLifecycleOwner(), new Observer<List<User>>() {
 //            @Override
@@ -184,7 +187,10 @@ public class UserFragment extends Fragment implements UserSettingApdater.UserSet
     }
 
     void updateProfile(){
-        UserSettingApdater adapter = new UserSettingApdater(userViewModel.getHostUser().getValue().getDob(), friendViewModel.getFriendsList().getValue().size(), 0 );
+        int year= prefs.getInt("year",0);
+        int month= prefs.getInt("month",0);
+        int day= prefs.getInt("day",0);
+        UserSettingApdater adapter = new UserSettingApdater(DateFormatter.format(new Date(year-1900,month,day),"dd MMMM yyyy"), friendViewModel.getFriendsList().getValue().size(), 0 );
         adapter.callback = UserFragment.this;
         recyclerview.setAdapter(adapter);
         recyclerview.setLayoutManager(new LinearLayoutManager(requireActivity()));

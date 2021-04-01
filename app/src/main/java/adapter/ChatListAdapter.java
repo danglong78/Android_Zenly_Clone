@@ -52,8 +52,10 @@ public class ChatListAdapter  extends RecyclerView.Adapter<ChatListAdapter.ViewH
 
     public ChatListAdapter(Context context,OnChatListListener onChatListListener) {
         this.onChatListListener= onChatListListener;
+        convList=new ArrayList<>();
         this.context = context;
         storage= FirebaseStorage.getInstance();
+        convListAll= new ArrayList<>(convList);
     }
     @NonNull
     @Override
@@ -188,9 +190,11 @@ public class ChatListAdapter  extends RecyclerView.Adapter<ChatListAdapter.ViewH
         if(convList!=null){
             convList.clear();
             convList.addAll(listConv);
+            convListAll= new ArrayList<>(convList);
         }else{
             convList = new ArrayList<Conversation>();
             convList.addAll(listConv);
+            convListAll= new ArrayList<>(convList);
         }
     }
 

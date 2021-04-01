@@ -100,59 +100,64 @@ public class HomeFragment extends Fragment {
     @Override
     public void onStart() {
         Log.d(TAG, "onStart: order test");
+        userViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
+
         super.onStart();
-        if(loginviewModel.getAuthentication().getValue() ) {
-            userViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
+        mapViewModel = new ViewModelProvider(requireActivity()).get(MapViewModel.class);
+        mapViewModel.setActivity(getActivity());
+        mapViewModel.init(getViewLifecycleOwner());
+        runLocationUpdateWorker(userViewModel.getHostUser().getValue().getUID());
 
-            mapViewModel = new ViewModelProvider(requireActivity()).get(MapViewModel.class);
-            mapViewModel.setActivity(getActivity());
-
-            friendViewModel = new ViewModelProvider(requireActivity()).get(FriendViewModel.class);
-
-            if (userViewModel.getIsInited().getValue() == null) {
-                userViewModel.getIsInited().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
-                    @Override
-                    public void onChanged(Boolean isInited) {
-                        if (isInited) {
-                            Log.d(TAG, "onChanged: observe inited user event");
-
-                            runLocationUpdateWorker(userViewModel.getHostUser().getValue().getUID());
-
-                            // Friends
-                            friendViewModel.init(requireActivity(), getViewLifecycleOwner());
-                            friendViewModel.getIsInited().observe(getViewLifecycleOwner(), new Observer<List<Boolean>>() {
-
-                                @Override
-                                public void onChanged(List<Boolean> isInitedList) {
-                                    Boolean isAllInited = true;
-                                    for (Boolean isInited : isInitedList) {
-                                        if (!isInited) {
-                                            isAllInited = false;
-                                            break;
-                                        }
-                                    }
-
-                                    if (isAllInited) {
-                                        // Add friend markers
-                                        // Map
-                                        mapViewModel.init(getViewLifecycleOwner());
-
-                                        friendViewModel.getIsInited().removeObserver(this);
-                                    }
-                                }
-
-
-                            });
-
-                            userViewModel.getIsInited().removeObserver(this);
-                        }
-                    }
-                });
-            }
-
-            userViewModel.init(getActivity(), getViewLifecycleOwner());
-
-        }
+//        if(loginviewModel.getAuthentication().getValue() ) {
+//
+//            mapViewModel = new ViewModelProvider(requireActivity()).get(MapViewModel.class);
+//            mapViewModel.setActivity(getActivity());
+//
+//            friendViewModel = new ViewModelProvider(requireActivity()).get(FriendViewModel.class);
+//
+//            if (userViewModel.getIsInited().getValue() == null) {
+//                userViewModel.getIsInited().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+//                    @Override
+//                    public void onChanged(Boolean isInited) {
+//                        if (isInited) {
+//                            Log.d(TAG, "onChanged: observe inited user event");
+//
+//
+//                            // Friends
+//                            friendViewModel.init(requireActivity(), getViewLifecycleOwner());
+//                            friendViewModel.getIsInited().observe(getViewLifecycleOwner(), new Observer<List<Boolean>>() {
+//
+//                                @Override
+//                                public void onChanged(List<Boolean> isInitedList) {
+//                                    Boolean isAllInited = true;
+//                                    for (Boolean isInited : isInitedList) {
+//                                        if (!isInited) {
+//                                            isAllInited = false;
+//                                            break;
+//                                        }
+//                                    }
+//
+//                                    if (isAllInited) {
+//                                        // Add friend markers
+//                                        // Map
+//                                        mapViewModel.init(getViewLifecycleOwner());
+//
+//                                        friendViewModel.getIsInited().removeObserver(this);
+//                                    }
+//                                }
+//
+//
+//                            });
+//
+//                            userViewModel.getIsInited().removeObserver(this);
+//                        }
+//                    }
+//                });
+//            }
+//
+//            userViewModel.init(getActivity(), getViewLifecycleOwner());
+//
+//        }
         if(bottomSheetBehavior.getState()==BottomSheetBehavior.STATE_EXPANDED) {
             bottomSheetMotionLayout.setProgress(1);
         }
