@@ -128,6 +128,7 @@ public class ConversationRepository {
                                     return o2.getRecentMessage().getTime().compareTo(o1.getRecentMessage().getTime());
                                 }
                             });
+                            Log.d("abcxyz",convList.toString());
                             conv.postValue(convList);
                             Log.d(TAG,"TriNe123");
                             madapter.setConversationList(convList);

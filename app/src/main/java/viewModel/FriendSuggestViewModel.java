@@ -14,6 +14,7 @@ import java.util.List;
 
 import data.models.User;
 import data.models.UserRef;
+import data.models.UserRefSuggest;
 import data.repositories.SuggestFriendRepository;
 
 
@@ -22,7 +23,7 @@ public class FriendSuggestViewModel extends ViewModel {
     private final String SUGGESTIONS_COLLECTION = "Suggestions";
 
     SuggestFriendRepository repository;
-    private MutableLiveData<List<UserRef>> suggestFriendRefList;
+    private MutableLiveData<List<UserRefSuggest>> suggestFriendRefList;
     private MutableLiveData<List<User>> suggestFriendList;
 
     private String hostUID;
@@ -46,7 +47,7 @@ public class FriendSuggestViewModel extends ViewModel {
         }
     }
 
-    public LiveData<List<UserRef>> getSuggestFriendRefList() {
+    public LiveData<List<UserRefSuggest>> getSuggestFriendRefList() {
         Log.d(TAG, "getSuggestFriendList: " + suggestFriendRefList);
         return suggestFriendRefList;
     }

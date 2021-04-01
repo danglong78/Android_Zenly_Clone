@@ -8,6 +8,7 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -16,16 +17,17 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 
 import data.models.User;
+import data.models.UserRefSuggest;
 
-public class SuggestFriendRepository extends ListUsersRepository {
+public class SuggestFriendRepository extends ListUsersRepository<UserRefSuggest> {
     private final String TAG = "SuggestFriendReposity";
     private final String USER_COLLECTION = "Users";
 
     private static SuggestFriendRepository mInstance;
 
-
     private SuggestFriendRepository(String SUGGESTIONS_COLLECTION, String UID) {
         super(SUGGESTIONS_COLLECTION, UID);
+        this.myUserRef = new UserRefSuggest(mDb.document(USER_COLLECTION + "/" + UID), true, Timestamp.now());
     }
 
     public static SuggestFriendRepository getInstance(String SUGGESTIONS_COLLECTION, String UID) {
@@ -79,44 +81,6 @@ public class SuggestFriendRepository extends ListUsersRepository {
         return phones;
     }
 
-//    public MutableLiveData<List<User>> getSuggestFriendList(Context context) {
-//        ArrayList<String> phones = getPhoneNumbersFromContact(context);
-//        MutableLiveData<List<User>> suggestFriendList = new MutableLiveData<List<User>>();
-//        suggestFriendList.setValue(new ArrayList<User>());
-//
-//
-//        for (String phone : phones) {
-//            mDb.collection(USER_COLLECTION)
-//                    .whereEqualTo("phone", phone)
-//                    .addSnapshotListener(new EventListener<QuerySnapshot>() {
-//                        @Override
-//                        public void onEvent(@Nullable QuerySnapshot snapshots,
-//                                            @Nullable FirebaseFirestoreException e) {
-//                            if (e != null) {
-//                                Log.w(TAG, "listen:error", e);
-//                                return;
-//                            }
-//
-//                            List<User> newSuggestFriendList = new ArrayList<>();
-//
-//                            for (DocumentChange dc : snapshots.getDocumentChanges()) {
-//                                if(dc.getType() == DocumentChange.Type.ADDED){
-//                                    newSuggestFriendList.add(dc.getDocument().toObject(User.class));
-//                                    Log.d(TAG, "SuggestFriend: " + dc.getDocument().get("phone"));
-//                                }
-//                            }
-//
-//                            suggestFriendList.getValue().addAll(newSuggestFriendList);
-//                            suggestFriendList.postValue(suggestFriendList.getValue());
-//                        }
-//                    });
-//        }
-//
-//        Log.d(TAG, "getSuggestFriendList: " + suggestFriendList.getValue());
-//
-//        return suggestFriendList;
-//        }
-
     public void initContactSuggestFriendList(Context context, String userPhone) {
         addInit();
 
@@ -137,7 +101,7 @@ public class SuggestFriendRepository extends ListUsersRepository {
                             for (DocumentChange dc : snapshots.getDocumentChanges()) {
                                 if (dc.getType() == DocumentChange.Type.ADDED) {
                                     User newSuggest = dc.getDocument().toObject(User.class);
-                                    addToMyRepository(newSuggest.getUID());
+                                    addToMyRepository(new UserRefSuggest(mDb.document(USER_COLLECTION + "/" + newSuggest.getUID()), false, Timestamp.now()));
                                 }
                             }
                         }
@@ -147,8 +111,6 @@ public class SuggestFriendRepository extends ListUsersRepository {
 
     public void modify(String modifyUID, boolean hidden) {
         listRef.document(modifyUID).update("hidden", hidden);
-        removeList(modifyUID, listUser);
         Log.d(TAG, "modify: " + UID + " modify " + modifyUID + " " + hidden);
     }
-
 }

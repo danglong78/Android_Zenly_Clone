@@ -6,28 +6,18 @@ import com.google.firebase.firestore.DocumentReference;
 
 public class UserRef {
     private DocumentReference ref;
-    private boolean hidden = false;
     private Timestamp time;
 
     public UserRef(){
     }
 
-    public UserRef(DocumentReference ref, boolean hidden, Timestamp time) {
+    public UserRef(DocumentReference ref, Timestamp time) {
         this.ref = ref;
-        this.hidden = hidden;
         this.time = time;
-    }
-
-    public void setHidden(boolean hidden){
-        this.hidden = hidden;
     }
 
     public DocumentReference getRef(){
         return ref;
-    }
-
-    public boolean getHidden(){
-        return hidden;
     }
 
     public Timestamp getTime(){return time;}
@@ -43,4 +33,9 @@ public class UserRef {
     public static UserRef toUserRef(DocumentChange userRef){
         return userRef.getDocument().toObject(UserRef.class);
     }
+
+    public void setTimestampNow(){
+        this.time = Timestamp.now();
+    }
+
 }

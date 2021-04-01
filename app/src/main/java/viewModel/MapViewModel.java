@@ -46,6 +46,7 @@ import data.models.ClusterMarker;
 import data.models.User;
 import data.models.UserLocation;
 import data.models.UserRef;
+import data.models.UserRefFriend;
 import data.repositories.UserRepository;
 import ultis.ClusterManagerRenderer;
 
@@ -61,7 +62,7 @@ public class MapViewModel extends ViewModel {
     private List<ClusterMarker> mFriendMarkers = new ArrayList<ClusterMarker>();
 
     private LiveData<List<UserLocation>> mFriendLocationList;
-    private LiveData<List<UserRef>> mFriendRefList;
+    private LiveData<List<UserRefFriend>> mFriendRefList;
 
     private LocationRequest locationRequest;
     private ClusterManagerRenderer mClusterManagerRenderer;
@@ -143,9 +144,9 @@ public class MapViewModel extends ViewModel {
 
                     // Ghost mode
                     mFriendRefList = mFriendViewModel.getFriendsRefList();
-                    mFriendRefList.observe(lifecycleOwner, new Observer<List<UserRef>>() {
+                    mFriendRefList.observe(lifecycleOwner, new Observer<List<UserRefFriend>>() {
                         @Override
-                        public void onChanged(List<UserRef> userRefs) {
+                        public void onChanged(List<UserRefFriend> userRefs) {
 
                         }
                     });

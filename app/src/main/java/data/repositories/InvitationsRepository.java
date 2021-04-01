@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -20,7 +21,7 @@ import java.util.List;
 import data.models.User;
 import data.models.UserRef;
 
-public class InvitationsRepository extends ListUsersRepository{
+public class InvitationsRepository extends ListUsersRepository<UserRef>{
     private final String TAG = "InvitationsReposity";
     private final String USER_COLLECTION = "Users";
 
@@ -28,6 +29,7 @@ public class InvitationsRepository extends ListUsersRepository{
 
     private InvitationsRepository(String INVITATIONS_COLLECTION, String UID) {
         super(INVITATIONS_COLLECTION, UID);
+        myUserRef = new UserRef(mDb.document(USER_COLLECTION + "/" + UID), Timestamp.now());
     }
 
     public static InvitationsRepository getInstance(String INVITATIONS_COLLECTION, String UID) {

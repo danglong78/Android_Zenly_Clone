@@ -17,6 +17,7 @@ import java.util.List;
 import data.models.User;
 import data.models.UserLocation;
 import data.models.UserRef;
+import data.models.UserRefFriend;
 import data.repositories.FriendsRepository;
 
 public class FriendViewModel extends ViewModel {
@@ -24,7 +25,7 @@ public class FriendViewModel extends ViewModel {
     private final String FRIENDS_COLLECTION = "Friends";
 
     FriendsRepository repository;
-    private MutableLiveData<List<UserRef>> friendsRefList;
+    private MutableLiveData<List<UserRefFriend>> friendsRefList;
     private MutableLiveData<List<User>> friendsList;
     private MutableLiveData<List<UserLocation>> friendLocationList;
 
@@ -41,10 +42,10 @@ public class FriendViewModel extends ViewModel {
             friendsList = repository.getListUser();
             friendLocationList = repository.getUserLocationList(lifecycleOwner);
 
-            friendsRefList.observe(lifecycleOwner, new Observer<List<UserRef>>() {
+            friendsRefList.observe(lifecycleOwner, new Observer<List<UserRefFriend>>() {
 
                 @Override
-                public void onChanged(List<UserRef> userRefs) {
+                public void onChanged(List<UserRefFriend> userRefs) {
                    if (isInited.getValue() == null) {
                        ArrayList<Boolean> tmp = new ArrayList<Boolean>();
                        tmp.add(true);
@@ -89,7 +90,7 @@ public class FriendViewModel extends ViewModel {
         return friendLocationList;
     }
 
-    public LiveData<List<UserRef>> getFriendsRefList() {
+    public LiveData<List<UserRefFriend>> getFriendsRefList() {
         Log.d(TAG, "getFriendsRefList: " + friendsRefList);
         return friendsRefList;
     }
