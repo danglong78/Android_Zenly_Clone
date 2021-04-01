@@ -27,4 +27,7 @@ public class UserRefSuggest extends UserRef {
         return userRef.getDocument().toObject(UserRefSuggest.class);
     }
 
+    public boolean filterAddUserList(){
+        return !hidden;
+    }
 }

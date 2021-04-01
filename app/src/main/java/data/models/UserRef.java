@@ -38,4 +38,7 @@ public class UserRef {
         this.time = Timestamp.now();
     }
 
+    public boolean filterAddUserList(){
+        return true;
+    }
 }

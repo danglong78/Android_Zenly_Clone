@@ -6,17 +6,24 @@ import android.database.Cursor;
 import android.provider.ContactsContract;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.MutableLiveData;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import data.models.User;
+import data.models.UserRef;
 import data.models.UserRefSuggest;
 
 public class SuggestFriendRepository extends ListUsersRepository<UserRefSuggest> {
@@ -112,5 +119,68 @@ public class SuggestFriendRepository extends ListUsersRepository<UserRefSuggest>
     public void modify(String modifyUID, boolean hidden) {
         listRef.document(modifyUID).update("hidden", hidden);
         Log.d(TAG, "modify: " + UID + " modify " + modifyUID + " " + hidden);
+    }
+
+
+    protected void handleMODIFIED(List<UserRefSuggest> newRefList, MutableLiveData<List<User>> listUser, DocumentChange dc) {
+        Log.d(TAG, "handleMODIFIED: " + COLLECTION + " " + UserRef.toUserRef(dc));
+        UserRefSuggest modifyUserRef = UserRefSuggest.toUserRef(dc);
+
+        if (newRefList != null)
+            newRefList.remove(modifyUserRef);
+
+        Log.d(TAG, "onEventMODIFIED: " + COLLECTION + " " + modifyUserRef.getRef().getPath());
+
+        if(modifyUserRef.filterAddUserList()){
+            Log.d(TAG, "handleMODIFIED: if yes");
+            modifyUserRef.getRef().get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    processAddUser(task);
+                }
+            });
+        }
+        else{
+            Log.d(TAG, "handleMODIFIED: if no");
+            removeList(toUID(modifyUserRef.getRef().getPath()), listUser);
+        }
+
+
+        if (newRefList != null)
+            newRefList.add(modifyUserRef);
+
+        if(listUserRef.getValue()!=null){
+            String x = "size() = " + listUserRef.getValue().size();
+            for(UserRef u : listUserRef.getValue()){
+                x += u.getRef().getPath() +" ";
+            }
+            Log.d(TAG, "listRefChange: " + COLLECTION + " " + x);
+        }
+    }
+
+    protected void handleADDED(List<UserRefSuggest> newRefList, MutableLiveData<List<User>> listUser, DocumentChange dc) {
+        Log.d(TAG, "handleADDED: " + COLLECTION + " " + UserRef.toUserRef(dc));
+        UserRefSuggest addUserRef = UserRefSuggest.toUserRef(dc);
+
+        if (newRefList != null)
+            if (!newRefList.contains(addUserRef)) {
+                newRefList.add(addUserRef);
+            }
+
+        if(addUserRef.filterAddUserList())
+            addUserRef.getRef().get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    processAddUser(task);
+                }
+            });
+
+        if(listUserRef.getValue()!=null){
+            String x = "size() = " + listUserRef.getValue().size();
+            for(UserRef u : listUserRef.getValue()){
+                x += u.getRef().getPath() +" ";
+            }
+            Log.d(TAG, "listRefChange: " + COLLECTION + " " + x);
+        }
     }
 }

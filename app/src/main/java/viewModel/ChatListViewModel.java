@@ -62,19 +62,27 @@ public class ChatListViewModel extends ViewModel {
     public void init(RecyclerView nav_drawer_recycler_view,ListenerRegistration listConvListener, ChatListAdapter madapter, UserViewModel mUserViewModel, Context context, LifecycleOwner lifecycleOwner){
         mRepo = ConversationRepository.getInstance();
         convList  = new MutableLiveData<ArrayList<Conversation>>();
-        User aUser = mUserViewModel.getHostUser().getValue();
-        ArrayList<String> convID = aUser.getConversation();
-        int count = convID.size();
-        convList = mRepo.getListConv(nav_drawer_recycler_view,listConvListener,madapter,convID);
-        convList.observe(lifecycleOwner, new Observer<ArrayList<Conversation>>(){
+        mUserViewModel.getIsInited().observe(lifecycleOwner,new Observer<Boolean>(){
             @Override
-            public void onChanged(ArrayList<Conversation> conversations) {
-                if(conversations.size()==count){
-                    Log.d(TAG, "load xong conv");
-                    isInited.postValue(true);
-                    convList.removeObserver(this);
-                }else{
-                    Log.d(TAG, "chua load xong conv");
+            public void onChanged(Boolean abool) {
+                if(abool){
+                    User aUser = mUserViewModel.getHostUser().getValue();
+                    ArrayList<String> convID = aUser.getConversation();
+                    int count = convID.size();
+                    convList = mRepo.getListConv(nav_drawer_recycler_view,listConvListener,madapter,convID);
+                    convList.observe(lifecycleOwner, new Observer<ArrayList<Conversation>>(){
+                        @Override
+                        public void onChanged(ArrayList<Conversation> conversations) {
+                            if(conversations.size()==count){
+                                Log.d(TAG, "load xong conv");
+                                isInited.postValue(true);
+                                convList.removeObserver(this);
+                            }else{
+                                Log.d(TAG, "chua load xong conv");
+                            }
+                        }
+                    });
+                    mUserViewModel.getIsInited().removeObserver(this);
                 }
             }
         });

@@ -86,7 +86,7 @@ public class ListUsersRepository <T extends UserRef> {
         return listUserRef;
     }
 
-    private void processAddUser(Task<DocumentSnapshot> task) {
+    protected void processAddUser(Task<DocumentSnapshot> task) {
         if (task.isSuccessful()) {
             DocumentSnapshot document = task.getResult();
             if (document.exists()) {
@@ -140,6 +140,8 @@ public class ListUsersRepository <T extends UserRef> {
             newRefList.remove(modifyUserRef);
 
         Log.d(TAG, "onEventMODIFIED: " + COLLECTION + " " + modifyUserRef.getRef().getPath());
+
+
         modifyUserRef.getRef().get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -324,7 +326,7 @@ public class ListUsersRepository <T extends UserRef> {
         Log.d(TAG, "removeOnPaginations: " + COLLECTION + " " + UID + " remove " + removeUID);
     }
 
-    private String toUID(String userRef) {
+    protected String toUID(String userRef) {
         return userRef.substring(userRef.lastIndexOf('/') + 1);
     }
 
