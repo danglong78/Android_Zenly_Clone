@@ -323,6 +323,7 @@ public class HomeFragment extends Fragment {
         });
         mapBtn.setOnClickListener(v -> {
             drawerLayout.closeDrawers();
+            mapViewModel.focusOnHost();
         });
     }
 

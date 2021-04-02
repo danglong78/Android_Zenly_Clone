@@ -46,6 +46,7 @@ import viewModel.FriendViewModel;
 import viewModel.InvitationViewModel;
 import viewModel.InvitingViewModel;
 import viewModel.LoginViewModel;
+import viewModel.MapViewModel;
 import viewModel.RequestLocationViewModel;
 import viewModel.UserViewModel;
 
@@ -67,6 +68,7 @@ public class AddFriendFragment extends Fragment implements FriendSuggestListAdap
     private UserViewModel userViewModel;
     private InvitingViewModel invitingViewModel;
     private FriendViewModel friendViewModel;
+    private MapViewModel mapViewModel;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -83,6 +85,7 @@ public class AddFriendFragment extends Fragment implements FriendSuggestListAdap
         userViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
         invitingViewModel = new ViewModelProvider(requireActivity()).get(InvitingViewModel.class);
         friendViewModel = new ViewModelProvider(requireActivity()).get(FriendViewModel.class);
+        mapViewModel = new ViewModelProvider(requireActivity()).get(MapViewModel.class);
 
 
         friendSuggestRecyclerView = view.findViewById(R.id.suggest_friend_recycler_view);
@@ -240,6 +243,6 @@ public class AddFriendFragment extends Fragment implements FriendSuggestListAdap
 
     @Override
     public void onClick(String UID) {
-
+        mapViewModel.focusOnFriend(UID);
     }
 }

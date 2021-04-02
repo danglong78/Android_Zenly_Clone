@@ -329,8 +329,20 @@ public class MapViewModel extends ViewModel {
 
     public void moveTo(LatLng location) {
         Log.d(TAG, "moveTo: " + location);
-        Log.d(TAG, "moveTo: " + mMap);
 
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 18));
+    }
+
+    public void focusOnFriend(String uid) {
+       for (ClusterMarker marker : mFriendMarkers) {
+           if (uid.equals(marker.getUserUID())) {
+               moveTo(marker.getPosition());
+               break;
+           }
+       }
+    }
+
+    public void focusOnHost() {
+        moveTo(mHostMarker.getPosition());
     }
 }
