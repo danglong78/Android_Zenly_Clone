@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -187,15 +188,39 @@ public class ChatListAdapter  extends RecyclerView.Adapter<ChatListAdapter.ViewH
     }
 
     public void setConversationList(ArrayList<Conversation> listConv){
-        if(convList!=null){
-            convList.clear();
-            convList.addAll(listConv);
-            convListAll= new ArrayList<>(convList);
-        }else{
-            convList = new ArrayList<Conversation>();
-            convList.addAll(listConv);
-            convListAll= new ArrayList<>(convList);
-        }
+        DiffUtil.Callback diffUtilCallback= new DiffUtil.Callback() {
+            @Override
+            public int getOldListSize() {
+                return convListAll.size();
+            }
+
+            @Override
+            public int getNewListSize() {
+                return listConv.size();
+            }
+
+            @Override
+            public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
+                Conversation x=convListAll.get(oldItemPosition);
+                Conversation y = listConv.get(newItemPosition);
+                return x.equals(y);
+            }
+
+            @Override
+            public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
+                final Conversation x = convListAll.get(oldItemPosition);
+                final Conversation y = listConv.get(newItemPosition);
+
+                return x.getID().equals(y.getID());
+            }
+        };
+        final DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffUtilCallback);
+
+        convList.clear();
+        convList.addAll(listConv);
+        convListAll= new ArrayList<>(convList);
+        diffResult.dispatchUpdatesTo(this);
+
     }
 
     public Conversation getConv(int pos){

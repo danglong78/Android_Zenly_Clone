@@ -238,7 +238,7 @@ public class AddFriendFragment extends Fragment implements FriendSuggestListAdap
 
             }).show();
         }
-
+        
     }
 
     @Override

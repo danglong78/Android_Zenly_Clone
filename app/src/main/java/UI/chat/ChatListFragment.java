@@ -3,10 +3,12 @@ package UI.chat;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -22,10 +24,13 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.study.android_zenly.R;
 
 import java.util.ArrayList;
+
+import java.io.Serializable;
 
 import UI.MainActivity.MainActivity;
 import adapter.ChatListAdapter;
@@ -35,7 +40,9 @@ import viewModel.ChatListViewModel;
 import viewModel.UserViewModel;
 
 
-public class ChatListFragment extends Fragment implements ChatListAdapter.OnChatListListener {
+public class ChatListFragment extends Fragment implements ChatListAdapter.OnChatListListener
+
+{
     MotionLayout homeFragmentMotionLayout;
     TextView searchText;
     private NavController navController;
@@ -43,6 +50,7 @@ public class ChatListFragment extends Fragment implements ChatListAdapter.OnChat
     private ChatListAdapter madapter;
     private ListenerRegistration listConvListener;
     private LiveData<ArrayList<Conversation>>convList;
+    private BottomSheetBehavior bottomsheet;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -54,8 +62,12 @@ public class ChatListFragment extends Fragment implements ChatListAdapter.OnChat
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        navController = Navigation.findNavController(view);
         homeFragmentMotionLayout = (MotionLayout) requireActivity().findViewById(R.id.motion_layout);
+        navController = Navigation.findNavController(view);
+        bottomsheet = BottomSheetBehavior.from(view.findViewById(R.id.chat_navigation_drawer_bottom));
+        bottomsheet.setState(BottomSheetBehavior.STATE_HIDDEN);
+        settingBottomSheet();
+
         searchText = view.findViewById(R.id.searchView);
         searchText.setOnClickListener(v -> {
             homeFragmentMotionLayout.setTransition(R.id.left, R.id.hideLeft);
@@ -87,6 +99,16 @@ public class ChatListFragment extends Fragment implements ChatListAdapter.OnChat
                 }
             }
         });
+        Button createChatButton=  view.findViewById(R.id.createChatButton);
+        createChatButton.setOnClickListener(v->{
+
+            homeFragmentMotionLayout.setTransition(R.id.left, R.id.hideLeft);
+            homeFragmentMotionLayout.transitionToEnd();
+            MainActivity activity = (MainActivity) getActivity();
+            activity.setFragmentTag(FragmentTag.CREATECHAT, homeFragmentMotionLayout, navController);
+            bottomsheet.setState(BottomSheetBehavior.STATE_EXPANDED);
+
+        });
     }
 
 
@@ -94,15 +116,6 @@ public class ChatListFragment extends Fragment implements ChatListAdapter.OnChat
     public void onDestroyView() {
         super.onDestroyView();
         convList.removeObservers(getViewLifecycleOwner());
-    }
-
-    private int getStatusBarHeight() {
-        int result = 0;
-        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
-        if (resourceId > 0) {
-            result = getResources().getDimensionPixelSize(resourceId);
-        }
-        return result;
     }
 
 
@@ -119,6 +132,7 @@ public class ChatListFragment extends Fragment implements ChatListAdapter.OnChat
         Log.d("Them ID ne", id);
         args.putString("name", name);
         args.putString("id", id);
+        args.putParcelableArrayList("listUserID", aConv.getMember());
         navController.navigate(R.id.action_chatListFragment_to_chatFragment, args);
     }
 
@@ -133,5 +147,24 @@ public class ChatListFragment extends Fragment implements ChatListAdapter.OnChat
         });
         builder.create().show();
     }
+    private void settingBottomSheet(){
+        bottomsheet.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
 
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+                    homeFragmentMotionLayout.setTransition(R.id.left, R.id.hideLeft);
+
+                    homeFragmentMotionLayout.setProgress(slideOffset);
+
+            }
+        });
+
+    }
+    public  void setBottomSheetState(int state) {
+        bottomsheet.setState(state);
+    }
 }

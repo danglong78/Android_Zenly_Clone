@@ -178,20 +178,21 @@ public class ConfirmOtpFragment extends Fragment {
                                                 public void onComplete(@NonNull Task<Void> task) {
                                                     if (task.isSuccessful()) {
                                                         Log.d(TAG, "onComplete: newUserRef: success");
-                                                        navController.navigate(R.id.action_global_homeFragment);
+                                                        navController.navigate(R.id.action_global_splashFragment);
                                                     }
                                                     else {
                                                         Log.d(TAG, "onComplete: newUserRef failed " + task.getException());
                                                     }
+                                                    codeInput.setText("");
+                                                    progressBar.setVisibility(View.INVISIBLE);
+                                                    btn.setVisibility(View.VISIBLE);
                                                 }
                                             });
 
                                         } else {
                                             Toast.makeText(getActivity(), "Your verify code wrong!!!", Toast.LENGTH_SHORT).show();
                                         }
-                                        codeInput.setText("");
-                                        progressBar.setVisibility(View.INVISIBLE);
-                                        btn.setVisibility(View.VISIBLE);
+
                                     }
                                 });
 
@@ -248,11 +249,14 @@ public class ConfirmOtpFragment extends Fragment {
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
                                 Log.d(TAG, "onComplete: newUserRef: success");
-                                navController.navigate(R.id.action_global_homeFragment);
+                                navController.navigate(R.id.action_global_splashFragment);
                             }
                             else {
                                 Log.d(TAG, "onComplete: newUserRef failed " + task.getException());
                             }
+                            codeInput.setText("");
+                            progressBar.setVisibility(View.INVISIBLE);
+                            btn.setVisibility(View.VISIBLE);
                         }
                     });
 
@@ -260,9 +264,7 @@ public class ConfirmOtpFragment extends Fragment {
                 }
                 else
                     showDialog();
-                codeInput.setText("");
-                progressBar.setVisibility(View.INVISIBLE);
-                btn.setVisibility(View.VISIBLE);
+
             }
         });
         CountDownTimer countdown= new CountDownTimer(120000, 1000) {

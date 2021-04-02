@@ -8,6 +8,8 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -20,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
@@ -33,6 +36,7 @@ import UI.MainActivity.MainActivity;
 import adapter.ChatAdapter;
 import data.models.Conversation;
 import data.models.Message;
+import data.models.User;
 import ultis.FragmentTag;
 import viewModel.ChatViewModel;
 
@@ -40,10 +44,11 @@ import viewModel.ChatViewModel;
 public class ChatFragment extends Fragment {
 
     private MainActivity activity;
-    private Button sendBtn;
+    private Button sendBtn,profileBtn;
     private EditText inputChat;
     private ChatViewModel mChatListViewModel;
     private ListenerRegistration listMessListener;
+    private NavController navController;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -55,9 +60,11 @@ public class ChatFragment extends Fragment {
     }
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        navController= Navigation.findNavController(view);
         RecyclerView recyclerView= view.findViewById(R.id.message_list_recyclerview);
         String id = getArguments().getString("id");
         String name = getArguments().getString("name");
+        List<User> listUser=  getArguments().getParcelableArrayList("listUserID");
         ChatAdapter adapter = new ChatAdapter(requireActivity(), FirebaseAuth.getInstance().getUid());
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(),LinearLayoutManager.VERTICAL,true));
@@ -115,5 +122,23 @@ public class ChatFragment extends Fragment {
                 }
             });
         });
+        profileBtn = view.findViewById(R.id.userProfileBtn);
+        profileBtn.setOnClickListener(v->{
+            if(listUser.size()==1)
+            {
+                User friend= listUser.get(0);
+                Bundle bundle= new Bundle();
+                bundle.putString("name",friend.getName());
+                bundle.putString("phone",friend.getPhone());
+                bundle.putString("uid",friend.getUID());
+                bundle.putString("avatar",friend.getAvatarURL());
+                navController.navigate(R.id.action_chatFragment_to_friendProfileFragment,bundle);
+            }
+        });
+        if (listUser.size() !=1)
+        {
+            ((MaterialButton)profileBtn).setIconResource(R.drawable.ic_baseline_person_add_alt_1_24);
+        }
+
     }
 }

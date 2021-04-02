@@ -88,6 +88,14 @@ public class MainActivity extends AppCompatActivity implements MainCallBacks {
                 tag = FragmentTag.OTHERS;
                 break;
             }
+            case CREATECHAT: {
+                motionLayout.setTransition(R.id.hideLeft, R.id.left);
+                motionLayout.setProgress(1);
+
+                tag = FragmentTag.OTHERS;
+
+                break;
+            }
 
         }
     }

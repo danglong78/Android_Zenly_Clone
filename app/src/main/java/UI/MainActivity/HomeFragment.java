@@ -92,7 +92,6 @@ public class HomeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         Log.d(TAG, "onViewCreated: order test");
-        observeLoginAndLocationPermissions(view);
         bindingView(view);
         setEventListener();
     }
@@ -188,7 +187,9 @@ public class HomeFragment extends Fragment {
     }
 
     private void bindingView(View view) {
-
+        chatnavController=Navigation.findNavController(requireActivity(),R.id.chat_nav_host_fragment);
+        navController=Navigation.findNavController(view);
+        usernavController=Navigation.findNavController(requireActivity(),R.id.user_nav_host_fragment);
         bottomSheetMotionLayout = (MotionLayout) view.findViewById(R.id.friend_motion_layout);
         bottomSheetBehavior = BottomSheetBehavior.from(view.findViewById(R.id.navigation_drawer_bottom));
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
@@ -327,37 +328,8 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    private void observeLoginAndLocationPermissions(View view) {
-        navController = Navigation.findNavController(view);
-        chatnavController= Navigation.findNavController(getActivity(),R.id.chat_nav_host_fragment);
-        usernavController = Navigation.findNavController(getActivity(),R.id.user_nav_host_fragment);
-        loginviewModel = new ViewModelProvider(requireActivity()).get(LoginViewModel.class);
-        loginviewModel.init(getActivity());
-        loginviewModel.getAuthentication().observe(getViewLifecycleOwner(), (Observer<Boolean>) isAuthenticated -> {
-
-            if (isAuthenticated) {
-
-                requestLocationViewModel = new ViewModelProvider(getActivity()).get(RequestLocationViewModel.class);
-                requestLocationViewModel.init(getActivity());
-                requestLocationViewModel.getHasPermission().observe(getViewLifecycleOwner(), (Observer<Boolean>) hasPermission -> {
-                    if (hasPermission) {
 
 
-                    } else {
-                        navController.navigate(R.id.action_homeFragment_to_request_location_nav);
-
-                        HomeFragment.this.onDestroy();
-
-
-                    }
-                });
-            } else {
-
-                navController.navigate(R.id.action_homeFragment_to_login_nav);
-                HomeFragment.this.onDestroy();
-            }
-        });
-    }
     public  void setBottomSheetState(int state) {
         bottomSheetBehavior.setState(state);
     }

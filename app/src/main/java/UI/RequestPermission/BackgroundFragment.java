@@ -73,7 +73,7 @@ public class BackgroundFragment extends Fragment {
                 Toast.makeText(getActivity(),
                         "Location permission is approved success",
                         Toast.LENGTH_LONG).show();
-                navController.navigate(R.id.action_global_homeFragment);
+                navController.navigate(R.id.action_global_splashFragment);
             }
 
         }

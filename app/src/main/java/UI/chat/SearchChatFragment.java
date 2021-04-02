@@ -101,7 +101,7 @@ public class SearchChatFragment extends Fragment implements ChatListAdapter.OnCh
 //                }
 //            }
 //        });
-        mChatListViewModel.init(getViewLifecycleOwner());
+//        mChatListViewModel.init(getViewLifecycleOwner());
         mChatListViewModel.getIsInited().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
                     @Override
                     public void onChanged(Boolean isInited) {
@@ -149,6 +149,7 @@ public class SearchChatFragment extends Fragment implements ChatListAdapter.OnCh
         Log.d("Them ID ne",id);
         args.putString("name",name);
         args.putString("id",id);
+        args.putParcelableArrayList("listUserID", aConv.getMember());
         navController.navigate(R.id.action_searchChatFragment_to_chatFragment2,args);
     }
 

@@ -1,78 +1,100 @@
-<androidx.constraintlayout.widget.ConstraintLayout
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+     android:layout_height="match_parent"
+     android:layout_width="match_parent"
     android:id="@+id/chatListContainer"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:color/white"
-    android:paddingHorizontal="10dp"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    android:fitsSystemWindows="true"
-
     tools:context="UI.chat.ChatListFragment">
+    <androidx.constraintlayout.widget.ConstraintLayout
 
-
-    <TextView
-        android:id="@+id/textView4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:paddingVertical="8dp"
-        android:text="MESSAGES"
-        android:textColor="@color/cyan_900"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/button"
-        android:layout_width="70dp"
-        android:layout_height="40dp"
-
-        android:layout_marginEnd="16dp"
-        android:allowUndo="false"
-        android:backgroundTint="@color/cyan_900"
-        android:text="NEW"
-        android:textColor="@color/teal"
-        android:textStyle="bold"
-        app:cornerRadius="15dp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/textView4"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/nav_drawer_recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-
-        android:layout_marginTop="24dp"
-        android:nestedScrollingEnabled="true"
-
+        android:layout_height="match_parent"
+        android:background="@android:color/white"
+        android:paddingHorizontal="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/searchView"/>
+        android:fitsSystemWindows="true"
+        >
 
 
-    <TextView
-        android:text="SEARCH"
-        android:gravity="center"
-        android:background="@drawable/chat_input_background"
-        android:layout_marginTop="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView4"
-        android:layout_height="60dp"
-        android:textStyle="bold"
-        android:textColor="@color/cyan_900"
-        android:textSize="18sp"
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:paddingVertical="8dp"
+            android:text="MESSAGES"
+            android:textColor="@color/cyan_900"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/createChatButton"
+            android:layout_width="70dp"
+            android:layout_height="40dp"
+
+            android:layout_marginEnd="16dp"
+            android:allowUndo="false"
+            android:backgroundTint="@color/cyan_900"
+            android:text="NEW"
+            android:textColor="@color/teal"
+            android:textStyle="bold"
+            app:cornerRadius="15dp"
+            app:layout_constraintBaseline_toBaselineOf="@+id/textView4"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/nav_drawer_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+
+            android:layout_marginTop="24dp"
+            android:nestedScrollingEnabled="true"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/searchView"/>
+
+
+        <TextView
+            android:text="SEARCH"
+            android:gravity="center"
+            android:background="@drawable/chat_input_background"
+            android:layout_marginTop="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView4"
+            android:layout_height="60dp"
+            android:textStyle="bold"
+            android:textColor="@color/cyan_900"
+            android:textSize="18sp"
+            android:layout_width="match_parent"
+            android:id="@+id/searchView"/>
+
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/chat_navigation_drawer_bottom"
         android:layout_width="match_parent"
-        android:id="@+id/searchView"/>
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/bottom_sheet_behavior"
+        app:behavior_hideable="true"
+        app:behavior_peekHeight="0dp"
+        app:behavior_fitToContents="true">
+        <fragment
+            android:name="UI.chat.CreateChatFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context="UI.chat.CreateChatFragment"
+            />
 
+    </com.google.android.material.navigation.NavigationView>
 
-
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -5,4 +5,5 @@ public enum FragmentTag {
     SETTINGS,
     OTHERS,
     FRIEND,
+    CREATECHAT
 }

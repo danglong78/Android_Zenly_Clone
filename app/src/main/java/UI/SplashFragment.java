@@ -1,11 +1,11 @@
 package UI;
 
-import android.animation.Animator;
-import android.animation.ObjectAnimator;
-import android.animation.PropertyValuesHolder;
-import android.animation.ValueAnimator;
-import android.content.Intent;
+
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,19 +15,10 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.widget.ImageView;
-
 import com.study.android_zenly.R;
 
 import java.util.List;
 
-import UI.MainActivity.HomeFragment;
-import UI.MainActivity.MainActivity;
 import viewModel.FriendViewModel;
 import viewModel.LoginViewModel;
 import viewModel.MapViewModel;
@@ -37,13 +28,14 @@ import viewModel.UserViewModel;
 
 public class SplashFragment extends Fragment {
 
-    ImageView iceCream;
+
     LoginViewModel loginviewModel;
     RequestLocationViewModel requestLocationViewModel;
     NavController navController;
     UserViewModel userViewModel;
     MapViewModel mapViewModel;
     FriendViewModel friendViewModel;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -117,12 +109,8 @@ public class SplashFragment extends Fragment {
                         }
 
 
-
-
-
                     } else {
                         navController.navigate(R.id.action_splashFragment_to_request_location_nav);
-
 
 
                     }

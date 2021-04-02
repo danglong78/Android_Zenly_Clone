@@ -9,7 +9,16 @@
         android:id="@+id/chatFragment"
         android:name="UI.chat.ChatFragment"
         android:label="fragment_chat"
-        tools:layout="@layout/fragment_chat" />
+        tools:layout="@layout/fragment_chat" >
+        <action
+            android:id="@+id/action_chatFragment_to_friendProfileFragment"
+            app:destination="@id/friendProfileFragment"
+            app:enterAnim="@anim/slide_in_bottom"
+            app:exitAnim="@anim/slide_out_bottom"
+            app:popEnterAnim="@anim/slide_in_bottom"
+            app:popExitAnim="@anim/slide_out_bottom"
+            app:popUpTo="@id/chatListFragment" />
+    </fragment>
     <fragment
         android:id="@+id/chatListFragment"
         android:name="UI.chat.ChatListFragment"
@@ -18,11 +27,19 @@
         <action
             android:id="@+id/action_chatListFragment_to_chatFragment"
             app:destination="@id/chatFragment"
-            app:launchSingleTop="true" />
+            app:launchSingleTop="true"
+            app:enterAnim="@anim/slide_in_bottom"
+            app:exitAnim="@anim/slide_out_bottom"
+            app:popEnterAnim="@anim/slide_in_bottom"
+            app:popExitAnim="@anim/slide_out_bottom"/>
         <action
             android:id="@+id/action_chatListFragment_to_searchChatFragment"
             app:destination="@id/searchChatFragment"
-            app:launchSingleTop="true" />
+            app:launchSingleTop="true"
+            app:enterAnim="@anim/slide_in_bottom"
+            app:exitAnim="@anim/slide_out_bottom"
+            app:popEnterAnim="@anim/slide_in_bottom"
+            app:popExitAnim="@anim/slide_out_bottom"/>
     </fragment>
     <fragment
         android:id="@+id/searchChatFragment"
@@ -32,6 +49,24 @@
             android:id="@+id/action_searchChatFragment_to_chatFragment2"
             app:destination="@id/chatFragment"
             app:launchSingleTop="true"
-            app:popUpTo="@id/chatListFragment" />
+            app:popUpTo="@id/chatListFragment"
+            app:enterAnim="@anim/slide_in_bottom"
+            app:exitAnim="@anim/slide_out_bottom"
+            app:popEnterAnim="@anim/slide_in_bottom"
+            app:popExitAnim="@anim/slide_out_bottom"/>
     </fragment>
+    <fragment
+        android:id="@+id/friendProfileFragment"
+        android:name="UI.friend.FriendProfileFragment"
+        android:label="fragment_friend_profile"
+        tools:layout="@layout/fragment_friend_profile"
+        app:enterAnim="@anim/slide_in_bottom"
+        app:exitAnim="@anim/slide_out_bottom"
+        app:popEnterAnim="@anim/slide_in_bottom"
+        app:popExitAnim="@anim/slide_out_bottom"/>
+    <fragment
+        android:id="@+id/strangerProfileFragment"
+        android:name="UI.friend.StrangerProfileFragment"
+        android:label="fragment_stranger_profile"
+        tools:layout="@layout/fragment_stranger_profile" />
 </navigation>

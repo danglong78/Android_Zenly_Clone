@@ -7,7 +7,8 @@
     android:orientation="horizontal"
     android:focusable="true"
     android:clickable="true"
-    android:padding="5dp">
+    android:foreground="?android:attr/selectableItemBackground"
+    android:padding="8dp">
 
     <androidx.cardview.widget.CardView
         android:layout_width="wrap_content"
@@ -16,53 +17,40 @@
 
         <ImageView
             android:id="@+id/avatar"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/ic_baseline_account_circle_24" />
+            android:src="@drawable/icon" />
     </androidx.cardview.widget.CardView>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical">
         <TextView
             android:id="@+id/userNameText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="7dp"
+            android:padding="10dp"
             android:textSize="16sp"
-            android:textColor="@color/cyan_900"
             android:textStyle="bold"
-            android:text="Name"
+            android:textColor="@color/cyan_900"
+            android:text="123"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
 
-        <Button
-            android:id="@+id/addBtn"
-            android:layout_width="70dp"
-            android:layout_height="40dp"
-            android:layout_marginEnd="15dp"
-            android:text="ADD"
-            android:textAlignment="center"
-            android:textSize="12sp"
-            app:cornerRadius="30dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/deleteBtn"
-            app:layout_constraintTop_toBottomOf="@+id/userNameText" />
 
-        <Button
-            android:id="@+id/deleteBtn"
-            android:layout_width="85dp"
-            android:layout_height="40dp"
-            android:layout_marginEnd="5dp"
-            android:backgroundTint="#5565a5"
-            android:text="DELETE"
-            android:textSize="12sp"
-            android:textStyle="bold"
-            app:cornerRadius="30dp"
+        <CheckBox
+            android:id="@+id/checkbox"
+            android:layout_width="30dp"
+            android:layout_height="20dp"
+            android:layout_marginEnd="4dp"
+            android:paddingLeft="1dp"
+            android:button="@drawable/custom_checkbox"
+            android:buttonTint="#FFFFFF"
+            android:buttonTintMode="multiply"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/addBtn" />
+            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

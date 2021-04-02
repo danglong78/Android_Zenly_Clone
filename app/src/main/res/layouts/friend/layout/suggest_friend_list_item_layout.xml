@@ -39,7 +39,7 @@
 
         <Button
             android:id="@+id/addBtn"
-            android:layout_width="60dp"
+            android:layout_width="70dp"
             android:layout_height="35dp"
             android:text="ADD"
             android:textSize="12sp"

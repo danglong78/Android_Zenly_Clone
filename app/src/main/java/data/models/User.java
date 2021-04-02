@@ -1,6 +1,8 @@
 package data.models;
 
 import android.graphics.Bitmap;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
@@ -10,7 +12,7 @@ import com.google.firebase.firestore.GeoPoint;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class User {
+public class User implements Parcelable {
     @Exclude
     private Bitmap avatar;
 
@@ -34,6 +36,28 @@ public class User {
     public User(){
 
     }
+
+    protected User(Parcel in) {
+        avatar = in.readParcelable(Bitmap.class.getClassLoader());
+        name = in.readString();
+        UID = in.readString();
+        avatarURL = in.readString();
+        dob = in.readString();
+        phone = in.readString();
+        conversation = in.createStringArrayList();
+    }
+
+    public static final Creator<User> CREATOR = new Creator<User>() {
+        @Override
+        public User createFromParcel(Parcel in) {
+            return new User(in);
+        }
+
+        @Override
+        public User[] newArray(int size) {
+            return new User[size];
+        }
+    };
 
     public Bitmap getAvatar() {
         return avatar;
@@ -104,4 +128,21 @@ public class User {
         }
         else return false;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(avatar, flags);
+        dest.writeString(name);
+        dest.writeString(UID);
+        dest.writeString(avatarURL);
+        dest.writeString(dob);
+        dest.writeString(phone);
+        dest.writeStringList(conversation);
+    }
+
 }

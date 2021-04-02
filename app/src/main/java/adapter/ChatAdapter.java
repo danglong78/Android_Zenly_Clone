@@ -50,10 +50,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.BaseMessageVie
     public ChatAdapter(String senderId) {
         this.senderId = senderId;
         this.items = new ArrayList<>();
-//            User x= new User(null,"Dang Minh Hoang Long","123","0e9748c8-8978-11eb-8dcd-0242ac130003.png",null,null,null);
-//            User y= new User(null,"Ho Dai Tri","1234","0e9748c8-8978-11eb-8dcd-0242ac130003.png",null,null,null);
-//            items.add(new Wrapper(new Message(x,"1","Hello", Timestamp.now())));
-//            items.add(new Wrapper(new Message(y,"1","Hi", Timestamp.now())));
     }
 
     public ChatAdapter(Context context, String senderId) {

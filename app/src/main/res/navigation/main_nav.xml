@@ -142,7 +142,7 @@
         android:id="@+id/action_global_homeFragment"
         app:destination="@id/homeFragment"
         app:popUpTo="@id/homeFragment"
-        app:popUpToInclusive="false" />
+        app:popUpToInclusive="true" />
     <fragment
         android:id="@+id/splashFragment"
         android:name="UI.SplashFragment"
