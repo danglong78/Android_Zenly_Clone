@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.motion.widget.MotionLayout;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -23,6 +24,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.firestore.ListenerRegistration;
 import com.study.android_zenly.R;
+
+import java.util.ArrayList;
 
 import UI.MainActivity.MainActivity;
 import adapter.ChatListAdapter;
@@ -39,6 +42,7 @@ public class ChatListFragment extends Fragment implements ChatListAdapter.OnChat
     private ChatListViewModel mChatListViewModel;
     private ChatListAdapter madapter;
     private ListenerRegistration listConvListener;
+    private LiveData<ArrayList<Conversation>>convList;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -64,23 +68,32 @@ public class ChatListFragment extends Fragment implements ChatListAdapter.OnChat
         RecyclerView nav_drawer_recycler_view = view.findViewById(R.id.nav_drawer_recycler_view);
         nav_drawer_recycler_view.setLayoutManager(new LinearLayoutManager(getActivity()));
         nav_drawer_recycler_view.setItemAnimator(new DefaultItemAnimator());
-
-        UserViewModel mUserViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
-        ChatListAdapter.OnChatListListener onChatListListener = this;
-        madapter = new ChatListAdapter(getActivity(), onChatListListener);
+        madapter = new ChatListAdapter(getActivity(), this);
         mChatListViewModel = new ViewModelProvider(requireActivity()).get(ChatListViewModel.class);
-        mChatListViewModel.init(nav_drawer_recycler_view, listConvListener, madapter, mUserViewModel, getActivity(), getViewLifecycleOwner());
-        mChatListViewModel.getIsInited().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+        mChatListViewModel.init(getViewLifecycleOwner());
+        mChatListViewModel.getIsInited().observe(getViewLifecycleOwner(), new Observer<Boolean>(){
             @Override
-            public void onChanged(Boolean isInited) {
-                if (isInited) {
-                    nav_drawer_recycler_view.setAdapter(madapter);
+            public void onChanged(Boolean aBoolean) {
+                if(aBoolean){
+                    convList = mChatListViewModel.getConvList();
+                    convList.observe(getViewLifecycleOwner(), new Observer<ArrayList<Conversation>>(){
+                        @Override
+                        public void onChanged(ArrayList<Conversation> conversations) {
+                            madapter.setConversationList(conversations);
+                            nav_drawer_recycler_view.setAdapter(madapter);
+                        }
+                    });
                     mChatListViewModel.getIsInited().removeObserver(this);
-                    mChatListViewModel.setIsInitedFalse();
                 }
             }
         });
+    }
 
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        convList.removeObservers(getViewLifecycleOwner());
     }
 
     private int getStatusBarHeight() {

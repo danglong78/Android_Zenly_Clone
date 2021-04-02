@@ -17,6 +17,7 @@ import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
@@ -147,25 +148,7 @@ public class UserRepository {
         return mDb.collection(USER_LOCATION_COLLECTION).document(UID);
     }
 
-    public MutableLiveData<List<Conversation>> getListConversations(){
-        User user = getUserWithUID(FirebaseAuth.getInstance().getUid()).getValue();
-        ConversationRepository convRepo = new ConversationRepository();
-        List<Conversation> list = new ArrayList<Conversation>();
-        for(String id : user.getConversation()){
-            Conversation temp = new Conversation();
-            convRepo.getConversation(id, temp, new MyCallBack() {
-                @Override
-                public void onCallback(Conversation pos, Conversation des) {
-                    des.setID(pos.getID());
-                    des.setName(pos.getName());
-                    des.setRecentMessage(pos.getRecentMessage());
-                    des.setAvatarURL(pos.getAvatarURL());
-                }
-            });
-            list.add(temp);
-        }
-        MutableLiveData<List<Conversation>> res = null;
-        res.postValue(list);
-        return res;
+    public void addConv(String uId,String convId){
+        mDb.collection(USER_COLLECTION).document(uId).update("conversation", FieldValue.arrayUnion(convId));
     }
 }

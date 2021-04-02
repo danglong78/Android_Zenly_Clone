@@ -25,74 +25,61 @@ import ultis.MyCallBack;
 
 public class ChatListViewModel extends ViewModel {
     private static final String TAG = "Chat List View Model";
-    private MutableLiveData<ArrayList<Conversation>> convList;
+    private LiveData<ArrayList<Conversation>> convList = new MutableLiveData<ArrayList<Conversation>>();
     private ConversationRepository mRepo;
     MutableLiveData<Boolean> isInited = new MutableLiveData<Boolean>();
 
 
-    public void init(UserViewModel mUserViewModel) {
-        if(convList!=null){
-            return;
-        }
-        convList  = new MutableLiveData<ArrayList<Conversation>>();
-        User aUser = mUserViewModel.getHostUser().getValue();
-        Log.d(TAG, aUser.getConversation().get(0));
-        mRepo = ConversationRepository.getInstance();
-        ArrayList<Conversation> conv = new ArrayList<Conversation>();
-        ArrayList<String> convID = aUser.getConversation();
-        Log.d(TAG, Integer.toString(convID.size()));
-        if(convID.size()>0){
-            for(String s : aUser.getConversation()){
-                Conversation temp = new Conversation();
-                mRepo.getConversation(s, temp, new MyCallBack() {
-                    @Override
-                    public void onCallback(Conversation pos, Conversation des) {
-                        des.setID(pos.getID());
-                        des.setName(pos.getName());
-                        des.setRecentMessage(pos.getRecentMessage());
-                        des.setAvatarURL(pos.getAvatarURL());
-                        conv.add(des);
-                        convList.postValue(conv);
-                    }
-                });
-            }
-        }
-    }
+//    public void init(RecyclerView nav_drawer_recycler_view,ListenerRegistration listConvListener, ChatListAdapter madapter, UserViewModel mUserViewModel, Context context, LifecycleOwner lifecycleOwner){
+//        mRepo = ConversationRepository.getInstance();
+//        convList  = new MutableLiveData<ArrayList<Conversation>>();
+//        mUserViewModel.getIsInited().observe(lifecycleOwner,new Observer<Boolean>(){
+//            @Override
+//            public void onChanged(Boolean abool) {
+//                if(abool){
+//                    User aUser = mUserViewModel.getHostUser().getValue();
+//                    ArrayList<String> convID = aUser.getConversation();
+//                    int count = convID.size();
+//                    convList = mRepo.getListConv(nav_drawer_recycler_view,listConvListener,madapter,convID);
+//                    convList.observe(lifecycleOwner, new Observer<ArrayList<Conversation>>(){
+//                        @Override
+//                        public void onChanged(ArrayList<Conversation> conversations) {
+//                            if(conversations.size()==count){
+//                                Log.d(TAG, "load xong conv");
+//                                isInited.postValue(true);
+//                                convList.removeObserver(this);
+//                            }else{
+//                                Log.d(TAG, "chua load xong conv");
+//                            }
+//                        }
+//                    });
+//                    mUserViewModel.getIsInited().removeObserver(this);
+//                }
+//            }
+//        });
+//    }
 
-    public void init(RecyclerView nav_drawer_recycler_view,ListenerRegistration listConvListener, ChatListAdapter madapter, UserViewModel mUserViewModel, Context context, LifecycleOwner lifecycleOwner){
-        mRepo = ConversationRepository.getInstance();
-        convList  = new MutableLiveData<ArrayList<Conversation>>();
-        mUserViewModel.getIsInited().observe(lifecycleOwner,new Observer<Boolean>(){
-            @Override
-            public void onChanged(Boolean abool) {
-                if(abool){
-                    User aUser = mUserViewModel.getHostUser().getValue();
-                    ArrayList<String> convID = aUser.getConversation();
-                    int count = convID.size();
-                    convList = mRepo.getListConv(nav_drawer_recycler_view,listConvListener,madapter,convID);
-                    convList.observe(lifecycleOwner, new Observer<ArrayList<Conversation>>(){
-                        @Override
-                        public void onChanged(ArrayList<Conversation> conversations) {
-                            if(conversations.size()==count){
-                                Log.d(TAG, "load xong conv");
-                                isInited.postValue(true);
-                                convList.removeObserver(this);
-                            }else{
-                                Log.d(TAG, "chua load xong conv");
-                            }
-                        }
-                    });
-                    mUserViewModel.getIsInited().removeObserver(this);
+    public void init(LifecycleOwner lifecycleOwner){
+        if(isInited.getValue() == null){
+            mRepo = ConversationRepository.getInstance();
+            convList = mRepo.getListConv();
+            convList.observe(lifecycleOwner, new Observer<ArrayList<Conversation>>() {
+                @Override
+                public void onChanged(ArrayList<Conversation> conversations) {
+                    if(conversations!=null){
+                        isInited.setValue(true);
+                        convList.removeObserver(this);
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     public LiveData<Boolean> getIsInited() {
         return isInited;
     }
 
-    public MutableLiveData<ArrayList<Conversation>> getConvList() {
+    public LiveData<ArrayList<Conversation>> getConvList() {
         return convList;
     }
 

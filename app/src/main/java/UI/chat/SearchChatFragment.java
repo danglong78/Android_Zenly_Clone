@@ -77,30 +77,42 @@ public class SearchChatFragment extends Fragment implements ChatListAdapter.OnCh
 //        nav_drawer_recycler_view.setLayoutManager(new LinearLayoutManager(getActivity()));
 
 //        view.setPadding(0,getStatusBarHeight(),0,0);
-        UserViewModel mUserViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
+        //UserViewModel mUserViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
         ChatListViewModel mChatListViewModel = new ViewModelProvider(requireActivity()).get(ChatListViewModel.class);
-        ChatListAdapter.OnChatListListener onChatListListener = this;
-        madapter = new ChatListAdapter(getActivity(),onChatListListener);
-        mUserViewModel.getIsInited().observe(getViewLifecycleOwner(),new Observer<Boolean>(){
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                if(aBoolean){
-                    mChatListViewModel.init(nav_drawer_recycler_view,listConvListener,madapter,mUserViewModel,getActivity(),getViewLifecycleOwner());
-                    mChatListViewModel.getIsInited().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
-                        @Override
-                        public void onChanged(Boolean isInited) {
-                            if (isInited) {
-                                nav_drawer_recycler_view.setAdapter(madapter);
-                                nav_drawer_recycler_view.setLayoutManager(new LinearLayoutManager(getActivity()));
-                                mChatListViewModel.getIsInited().removeObserver(this);
-                                mChatListViewModel.setIsInitedFalse();
-                            }
+        madapter = new ChatListAdapter(getActivity(),this);
+//        mUserViewModel.getIsInited().observe(getViewLifecycleOwner(),new Observer<Boolean>(){
+//            @Override
+//            public void onChanged(Boolean aBoolean) {
+//                if(aBoolean){
+//                    mChatListViewModel.init(getViewLifecycleOwner());
+//                    mChatListViewModel.getIsInited().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+//                        @Override
+//                        public void onChanged(Boolean isInited) {
+//                            if (isInited) {
+//                                madapter.setConversationList(mChatListViewModel.getConvList().getValue());
+//                                nav_drawer_recycler_view.setAdapter(madapter);
+//                                nav_drawer_recycler_view.setLayoutManager(new LinearLayoutManager(getActivity()));
+//                                mChatListViewModel.getIsInited().removeObserver(this);
+//                                mChatListViewModel.setIsInitedFalse();
+//                            }
+//                        }
+//                    });
+//                    mUserViewModel.getIsInited().removeObserver(this);
+//                }
+//            }
+//        });
+        mChatListViewModel.init(getViewLifecycleOwner());
+        mChatListViewModel.getIsInited().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+                    @Override
+                    public void onChanged(Boolean isInited) {
+                        if (isInited) {
+                            madapter.setConversationList(mChatListViewModel.getConvList().getValue());
+                            nav_drawer_recycler_view.setAdapter(madapter);
+                            nav_drawer_recycler_view.setLayoutManager(new LinearLayoutManager(getActivity()));
+                            mChatListViewModel.getIsInited().removeObserver(this);
                         }
-                    });
-                    mUserViewModel.getIsInited().removeObserver(this);
-                }
-            }
-        });
+                    }
+                });
         searchText.addTextChangedListener(new TextWatcher(){
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {

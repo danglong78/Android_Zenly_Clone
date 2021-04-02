@@ -136,4 +136,33 @@ public class MessageRepository {
         });
         return res;
     }
+
+    public Message createInitMess(String convID,String id1,String id2){
+        DocumentReference docRef1 = mDb.collection(MESS_COLLECTION).document();
+        Message aMess = new Message();
+        aMess.setConvID(convID);
+        aMess.setTime(Timestamp.now());
+        aMess.setSenderID(id2);
+        aMess.setMess("We are firend now... Let's have fun (auto generated message)");
+        docRef1.set(aMess);
+        DocumentReference docRef2 = mDb.collection(MESS_COLLECTION).document();
+        Message aMess2 = new Message();
+        aMess2.setConvID(convID);
+        aMess2.setTime(Timestamp.now());
+        aMess2.setSenderID(id1);
+        aMess2.setMess("We are firend now... Let's have fun (auto generated message)");
+        docRef2.set(aMess2);
+        return aMess2;
+    }
+
+    public Message createInitMessGroup(String convID,String creatorID){
+        DocumentReference docRef1 = mDb.collection(MESS_COLLECTION).document();
+        Message aMess = new Message();
+        aMess.setConvID(convID);
+        aMess.setTime(Timestamp.now());
+        aMess.setSenderID(creatorID);
+        aMess.setMess("Welcome to our new Group Chat (auto generated message)");
+        docRef1.set(aMess);
+        return aMess;
+    }
 }

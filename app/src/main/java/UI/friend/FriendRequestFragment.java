@@ -7,6 +7,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -17,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.study.android_zenly.R;
 
 import java.util.ArrayList;
@@ -25,6 +27,8 @@ import java.util.List;
 import adapter.FriendListAdapter;
 import adapter.FriendRequestAdapter;
 import data.models.User;
+import data.repositories.ConversationRepository;
+import data.repositories.UserRepository;
 import viewModel.FriendSuggestViewModel;
 import viewModel.FriendViewModel;
 import viewModel.InvitationViewModel;
@@ -79,6 +83,18 @@ public class FriendRequestFragment extends Fragment implements FriendRequestAdap
         //TODO ACCEPT FRIEND REQUEST FUNCTION
         friendViewModel.acceptFriendRequest(friendUID);
         invitationViewModel.removeMyInvitation(friendUID);
+
+        //TODO CREATE A CONVERSATION WITH NEW FRIEND
+        LiveData<String> convID = ConversationRepository.getInstance().createNewConv(FirebaseAuth.getInstance().getUid(),friendUID);
+        convID.observe(getViewLifecycleOwner(),new Observer<String>() {
+            @Override
+            public void onChanged(String convId) {
+                if(convId!=null){
+                    UserRepository.getInstance().addConv(FirebaseAuth.getInstance().getUid(),convId);
+                    UserRepository.getInstance().addConv(friendUID,convId);
+                }
+            }
+        });
     }
 
     @Override
