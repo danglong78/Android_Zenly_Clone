@@ -63,8 +63,6 @@ public class StrangerProfileFragment extends Fragment implements ListFriendOfUse
                     switch (which) {
                         case 0:
                         {
-//                            FriendViewModel friendViewModel= new ViewModelProvider(getActivity()).get(FriendViewModel.class);
-//                            friendViewModel.deleteFriend(getArguments().getString("uid"));
 
                             //TODO: Block Friend Function
                             break;

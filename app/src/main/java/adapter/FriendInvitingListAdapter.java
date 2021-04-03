@@ -6,10 +6,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -18,20 +21,22 @@ import com.google.firebase.storage.StorageReference;
 import com.study.android_zenly.R;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import data.models.User;
 
-public class FriendInvitingListAdapter extends RecyclerView.Adapter<FriendInvitingListAdapter.ViewHolder>  {
-    private List<User> list;
+public class FriendInvitingListAdapter extends RecyclerView.Adapter<FriendInvitingListAdapter.ViewHolder> implements Filterable {
+    private List<User> list,listAll;
     private FirebaseStorage storage;
     private StorageReference ref;
     private String userUID;
     private Context context;
     InvitedListCallback callback;
 
-    public FriendInvitingListAdapter(Context context, ArrayList<User> list,InvitedListCallback callback){
-        this.list = list;
+    public FriendInvitingListAdapter(Context context,InvitedListCallback callback){
+        this.list = new ArrayList<>();
+        listAll=new ArrayList<>();
         storage = FirebaseStorage.getInstance();
         this.context = context;
         SharedPreferences prefs = context.getSharedPreferences("user_info",Context.MODE_PRIVATE);
@@ -40,7 +45,40 @@ public class FriendInvitingListAdapter extends RecyclerView.Adapter<FriendInviti
         }
         this.callback=callback;
     }
+    public void setList(List<User> newList) {
+        DiffUtil.Callback diffUtilCallback= new DiffUtil.Callback() {
+            @Override
+            public int getOldListSize() {
+                return list.size();
+            }
 
+            @Override
+            public int getNewListSize() {
+                return newList.size();
+            }
+
+            @Override
+            public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
+                User x=list.get(oldItemPosition);
+                User y = list.get(newItemPosition);
+                return x.equals(y);
+            }
+
+            @Override
+            public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
+                final User x = list.get(oldItemPosition);
+                final User y = newList.get(newItemPosition);
+
+                return x.getUID().equals(y.getUID());
+            }
+        };
+        final DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffUtilCallback);
+
+        list.clear();
+        list.addAll(newList);
+        listAll=new ArrayList<>(newList);
+        diffResult.dispatchUpdatesTo(this);
+    }
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -75,6 +113,38 @@ public class FriendInvitingListAdapter extends RecyclerView.Adapter<FriendInviti
     public int getItemCount() {
         return list.size();
     }
+
+    @Override
+    public Filter getFilter() {
+        return filter;
+    }
+    Filter filter = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            List<User> filteredList = new ArrayList<User>();
+            if( constraint.toString().isEmpty())
+                filteredList.addAll(listAll);
+            else{
+                for(User user:listAll)
+                {
+                    if(user.getName().toLowerCase().contains(constraint.toString().toLowerCase()))
+                        filteredList.add(user);
+                }
+            }
+            FilterResults results = new FilterResults();
+            results.values=filteredList;
+            return results;
+
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            list.clear();
+            list.addAll((Collection<User>) results.values);
+            notifyDataSetChanged();
+
+        }
+    };
 
     public class ViewHolder extends RecyclerView.ViewHolder{
         private TextView userNameText;

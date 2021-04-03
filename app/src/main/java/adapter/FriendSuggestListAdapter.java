@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -104,8 +105,38 @@ public class FriendSuggestListAdapter  extends RecyclerView.Adapter<FriendSugges
     public User getItem(int position) {
         return list.get(position);
     }
-    public void setItems(ArrayList<User> list) {
-        this.list=list;
+    public void setList(ArrayList<User>newList){
+        DiffUtil.Callback diffUtilCallback= new DiffUtil.Callback() {
+            @Override
+            public int getOldListSize() {
+                return list.size();
+            }
+
+            @Override
+            public int getNewListSize() {
+                return newList.size();
+            }
+
+            @Override
+            public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
+                User x=list.get(oldItemPosition);
+                User y = list.get(newItemPosition);
+                return x.equals(y);
+            }
+
+            @Override
+            public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
+                final User x = list.get(oldItemPosition);
+                final User y = newList.get(newItemPosition);
+
+                return x.getUID().equals(y.getUID());
+            }
+        };
+        final DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffUtilCallback);
+
+        list.clear();
+        list.addAll(newList);
+        diffResult.dispatchUpdatesTo(this);
     }
     public void addItems(ArrayList<User> postItems) {
         list.addAll(postItems);

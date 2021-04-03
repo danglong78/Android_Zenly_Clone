@@ -2,6 +2,8 @@ package viewModel;
 
 import android.app.Application;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.util.Log;
 import android.view.View;
 
@@ -14,6 +16,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -120,5 +123,17 @@ public class UserViewModel extends ViewModel {
         MutableLiveData<ArrayList<String>> res = null;
         res.postValue(getHostUser().getValue().getConversation());
         return res;
+    }
+    public Task<Void> setName(String name){
+        return repository.setName(getHostUser().getValue().getUID(),name);
+    }
+    public Task<Void> setDob(String dob){
+        return repository.setDob(getHostUser().getValue().getUID(),dob);
+    }
+    public void setAvatarURL(Uri file){
+        repository.setAvatarURL(getHostUser().getValue().getUID(),file);
+    }
+    public void setAvatarURL(Bitmap file){
+        repository.setAvatarURL(getHostUser().getValue().getUID(),file);
     }
 }

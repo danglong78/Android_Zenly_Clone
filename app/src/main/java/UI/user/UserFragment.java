@@ -72,13 +72,15 @@ public class UserFragment extends Fragment implements UserSettingApdater.UserSet
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_user, container, false);
+
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         activity = (MainActivity) getActivity();
         homeFragmentMotionLayout = (MotionLayout) requireActivity().findViewById(R.id.motion_layout);
-
+        userViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
+        friendViewModel = new ViewModelProvider(requireActivity()).get(FriendViewModel.class);
         super.onViewCreated(view, savedInstanceState);
         userName = (TextView) view.findViewById(R.id.userName);
         navController= Navigation.findNavController(view);
@@ -98,17 +100,7 @@ public class UserFragment extends Fragment implements UserSettingApdater.UserSet
         });
 
         avatar = view.findViewById(R.id.avatar);
-        //TODO lay avatar url truyền vào "Avatar URL"
-//        StorageReference ref = FirebaseStorage.getInstance().getReference().child("avatars").child(Avatar URL);
-//        if (ref != null) {
-//            ref.getDownloadUrl().addOnSuccessListener(uri -> {
-//                String imageURL = uri.toString();
-//                Glide.with(requireActivity())
-//                        .load(imageURL)
-//                        .into(avatar);
-//
-//            });
-//        }
+
         avatar.setOnClickListener(v -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setTitle("Which one does select photo from ?");
@@ -161,39 +153,39 @@ public class UserFragment extends Fragment implements UserSettingApdater.UserSet
 
 
         });
-        userViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
-        friendViewModel = new ViewModelProvider(requireActivity()).get(FriendViewModel.class);
+
 
         recyclerview = view.findViewById(R.id.recyclerview);
-        updateProfile();
-//        userViewModel.getHostUser().observe(getViewLifecycleOwner(), new Observer<User>() {
-//            @Override
-//            public void onChanged(User s) {
-//                updateProfile();
-//            }
-//        });
-//
-//        friendViewModel.init(requireActivity(), getViewLifecycleOwner());
-//        friendViewModel.getFriendsList().observe(getViewLifecycleOwner(), new Observer<List<User>>() {
-//            @Override
-//            public void onChanged(List<User> users) {
-//                updateProfile();
-//            }
-//        });
+        UserSettingApdater adapter = new UserSettingApdater();
+        recyclerview.setLayoutManager(new LinearLayoutManager(requireActivity()));
+        recyclerview.setAdapter(adapter);
+        adapter.callback = UserFragment.this;
+        adapter.setDob(getDob());
+        userViewModel.getHostUser().observe(getViewLifecycleOwner(), user -> {
+            StorageReference ref = FirebaseStorage.getInstance().getReference().child("avatars").child(user.getAvatarURL());
+            if (ref != null) {
+                ref.getDownloadUrl().addOnSuccessListener(uri -> {
+                    String imageURL = uri.toString();
+                    Glide.with(requireActivity())
+                            .load(imageURL)
+                            .into(avatar);
 
-        // blocks
-
+                });
+            }
+        });
+        friendViewModel.getFriendsList().observe(getViewLifecycleOwner(),friendList->{
+            adapter.setNumFriends(friendList.size());
+        });
+        //TODO observe Blocked User List
 
     }
 
-    void updateProfile(){
+    private String getDob(){
         int year= prefs.getInt("year",0);
         int month= prefs.getInt("month",0);
         int day= prefs.getInt("day",0);
-        UserSettingApdater adapter = new UserSettingApdater(DateFormatter.format(new Date(year-1900,month,day),"dd MMMM yyyy"), friendViewModel.getFriendsList().getValue().size(), 0 );
-        adapter.callback = UserFragment.this;
-        recyclerview.setAdapter(adapter);
-        recyclerview.setLayoutManager(new LinearLayoutManager(requireActivity()));
+        return DateFormatter.format(new Date(year-1900,month,day),"dd MMMM yyyy");
+
     }
 
 
@@ -325,6 +317,7 @@ public class UserFragment extends Fragment implements UserSettingApdater.UserSet
                         Bundle extras = data.getExtras();
                         Bitmap imageBitmap = (Bitmap) extras.get("data");
                         //TODO UPDATE DATABASE
+                        userViewModel.setAvatarURL(imageBitmap);
                         avatar.setImageBitmap(imageBitmap);
                     }
 
@@ -333,7 +326,7 @@ public class UserFragment extends Fragment implements UserSettingApdater.UserSet
                     if(resultCode == RESULT_OK){
                         Uri selectedImage = data.getData();
                         //TODO UPDATE DATABASE
-
+                        userViewModel.setAvatarURL(selectedImage);
                         avatar.setImageURI(selectedImage);
                     }
                     break;

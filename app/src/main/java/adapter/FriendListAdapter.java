@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -78,9 +79,39 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Vi
         });
     }
 
-    public void setUsers(ArrayList<User> users) {
-        this.list = users;
-        listAll= new ArrayList<>(users);
+    public void setUsers(ArrayList<User> newList) {
+        DiffUtil.Callback diffUtilCallback= new DiffUtil.Callback() {
+            @Override
+            public int getOldListSize() {
+                return list.size();
+            }
+
+            @Override
+            public int getNewListSize() {
+                return newList.size();
+            }
+
+            @Override
+            public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
+                User x=list.get(oldItemPosition);
+                User y = list.get(newItemPosition);
+                return x.equals(y);
+            }
+
+            @Override
+            public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
+                final User x = list.get(oldItemPosition);
+                final User y = newList.get(newItemPosition);
+
+                return x.getUID().equals(y.getUID());
+            }
+        };
+        final DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffUtilCallback);
+
+        list.clear();
+        list.addAll(newList);
+        listAll=new ArrayList<>(newList);
+        diffResult.dispatchUpdatesTo(this);
     }
 
     @Override

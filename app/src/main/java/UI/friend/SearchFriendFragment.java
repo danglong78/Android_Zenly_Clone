@@ -50,9 +50,9 @@ public class SearchFriendFragment extends Fragment implements FriendInvitingList
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        FriendListAdapter adapter = new FriendListAdapter(requireActivity(),SearchFriendFragment.this);
+        FriendListAdapter friendAdapter = new FriendListAdapter(requireActivity(),SearchFriendFragment.this);
         RecyclerView recyclerView = view.findViewById(R.id.friend_recycler_view);
-        recyclerView.setAdapter(adapter);
+        recyclerView.setAdapter(friendAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         invitationViewModel = new ViewModelProvider(requireActivity()).get(InvitationViewModel.class);
@@ -61,32 +61,26 @@ public class SearchFriendFragment extends Fragment implements FriendInvitingList
         friendViewModel.getFriendsList().observe(getViewLifecycleOwner(), new Observer<List<User>>() {
             @Override
             public void onChanged(List<User> users) {
-                adapter.setUsers( (ArrayList<User>)users);
-                adapter.notifyDataSetChanged();
+                friendAdapter.setUsers( (ArrayList<User>)users);
+                friendAdapter.notifyDataSetChanged();
             }
         });
 
 
 
 
-//        List<User> invitedList= new ArrayList<>();
-//        invitedList.add(new User(null,"Dang Minh Hoang Long","123","0e9748c8-8978-11eb-8dcd-0242ac130003.png",null,null,null));
-//        invitedList.add(new User(null,"Ho Dai Tri","123","0e974b5c-8978-11eb-8dcd-0242ac130003.png",null,null,null));
-//        invitedList.add(new User(null,"Tran Thanh Tam","123","0e974d50-8978-11eb-8dcd-0242ac130003.png",null,null,null));
-//        invitedList.add(new User(null,"Huynh Lam Hoang Dai","123","0e974e36-8978-11eb-8dcd-0242ac130003.jpg",null,null,null));
-//        FriendInvitingListAdapter adapter2= new FriendInvitingListAdapter(requireActivity(), (ArrayList<User>) invitedList,this);
-
+        RecyclerView invitedRecyclerView = view.findViewById(R.id.invitedRecyclerView);
+        FriendInvitingListAdapter friendInvitingAdapter = new FriendInvitingListAdapter(requireActivity(), SearchFriendFragment.this);
+        invitedRecyclerView.setAdapter(friendInvitingAdapter);
+        invitedRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         invitingViewModel = new ViewModelProvider(requireActivity()).get(InvitingViewModel.class);
         invitingViewModel.getInvitingList().observe(getViewLifecycleOwner(), new Observer<List<User>>() {
             @Override
             public void onChanged(List<User> users) {
                 Log.d(TAG, "getInvitingList: users.size()" + users.size());
-                FriendInvitingListAdapter adapter = new FriendInvitingListAdapter(requireActivity(), (ArrayList<User>) invitingViewModel.getInvitingList().getValue(), SearchFriendFragment.this);
-                RecyclerView invitedRecyclerView = view.findViewById(R.id.invitedRecyclerView);
-                invitedRecyclerView.setAdapter(adapter);
-                invitedRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-                adapter.notifyDataSetChanged();
+                friendInvitingAdapter.setList(users);
+                friendInvitingAdapter.notifyDataSetChanged();
             }
         });
 
@@ -104,8 +98,11 @@ public class SearchFriendFragment extends Fragment implements FriendInvitingList
 
             @Override
             public void afterTextChanged(Editable s) {
-                adapter.getFilter().filter(s);
-                adapter.notifyDataSetChanged();
+                friendAdapter.getFilter().filter(s);
+                friendAdapter.notifyDataSetChanged();
+                friendInvitingAdapter.getFilter().filter(s);
+                friendInvitingAdapter.notifyDataSetChanged();
+
             }
         });
     }

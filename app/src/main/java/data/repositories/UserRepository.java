@@ -1,8 +1,9 @@
 package data.repositories;
 
-import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -11,7 +12,6 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
@@ -20,17 +20,16 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.ListenerRegistration;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import data.models.Conversation;
 import data.models.User;
 import data.models.UserLocation;
-import ultis.MyCallBack;
 
 public class UserRepository {
     private final String TAG = "UserRepository";
@@ -151,4 +150,31 @@ public class UserRepository {
     public void addConv(String uId,String convId){
         mDb.collection(USER_COLLECTION).document(uId).update("conversation", FieldValue.arrayUnion(convId));
     }
+    public Task<Void> setName(String UID, String name){
+        return mDb.collection(USER_COLLECTION).document(UID).update("name", name);
+
+    }
+    public Task<Void> setDob(String UID, String dob){
+
+        return mDb.collection(USER_COLLECTION).document(UID).update("dob", dob);
+    }
+    public void setAvatarURL(String UID, Uri file){
+        StorageReference ref = FirebaseStorage.getInstance().getReference().child("avatars/"+UID+file.getLastPathSegment());
+        ref.putFile(file).addOnSuccessListener(task->{
+            mDb.collection(USER_COLLECTION).document(UID).update("avatarURL", UID+file.getLastPathSegment());
+
+        });
+    }
+    public void setAvatarURL(String UID, Bitmap file){
+        StorageReference ref = FirebaseStorage.getInstance().getReference().child("avatars/"+UID+".jpg");
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        file.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] data = baos.toByteArray();
+        ref.putBytes(data).addOnSuccessListener(task->{
+            mDb.collection(USER_COLLECTION).document(UID).update("avatarURL", UID+".jpg");
+
+        });
+    }
+
+
 }

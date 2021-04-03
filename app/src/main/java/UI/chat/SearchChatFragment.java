@@ -72,43 +72,16 @@ public class SearchChatFragment extends Fragment implements ChatListAdapter.OnCh
         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
         imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
         RecyclerView nav_drawer_recycler_view = view.findViewById(R.id.nav_drawer_recycler_view);
-//        ChatListAdapter adapter = new ChatListAdapter(getActivity(),this);
-//        nav_drawer_recycler_view.setAdapter(adapter);
-//        nav_drawer_recycler_view.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-//        view.setPadding(0,getStatusBarHeight(),0,0);
-        //UserViewModel mUserViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
-        ChatListViewModel mChatListViewModel = new ViewModelProvider(requireActivity()).get(ChatListViewModel.class);
         madapter = new ChatListAdapter(getActivity(),this);
-//        mUserViewModel.getIsInited().observe(getViewLifecycleOwner(),new Observer<Boolean>(){
-//            @Override
-//            public void onChanged(Boolean aBoolean) {
-//                if(aBoolean){
-//                    mChatListViewModel.init(getViewLifecycleOwner());
-//                    mChatListViewModel.getIsInited().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
-//                        @Override
-//                        public void onChanged(Boolean isInited) {
-//                            if (isInited) {
-//                                madapter.setConversationList(mChatListViewModel.getConvList().getValue());
-//                                nav_drawer_recycler_view.setAdapter(madapter);
-//                                nav_drawer_recycler_view.setLayoutManager(new LinearLayoutManager(getActivity()));
-//                                mChatListViewModel.getIsInited().removeObserver(this);
-//                                mChatListViewModel.setIsInitedFalse();
-//                            }
-//                        }
-//                    });
-//                    mUserViewModel.getIsInited().removeObserver(this);
-//                }
-//            }
-//        });
-//        mChatListViewModel.init(getViewLifecycleOwner());
+        nav_drawer_recycler_view.setAdapter(madapter);
+        nav_drawer_recycler_view.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        ChatListViewModel mChatListViewModel = new ViewModelProvider(requireActivity()).get(ChatListViewModel.class);
         mChatListViewModel.getIsInited().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
                     @Override
                     public void onChanged(Boolean isInited) {
                         if (isInited) {
                             madapter.setConversationList(mChatListViewModel.getConvList().getValue());
-                            nav_drawer_recycler_view.setAdapter(madapter);
-                            nav_drawer_recycler_view.setLayoutManager(new LinearLayoutManager(getActivity()));
                             mChatListViewModel.getIsInited().removeObserver(this);
                         }
                     }
@@ -159,6 +132,7 @@ public class SearchChatFragment extends Fragment implements ChatListAdapter.OnCh
         builder.setItems(new String[]{"Delete"},new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 //TODO: Delete Conversation Function
+                madapter.deleteConversation(position);
             }
         });
         builder.create().show();

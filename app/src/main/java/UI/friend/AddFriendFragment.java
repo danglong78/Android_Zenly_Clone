@@ -134,7 +134,7 @@ public class AddFriendFragment extends Fragment implements FriendSuggestListAdap
                 @Override
                 public void onChanged(List<User> users) {
                     recentFriendAdapter.setList((ArrayList<User>) users);
-                    recentFriendAdapter.notifyDataSetChanged();
+//                    recentFriendAdapter.notifyDataSetChanged();
                 }
             });
 
@@ -142,8 +142,8 @@ public class AddFriendFragment extends Fragment implements FriendSuggestListAdap
                 @Override
                 public void onChanged(List<User> users) {
                     swiperefreshlayout.setRefreshing(false);
-                    adapter.setItems((ArrayList<User>) users);
-                    adapter.notifyDataSetChanged();
+                    adapter.setList((ArrayList<User>) users);
+//                    adapter.notifyDataSetChanged();
                 }
             });
 

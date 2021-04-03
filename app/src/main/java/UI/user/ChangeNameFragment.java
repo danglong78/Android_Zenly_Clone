@@ -11,6 +11,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
@@ -24,10 +25,12 @@ import android.widget.TextView;
 
 import com.study.android_zenly.R;
 
+import viewModel.UserViewModel;
+
 public class ChangeNameFragment extends Fragment {
     NavController navController;
     EditText nameInput;
-
+    UserViewModel userViewModel;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -38,7 +41,7 @@ public class ChangeNameFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
+        userViewModel= new ViewModelProvider(requireActivity()).get(UserViewModel.class);
         navController= Navigation.findNavController(view);
         initView(view);
     }
@@ -67,7 +70,9 @@ public class ChangeNameFragment extends Fragment {
                 }
                 else{
                     saveInformation();
-                    //TODO change name of user on firebase
+                    userViewModel.setName(nameInput.getText().toString()).addOnCompleteListener(task->{
+                        navController.popBackStack();
+                    });
 
                     InputMethodManager inputMethodManager =
                             (InputMethodManager) getActivity().getSystemService(
@@ -75,7 +80,7 @@ public class ChangeNameFragment extends Fragment {
                     if(getActivity().getCurrentFocus()!=null)
                     {inputMethodManager.hideSoftInputFromWindow(
                             getActivity().getCurrentFocus().getWindowToken(), 0);}
-                    navController.popBackStack();
+//                    navController.popBackStack();
                 }
             }
         });

@@ -10,6 +10,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
@@ -23,13 +24,17 @@ import android.widget.TextView;
 import com.study.android_zenly.R;
 
 import java.util.Calendar;
+import java.util.Date;
+
+import ultis.DateFormatter;
+import viewModel.UserViewModel;
 
 
 public class ChangeDobFragment extends Fragment {
     NavController navController;
     DatePicker datePicker;
     TextView dobTextView;
-
+    UserViewModel userViewModel;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -40,7 +45,7 @@ public class ChangeDobFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         navController= Navigation.findNavController(view);
-
+        userViewModel= new ViewModelProvider(requireActivity()).get(UserViewModel.class);
         initView( view);
 
     }
@@ -70,7 +75,11 @@ public class ChangeDobFragment extends Fragment {
                 }
                 else {
                     saveInformation();
-                    navController.popBackStack();
+                    userViewModel.setDob(DateFormatter.format(new Date(datePicker.getYear()-1900,datePicker.getDayOfMonth(),datePicker.getDayOfMonth()),"dd MMMM yyyy"))
+                            .addOnCompleteListener(task -> {
+                                navController.popBackStack();
+                            });
+
                 }
             }
         });

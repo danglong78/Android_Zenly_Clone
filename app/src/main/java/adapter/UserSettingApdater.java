@@ -24,11 +24,26 @@ public class UserSettingApdater extends RecyclerView.Adapter<UserSettingApdater.
     private int numBlocks;
 
 
-    public UserSettingApdater(String dob, int numFriends, int numBlocks)
+    public UserSettingApdater()
+    {
+        this.dob = "";
+        this.numFriends = 0;
+        this.numBlocks = 0;
+    }
+    public void setDob(String dob)
     {
         this.dob = dob;
+        notifyItemChanged(0);
+    }
+    public void setNumFriends(int numFriends)
+    {
         this.numFriends = numFriends;
+        notifyItemChanged(1);
+    }
+    public void setNumBlocks(int numBlocks)
+    {
         this.numBlocks = numBlocks;
+        notifyItemChanged(2);
     }
     @NonNull
     @Override

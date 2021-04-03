@@ -110,6 +110,8 @@ public class FriendProfileFragment extends Fragment implements ListFriendOfUserA
 
 
                         //TODO: SET PRECISE LOCATION
+                        dialog.dismiss();
+
                         break;
                     }
                     case 1:
