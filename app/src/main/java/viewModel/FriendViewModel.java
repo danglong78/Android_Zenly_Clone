@@ -38,14 +38,19 @@ public class FriendViewModel extends ViewModel {
             Log.d(TAG, "init: Runned");
             hostUser = new ViewModelProvider((FragmentActivity) context).get(UserViewModel.class).getHostUser().getValue().getUID();
             repository = FriendsRepository.getInstance(FRIENDS_COLLECTION, hostUser);
-            friendsRefList = repository.getListUserReference();
+            friendsRefList =  (MutableLiveData<List<UserRefFriend>>) repository.getListUserReference();
             friendsList = repository.getListUser();
             friendLocationList = repository.getUserLocationList(lifecycleOwner);
+
+            repository.getAll();
+
+
 
             friendsRefList.observe(lifecycleOwner, new Observer<List<UserRefFriend>>() {
 
                 @Override
                 public void onChanged(List<UserRefFriend> userRefs) {
+                    Log.d(TAG, "onChanged: friendsRefList");
                    if (isInited.getValue() == null) {
                        ArrayList<Boolean> tmp = new ArrayList<Boolean>();
                        tmp.add(true);
@@ -77,8 +82,6 @@ public class FriendViewModel extends ViewModel {
                     friendsList.removeObserver(this);
                 }
             });
-
-            repository.getAll();
         }
     }
 

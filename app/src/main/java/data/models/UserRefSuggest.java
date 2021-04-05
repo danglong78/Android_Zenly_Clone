@@ -23,8 +23,8 @@ public class UserRefSuggest extends UserRef {
         this.hidden = hidden;
     }
 
-    public static UserRefSuggest toUserRef (DocumentChange userRef){
-        return userRef.getDocument().toObject(UserRefSuggest.class);
+    public static <T extends UserRef> T  toUserRef (DocumentChange userRef){
+        return (T) userRef.getDocument().toObject(UserRefSuggest.class);
     }
 
     public boolean filterAddUserList(){

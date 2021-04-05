@@ -165,6 +165,7 @@ public class ListUsersRepository <T extends UserRef> {
     protected void handleADDED(List<T> newRefList, MutableLiveData<List<User>> listUser, DocumentChange dc) {
         Log.d(TAG, "handleADDED: " + COLLECTION + " " + UserRef.toUserRef(dc));
         T addUserRef = (T) T.toUserRef(dc);
+        Log.d(TAG, "handleADDED: " +  COLLECTION + " " + addUserRef.getClass().getTypeName());
 
         if (newRefList != null)
             if (!newRefList.contains(addUserRef)) {
@@ -189,6 +190,7 @@ public class ListUsersRepository <T extends UserRef> {
     }
 
     private void processAllSnapshots(QuerySnapshot snapshots) {
+        Log.d(TAG, "processAllSnapshots: " + COLLECTION);
         List<T> newRefList = null;
 
         if (listUserRef.getValue() == null)
@@ -210,8 +212,9 @@ public class ListUsersRepository <T extends UserRef> {
             }
         }
 
-        listUserRef.postValue(newRefList);
-//        Log.d(TAG, "onEvent: " + COLLECTION + " "   + listUserRef.getValue().size());
+        listUserRef.setValue(newRefList);
+        Log.d(TAG, "processAllSnapshots: " + COLLECTION);
+        Log.d(TAG, "processAllSnapshots: " + listUserRef.getValue().size());
     }
 
     protected void processPaginationSnapshots(QuerySnapshot snapshots) {
@@ -241,9 +244,12 @@ public class ListUsersRepository <T extends UserRef> {
     }
 
     public void getAll() {
+        Log.d(TAG, "getAll: bo may chay r" + COLLECTION);
         listRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot snapshots, @Nullable FirebaseFirestoreException e) {
+                Log.d(TAG, "onEvent: Bo may chay r" + COLLECTION);
+                
                 if (e != null) {
                     Log.w(TAG, "listen:error", e);
                     return;

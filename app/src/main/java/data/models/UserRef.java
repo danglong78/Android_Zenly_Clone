@@ -30,8 +30,8 @@ public class UserRef {
         return false;
     }
 
-    public static UserRef toUserRef(DocumentChange userRef){
-        return userRef.getDocument().toObject(UserRef.class);
+    public static <T extends UserRef> T  toUserRef(DocumentChange userRef){
+        return (T) userRef.getDocument().toObject(UserRef.class);
     }
 
     public void setTimestampNow(){

@@ -113,6 +113,7 @@ public class MapViewModel extends ViewModel {
                     // Add friend markers
                     FriendViewModel mFriendViewModel = new ViewModelProvider((FragmentActivity) activity).get(FriendViewModel.class);
                     mFriendLocationList = mFriendViewModel.getFriendLocationList();
+                    Log.d(TAG, "onChanged: mFriendLocationList " + mFriendLocationList.getValue().size());
                     mFriendLocationList.observe(lifecycleOwner, new Observer<List<UserLocation>>() {
 
                         @Override

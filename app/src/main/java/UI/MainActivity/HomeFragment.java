@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import data.models.User;
 import ultis.FragmentTag;
 import ultis.UpdateLocationWorker;
 import viewModel.FriendViewModel;
@@ -105,6 +106,7 @@ public class HomeFragment extends Fragment {
         mapViewModel = new ViewModelProvider(requireActivity()).get(MapViewModel.class);
         mapViewModel.setActivity(getActivity());
         mapViewModel.init(getViewLifecycleOwner());
+
         runLocationUpdateWorker(userViewModel.getHostUser().getValue().getUID());
 
 //        if(loginviewModel.getAuthentication().getValue() ) {

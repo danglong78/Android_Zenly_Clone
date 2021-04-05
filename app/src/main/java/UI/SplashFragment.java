@@ -76,8 +76,8 @@ public class SplashFragment extends Fragment {
 //                                        runLocationUpdateWorker(userViewModel.getHostUser().getValue().getUID());
 
                                         // Friends
-                                        friendViewModel.init(requireActivity(), getViewLifecycleOwner());
-                                        friendViewModel.getIsInited().observe(getViewLifecycleOwner(), new Observer<List<Boolean>>() {
+                                        friendViewModel.init(requireActivity(), requireActivity());
+                                        friendViewModel.getIsInited().observe(requireActivity(), new Observer<List<Boolean>>() {
 
                                             @Override
                                             public void onChanged(List<Boolean> isInitedList) {

@@ -35,8 +35,8 @@ public class UserRefFriend extends UserRef {
         this.frozenLocation = frozenLocation;
     }
 
-    public static UserRefFriend toUserRef (DocumentChange userRef){
-        return userRef.getDocument().toObject(UserRefFriend.class);
+    public static <T extends UserRef> T  toUserRef (DocumentChange userRef){
+        return (T) userRef.getDocument().toObject(UserRefFriend.class);
     }
 
 

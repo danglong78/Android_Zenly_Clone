@@ -1,6 +1,10 @@
 package data.models;
 
+import androidx.annotation.Nullable;
+
+import com.google.firebase.firestore.Exclude;
 import com.google.firebase.firestore.GeoPoint;
+import com.google.firebase.firestore.ListenerRegistration;
 
 public class UserLocation {
     String userUID;
@@ -8,6 +12,31 @@ public class UserLocation {
     GeoPoint location;
     String snippet;
     String imageURL;
+
+
+
+    @Exclude
+    boolean isFrozen = false;
+    @Exclude
+    ListenerRegistration listener = null;
+
+
+    public boolean isFrozen() {
+        return isFrozen;
+    }
+
+    public void setFrozen(boolean frozen) {
+        isFrozen = frozen;
+    }
+
+    public ListenerRegistration getListener() {
+        return listener;
+    }
+
+    public void setListener(ListenerRegistration listener) {
+        this.listener = listener;
+    }
+
 
 
     public UserLocation() {
@@ -20,6 +49,10 @@ public class UserLocation {
         this.location = location;
         this.snippet = snippet;
         this.imageURL = imageURL;
+    }
+
+    public UserLocation(String userUID) {
+        this.userUID = userUID;
     }
 
     public String getSnippet() {
@@ -62,4 +95,11 @@ public class UserLocation {
     public void setLocation(GeoPoint location) {
         this.location = location;
     }
+
+
+
+//    @Override
+//    public boolean equals(@Nullable Object obj) {
+//        return userUID.equals(((UserLocation)obj).getUserUID());
+//    }
 }
