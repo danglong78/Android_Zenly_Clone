@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.motion.widget.MotionLayout;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -39,9 +40,12 @@ import adapter.CreateChatAdapter;
 import adapter.GhostModeListAdapter;
 import data.models.Conversation;
 import data.models.User;
+import data.repositories.ConversationRepository;
+import data.repositories.UserRepository;
 import ultis.FragmentTag;
 import viewModel.ChatListViewModel;
 import viewModel.FriendViewModel;
+import viewModel.UserViewModel;
 
 
 public class CreateChatFragment extends Fragment implements CreateChatAdapter.onItemClickListener {
@@ -116,9 +120,71 @@ public class CreateChatFragment extends Fragment implements CreateChatAdapter.on
             ChatListFragment chatListFragment= (ChatListFragment) getParentFragment();
             chatListFragment.setBottomSheetState(BottomSheetBehavior.STATE_HIDDEN);
             //TODO  Create CHat Function
-            // tempList là list danh sách người chat nhóm
+            List<User> users = madapter.getCheckList();
+            if(users.size()==0){
+                navController.navigate(R.id.action_chatListFragment_to_chatFragment);
+            }
+            if(users.size()==1){
+                UserViewModel userViewModel = new ViewModelProvider(getActivity()).get(UserViewModel.class);
+                userViewModel.getIsInited().observe(getViewLifecycleOwner(),new Observer<Boolean>(){
+                    @Override
+                    public void onChanged(Boolean aBoolean) {
+                        if(aBoolean){
+                            User aUser = userViewModel.getHostUser().getValue();
+                            ArrayList<String> listID1 = aUser.getConversation();
+                            ArrayList<String> listID2 = users.get(0).getConversation();
+                            ArrayList<String> listID3 = new ArrayList<String>();
+                            for(String s : listID1){
+                                if(listID2.contains(s)){
+                                    listID3.add(s);
+                                }
+                            }
+                            LiveData<String> aId = ConversationRepository.getInstance().getP2PConv(listID3);
+                            aId.observe(getViewLifecycleOwner(),new Observer<String>(){
+                                @Override
+                                public void onChanged(String s) {
+                                    Bundle aBundle = new Bundle();
+                                    aBundle.putString("convID",aId.getValue());
+                                    aId.removeObserver(this);
+                                    navController.navigate(R.id.action_chatListFragment_to_chatFragment,aBundle);
+                                    aId.removeObserver(this);
+                                }
+                            });
+                            userViewModel.getIsInited().removeObserver(this);
+                        }
+                    }
+                });
+            }else{
+                ArrayList<String> memberId = new ArrayList<String>();
+                for(User temp : users){
+                    memberId.add(temp.getUID());
+                }
+                UserViewModel userViewModel = new ViewModelProvider(getActivity()).get(UserViewModel.class);
+                userViewModel.getIsInited().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+                    @Override
+                    public void onChanged(Boolean aBoolean) {
+                        if(aBoolean){
+                            String uidCreator = userViewModel.getHostUser().getValue().getUID();
+                            LiveData<String> convID = ConversationRepository.getInstance().createGroupChat(uidCreator,memberId);
+                            convID.observe(getViewLifecycleOwner(),new Observer<String>(){
+                                @Override
+                                public void onChanged(String s) {
+                                    if(s!=null){
+                                        memberId.add(uidCreator);
+                                        for(String aId : memberId){
+                                            UserRepository.getInstance().addConv(aId,s);
+                                        }
+                                    }
+                                    convID.removeObserver(this);
+                                }
+                            });
+                        }
+                        userViewModel.getIsInited().removeObserver(this);
+                        navController.navigate(R.id.action_chatListFragment_to_chatFragment);
+                    }
+                });
+            }
             //navController.navigate(R.id.action_chatListFragment_to_chatFragment);
-
         });
 
 

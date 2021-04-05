@@ -292,4 +292,23 @@ public class ConversationRepository {
         });
         return res;
     };
+
+    public LiveData<String> getP2PConv(ArrayList<String> convId){
+        MutableLiveData<String> res = new MutableLiveData<String>();
+        mDb.collection(CONV_COLLECTION).whereIn("id",convId).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()){
+                    for(DocumentSnapshot doc : task.getResult()){
+                        ArrayList<User> temp = (ArrayList<User>)doc.get("members");
+                        if(temp!=null && temp.size()==2){
+                            res.postValue((String)doc.get("id"));
+                            break;
+                        }
+                    }
+                }
+            }
+        });
+        return res;
+    }
 }
