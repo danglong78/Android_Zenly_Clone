@@ -112,4 +112,12 @@ public class FriendViewModel extends ViewModel {
         repository.removeFromMyRepository(friendUID);
         repository.removeFromOtherRepository(friendUID);
     }
+
+    public void onFrozen(String suggestUID) {
+        repository.modify(suggestUID, true);
+    }
+
+    public void offFrozen(String suggestUID) {
+        repository.modify(suggestUID, false);
+    }
 }

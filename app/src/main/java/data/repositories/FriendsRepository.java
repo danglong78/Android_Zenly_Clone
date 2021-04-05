@@ -116,12 +116,14 @@ public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
                         if (userRef.getFrozen()) {
                             if (!foundUserLocation.isFrozen()) {
                                 Log.d(TAG, "onChanged: on frozen");
+                                foundUserLocation.setFrozen(true);
                                 foundUserLocation.getListener().remove();
                             }
                         }
                         else {
                             if (foundUserLocation.isFrozen()) {
                                 Log.d(TAG, "onChanged: off frozen");
+                                foundUserLocation.setFrozen(false);
                                 ListenerRegistration listener = mDb.collection("UserLocations").document(userRef.getRef().getId()).addSnapshotListener(new EventListener<DocumentSnapshot>() {
 
                                     @Override
@@ -214,5 +216,10 @@ public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
             }
             Log.d(TAG, "listRefChange: " + COLLECTION + " " + x);
         }
+    }
+
+    public void modify(String modifyUID, boolean frozen) {
+        listRef.document(modifyUID).update("frozen", frozen);
+        Log.d(TAG, "modify: " + UID + " modify " + modifyUID + " " + frozen);
     }
 }
