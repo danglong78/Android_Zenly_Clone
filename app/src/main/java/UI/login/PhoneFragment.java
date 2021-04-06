@@ -141,7 +141,10 @@ public class PhoneFragment extends Fragment implements LoginFragmentInterface{
         String temp = ccp.getSelectedCountryNameCode();
         myEditor.putString("countrycode", temp);
         myEditor.putString("codePhone",ccp.getSelectedCountryCodeWithPlus());
-        myEditor.putString("phone",editTextCarrierNumber.getText().toString());
+        String phone=editTextCarrierNumber.getText().toString();
+        phone = (phone.startsWith("0"))? phone.substring(1) : phone;
+
+        myEditor.putString("phone",phone);
         myEditor.apply();
     }
 

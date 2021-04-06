@@ -94,6 +94,9 @@ public class FriendSuggestListAdapter  extends RecyclerView.Adapter<FriendSugges
                     listener.onHideClick(list.get(position).getUID());
                 }
             });
+            holder.itemView.setOnClickListener(v->{
+                listener.onClickVIew(list.get(position));
+            });
         }
     }
 
@@ -195,6 +198,7 @@ public class FriendSuggestListAdapter  extends RecyclerView.Adapter<FriendSugges
     public interface AddFriendsFragmentCallback {
         public void onAddButtonClick(String friendUID);
         public void onHideClick(String suggestUID);
+        public void onClickVIew(User user);
     }
 
 

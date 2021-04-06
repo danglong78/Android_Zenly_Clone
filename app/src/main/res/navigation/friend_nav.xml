@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/addFriendFragment2"
-        android:name="UI.friend.AddFriendFragment"
+        android:name="UI.friend.MainFriendFragment"
         android:label="fragment_add_friend"
         tools:layout="@layout/fragment_add_friend" >
         <action
@@ -21,6 +21,15 @@
         <action
             android:id="@+id/action_addFriendFragment2_to_friendRequestFragment"
             app:destination="@id/friendRequestFragment" />
+        <action
+            android:id="@+id/action_addFriendFragment2_to_addFriendFragment"
+            app:destination="@id/addFriendFragment" />
+        <action
+            android:id="@+id/action_addFriendFragment2_to_friendProfileFragment2"
+            app:destination="@id/friendProfileFragment2" />
+        <action
+            android:id="@+id/action_addFriendFragment2_to_strangerProfileFragment2"
+            app:destination="@id/strangerProfileFragment2" />
     </fragment>
     <fragment
         android:id="@+id/searchFriendFragment"
@@ -32,4 +41,36 @@
         android:name="UI.friend.FriendRequestFragment"
         android:label="fragment_friend_request"
         tools:layout="@layout/fragment_friend_request" />
+    <fragment
+        android:id="@+id/addFriendFragment"
+        android:name="UI.friend.AddFriendFragment"
+        android:label="fragment_detail_add_friend"
+        tools:layout="@layout/fragment_detail_add_friend" >
+        <action
+            android:id="@+id/action_addFriendFragment_to_addFriendByUsernameFragment"
+            app:destination="@id/addFriendByUsernameFragment" />
+        <action
+            android:id="@+id/action_addFriendFragment_to_addFriendByPhoneFragment"
+            app:destination="@id/addFriendByPhoneFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addFriendByPhoneFragment"
+        android:name="UI.friend.AddFriendByPhoneFragment"
+        android:label="fragment_add_friend_by_phone"
+        tools:layout="@layout/fragment_add_friend_by_phone" />
+    <fragment
+        android:id="@+id/addFriendByUsernameFragment"
+        android:name="UI.friend.AddFriendByUsernameFragment"
+        android:label="fragment_add_friend_by_username"
+        tools:layout="@layout/fragment_add_friend_by_username" />
+    <fragment
+        android:id="@+id/friendProfileFragment2"
+        android:name="UI.friend.FriendProfileFragment"
+        android:label="fragment_friend_profile"
+        tools:layout="@layout/fragment_friend_profile" />
+    <fragment
+        android:id="@+id/strangerProfileFragment2"
+        android:name="UI.friend.StrangerProfileFragment"
+        android:label="fragment_stranger_profile"
+        tools:layout="@layout/fragment_stranger_profile" />
 </navigation>

@@ -20,6 +20,8 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -32,12 +34,11 @@ import data.models.User;
 import data.models.UserLocation;
 
 public class UserRepository {
+    private static UserRepository mInstance;
     private final String TAG = "UserRepository";
     private final String USER_COLLECTION = "Users";
     private final String USER_LOCATION_COLLECTION = "UserLocations";
     private final String FRIENDS_COLLECTION = "Friends";
-
-    private static UserRepository mInstance;
     private FirebaseFirestore mDb;
 
     private UserRepository() {
@@ -45,8 +46,8 @@ public class UserRepository {
     }
 
 
-    public static UserRepository getInstance(){
-        if(mInstance == null){
+    public static UserRepository getInstance() {
+        if (mInstance == null) {
             mInstance = new UserRepository();
         }
         return mInstance;
@@ -55,7 +56,7 @@ public class UserRepository {
     public MutableLiveData<User> getHostUser(Context context) {
         SharedPreferences prefs = context.getSharedPreferences("user_infor", Context.MODE_PRIVATE);
         String uid = "";
-        if ( (prefs != null) && (prefs.contains("uid")) ) {
+        if ((prefs != null) && (prefs.contains("uid"))) {
             Log.d(TAG, "getHostUser: uid " + prefs.getString("uid", ""));
             uid = prefs.getString("uid", "");
         }
@@ -65,7 +66,7 @@ public class UserRepository {
     public MutableLiveData<UserLocation> getHostUserLocation(Context context) {
         SharedPreferences prefs = context.getSharedPreferences("user_infor", Context.MODE_PRIVATE);
         String uid = "";
-        if ( (prefs != null) && (prefs.contains("uid")) ) {
+        if ((prefs != null) && (prefs.contains("uid"))) {
             Log.d(TAG, "getHostUserLocation: uid " + prefs.getString("uid", ""));
             uid = prefs.getString("uid", "");
         }
@@ -79,9 +80,9 @@ public class UserRepository {
 
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.isSuccessful()){
+                if (task.isSuccessful()) {
                     Log.d(TAG, "onComplete: successfully set the user client.");
-                    Log.d(TAG,task.getResult().toObject(User.class).getUID());
+                    Log.d(TAG, task.getResult().toObject(User.class).getUID());
                     user.postValue(task.getResult().toObject(User.class));
                 }
             }
@@ -96,7 +97,7 @@ public class UserRepository {
 
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.isSuccessful()){
+                if (task.isSuccessful()) {
                     Log.d(TAG, "onComplete: successfully set the user client.");
                     userLocation.postValue(task.getResult().toObject(UserLocation.class));
                 }
@@ -120,10 +121,9 @@ public class UserRepository {
                 List<User> newFriendList = new ArrayList<>();
 
                 for (DocumentChange doc : queryDocumentSnapshots.getDocumentChanges()) {
-                    if(doc.getType() == DocumentChange.Type.ADDED) {
+                    if (doc.getType() == DocumentChange.Type.ADDED) {
                         newFriendList.add(doc.getDocument().toObject(User.class));
-                    }
-                    else if (doc.getType() == DocumentChange.Type.REMOVED) {
+                    } else if (doc.getType() == DocumentChange.Type.REMOVED) {
                         friendList.getValue().remove(doc.getDocument().toObject(User.class));
                     }
                 }
@@ -147,33 +147,42 @@ public class UserRepository {
         return mDb.collection(USER_LOCATION_COLLECTION).document(UID);
     }
 
-    public void addConv(String uId,String convId){
+    public void addConv(String uId, String convId) {
         mDb.collection(USER_COLLECTION).document(uId).update("conversation", FieldValue.arrayUnion(convId));
     }
-    public Task<Void> setName(String UID, String name){
+
+    public Task<Void> setName(String UID, String name) {
         return mDb.collection(USER_COLLECTION).document(UID).update("name", name);
 
     }
-    public Task<Void> setDob(String UID, String dob){
+
+    public Task<Void> setDob(String UID, String dob) {
 
         return mDb.collection(USER_COLLECTION).document(UID).update("dob", dob);
     }
-    public void setAvatarURL(String UID, Uri file){
-        StorageReference ref = FirebaseStorage.getInstance().getReference().child("avatars/"+UID+file.getLastPathSegment());
-        ref.putFile(file).addOnSuccessListener(task->{
-            mDb.collection(USER_COLLECTION).document(UID).update("avatarURL", UID+file.getLastPathSegment());
+
+    public void setAvatarURL(String UID, Uri file) {
+        StorageReference ref = FirebaseStorage.getInstance().getReference().child("avatars/" + UID + file.getLastPathSegment());
+        ref.putFile(file).addOnSuccessListener(task -> {
+            mDb.collection(USER_COLLECTION).document(UID).update("avatarURL", UID + file.getLastPathSegment());
 
         });
     }
-    public void setAvatarURL(String UID, Bitmap file){
-        StorageReference ref = FirebaseStorage.getInstance().getReference().child("avatars/"+UID+".jpg");
+
+    public void setAvatarURL(String UID, Bitmap file) {
+        StorageReference ref = FirebaseStorage.getInstance().getReference().child("avatars/" + UID + ".jpg");
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         file.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         byte[] data = baos.toByteArray();
-        ref.putBytes(data).addOnSuccessListener(task->{
-            mDb.collection(USER_COLLECTION).document(UID).update("avatarURL", UID+".jpg");
+        ref.putBytes(data).addOnSuccessListener(task -> {
+            mDb.collection(USER_COLLECTION).document(UID).update("avatarURL", UID + ".jpg");
 
         });
+    }
+
+    public  Task <QuerySnapshot>  getUserWithPhone(String phone) {
+        Query userRef = mDb.collection(USER_COLLECTION).whereEqualTo("phone", phone);
+        return userRef.get();
     }
 
 

@@ -1,17 +1,28 @@
-<androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/createChatFragment"
+    android:id="@+id/chatListContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
-    android:fitsSystemWindows="true"
     android:paddingHorizontal="10dp"
-    app:layoutDescription="@xml/fragment_create_chat_scene"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintStart_toStartOf="parent"
-    tools:context="UI.chat.CreateChatFragment">
+    tools:context="UI.friend.AddFriendByUsernameFragment">
 
+    <TextView
+        android:id="@+id/name_question"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="ADD BY USERNAME"
+        android:textColor="@color/cyan_900"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/nav_drawer_recycler_view"
@@ -23,15 +34,15 @@
         app:layout_constraintTop_toBottomOf="@+id/searchView" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/searchView"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:layout_marginTop="16dp"
-
+        android:id="@+id/searchView"
         android:background="@drawable/chat_input_background"
+
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/name_question"
+        android:layout_marginTop="16dp">
 
         <EditText
             android:id="@+id/searchInput"
@@ -39,8 +50,8 @@
             android:layout_height="match_parent"
             android:background="@android:color/transparent"
             android:hint="SEARCH"
-            android:paddingStart="16dp"
             android:textColorHint="#4F5875"
+            android:paddingStart="16dp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/cancelBtn"
@@ -62,15 +73,4 @@
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <Button
-        android:id="@+id/createChatBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
-        android:text="CHAT"
-        android:textStyle="bold"
-        app:cornerRadius="30dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-</androidx.constraintlayout.motion.widget.MotionLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

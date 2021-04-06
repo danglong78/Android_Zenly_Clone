@@ -24,8 +24,8 @@
 <!--            android:id="@+id/addFriendFragment"-->
 <!--            android:layout_width="match_parent"-->
 <!--            android:layout_height="match_parent"-->
-<!--            android:name="UI.friend.AddFriendFragment"-->
-<!--            tools:context="UI.friend.AddFriendFragment"/>-->
+<!--            android:name="UI.friend.MainFriendFragment"-->
+<!--            tools:context="UI.friend.MainFriendFragment"/>-->
 
         <include layout="@layout/bottom_sheet_layout"/>
     </com.google.android.material.navigation.NavigationView>

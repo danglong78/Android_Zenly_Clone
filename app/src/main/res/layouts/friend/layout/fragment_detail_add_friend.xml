@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/friend_motion_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="UI.friend.AddFriendFragment">
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:text="ADD SOME FRIENDS"
+        android:textColor="@color/cyan_900"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        />
+
+    <LinearLayout
+        android:id="@+id/addUsernameBtn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/title"
+        app:layout_constraintTop_toBottomOf="@+id/title">
+
+        <Button
+            android:layout_width="40dp"
+            android:layout_height="50dp"
+            android:backgroundTint="@color/cyan_900"
+            android:paddingStart="10dp"
+            app:cornerRadius="12dp"
+            app:icon="@drawable/ic_signature_solid"
+            app:iconSize="22dp"
+            app:iconTint="@color/teal" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:text="By username"
+            android:textColor="@color/cyan_900"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/addPhoneBtn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/title"
+        app:layout_constraintTop_toBottomOf="@+id/addUsernameBtn">
+
+        <Button
+            android:layout_width="40dp"
+            android:layout_height="50dp"
+            android:backgroundTint="@color/cyan_900"
+            android:paddingStart="9dp"
+            app:cornerRadius="12dp"
+            app:icon="@drawable/ic_mobile_alt_solid"
+            app:iconSize="22dp"
+            app:iconTint="@color/teal" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:text="By phone number"
+            android:textColor="@color/cyan_900"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/suggest_friend_recycler_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/suggestFriendTextView"
+        app:layout_constraintTop_toBottomOf="@+id/suggestFriendTextView" />
+
+
+
+    <TextView
+        android:id="@+id/suggestFriendTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="16dp"
+        android:layout_marginTop="16dp"
+        android:text="YOU MIGHT KNOW THESE PEOPLE"
+        android:textColor="#8F8F8F"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/title"
+        app:layout_constraintTop_toBottomOf="@+id/addPhoneBtn" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

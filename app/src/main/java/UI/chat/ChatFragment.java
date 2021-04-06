@@ -65,6 +65,7 @@ public class ChatFragment extends Fragment {
         String id = getArguments().getString("id");
         String name = getArguments().getString("name");
         List<User> listUser=  getArguments().getParcelableArrayList("listUserID");
+        Log.d("listUserChat",String.valueOf(listUser.size()));
         ChatAdapter adapter = new ChatAdapter(requireActivity(), FirebaseAuth.getInstance().getUid());
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(),LinearLayoutManager.VERTICAL,true));
@@ -124,7 +125,7 @@ public class ChatFragment extends Fragment {
         });
         profileBtn = view.findViewById(R.id.userProfileBtn);
         profileBtn.setOnClickListener(v->{
-            if(listUser.size()==1)
+            if(listUser.size()==2)
             {
                 User friend= listUser.get(0);
                 Bundle bundle= new Bundle();
@@ -135,7 +136,7 @@ public class ChatFragment extends Fragment {
                 navController.navigate(R.id.action_chatFragment_to_friendProfileFragment,bundle);
             }
         });
-        if (listUser.size() !=1)
+        if (listUser.size() !=2)
         {
             ((MaterialButton)profileBtn).setIconResource(R.drawable.ic_baseline_person_add_alt_1_24);
         }

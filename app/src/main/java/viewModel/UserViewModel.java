@@ -136,4 +136,7 @@ public class UserViewModel extends ViewModel {
     public void setAvatarURL(Bitmap file){
         repository.setAvatarURL(getHostUser().getValue().getUID(),file);
     }
+    public Task <QuerySnapshot> getUserWithPhone(String phone){
+        return repository.getUserWithPhone(phone);
+    }
 }

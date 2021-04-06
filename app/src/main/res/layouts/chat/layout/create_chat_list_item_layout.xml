@@ -48,6 +48,8 @@
             android:button="@drawable/custom_checkbox"
             android:buttonTint="#FFFFFF"
             android:buttonTintMode="multiply"
+            android:clickable="false"
+            android:focusable="false"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

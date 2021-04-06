@@ -151,6 +151,9 @@ public class ChatListFragment extends Fragment implements ChatListAdapter.OnChat
         bottomsheet.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                if(newState ==BottomSheetBehavior.STATE_HIDDEN)
+                homeFragmentMotionLayout.setTransition(R.id.left, R.id.hideLeft);
+                homeFragmentMotionLayout.setProgress(0f);
 
             }
 
