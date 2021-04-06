@@ -13,9 +13,11 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.ListenerRegistration;
 
 import java.util.ArrayList;
@@ -30,6 +32,7 @@ import data.models.UserRefSuggest;
 public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
     private final String TAG = "FriendsReposity";
     private final String USER_COLLECTION = "Users";
+    private final String FRIEND_COLLECTION = "Friends";
 
     private static FriendsRepository mInstance;
     MutableLiveData<List<UserLocation>> userLocationList;
@@ -211,15 +214,27 @@ public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
 
         if(listUserRef.getValue()!=null){
             String x = "size() = " + listUserRef.getValue().size();
-            for(UserRef u : listUserRef.getValue()){
+            for(UserRef u : listUserRef.getValue()) {
                 x += u.getRef().getPath() +" ";
             }
             Log.d(TAG, "listRefChange: " + COLLECTION + " " + x);
         }
     }
 
-    public void modify(String modifyUID, boolean frozen) {
-        listRef.document(modifyUID).update("frozen", frozen);
-        Log.d(TAG, "modify: " + UID + " modify " + modifyUID + " " + frozen);
+    public void toggleFrozen(String hostUserUID, String friendUID, boolean flag) {
+        DocumentReference friend = mDb.collection(FRIEND_COLLECTION).document(hostUserUID).collection("List").document(friendUID);
+        friend.update("frozen", flag);
+
+        DocumentReference curLocationRef = mDb.collection("UserLocations").document(friendUID);
+        curLocationRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    UserLocation curLocation = task.getResult().toObject(UserLocation.class);
+                    friend.update("frozenLocation", curLocation.getLocation());
+                }
+            }
+        });
     }
 }

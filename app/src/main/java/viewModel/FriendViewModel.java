@@ -28,23 +28,20 @@ public class FriendViewModel extends ViewModel {
     private MutableLiveData<List<UserRefFriend>> friendsRefList;
     private MutableLiveData<List<User>> friendsList;
     private MutableLiveData<List<UserLocation>> friendLocationList;
-
     private MutableLiveData<List<Boolean>> isInited = new MutableLiveData<List<Boolean>>();
-    private String hostUser;
+    private String hostUserUID;
 
 
     public void init(Context context, LifecycleOwner lifecycleOwner) {
         if (isInited.getValue() == null) {
             Log.d(TAG, "init: Runned");
-            hostUser = new ViewModelProvider((FragmentActivity) context).get(UserViewModel.class).getHostUser().getValue().getUID();
-            repository = FriendsRepository.getInstance(FRIENDS_COLLECTION, hostUser);
+            hostUserUID = new ViewModelProvider((FragmentActivity) context).get(UserViewModel.class).getHostUser().getValue().getUID();
+            repository = FriendsRepository.getInstance(FRIENDS_COLLECTION, hostUserUID);
             friendsRefList =  (MutableLiveData<List<UserRefFriend>>) repository.getListUserReference();
             friendsList = repository.getListUser();
             friendLocationList = repository.getUserLocationList(lifecycleOwner);
 
             repository.getAll();
-
-
 
             friendsRefList.observe(lifecycleOwner, new Observer<List<UserRefFriend>>() {
 
@@ -113,11 +110,11 @@ public class FriendViewModel extends ViewModel {
         repository.removeFromOtherRepository(friendUID);
     }
 
-    public void onFrozen(String suggestUID) {
-        repository.modify(suggestUID, true);
+    public void turnOnFrozen(String friendUID) {
+        repository.toggleFrozen(hostUserUID, friendUID, true);
     }
 
-    public void offFrozen(String suggestUID) {
-        repository.modify(suggestUID, false);
+    public void turnOffFrozen(String friendUID) {
+        repository.toggleFrozen(hostUserUID, friendUID, false);
     }
 }

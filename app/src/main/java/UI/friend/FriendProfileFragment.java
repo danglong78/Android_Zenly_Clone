@@ -44,7 +44,8 @@ public class FriendProfileFragment extends Fragment implements ListFriendOfUserA
         TextView userName= view.findViewById(R.id.userName);
         userName.setText(getArguments().getString("name"));
         ImageView avatar = view.findViewById(R.id.avatar);
-        StorageReference ref= FirebaseStorage.getInstance().getReference().child("avatars").child(getArguments().getString("avatar"));
+        StorageReference ref = FirebaseStorage.getInstance().getReference().child("avatars").child(getArguments().getString("avatar"));
+
         if(ref!=null) {
             ref.getDownloadUrl().addOnSuccessListener(uri->{
                 String imageURL= uri.toString();
@@ -56,7 +57,6 @@ public class FriendProfileFragment extends Fragment implements ListFriendOfUserA
         RecyclerView friendListRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
         friendListRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         //        ListFriendOfUserAdapter adapter= new ListFriendOfUserAdapter();
-
 
 
         Button settingBtn = view.findViewById(R.id.userSettingBtn);
@@ -107,17 +107,20 @@ public class FriendProfileFragment extends Fragment implements ListFriendOfUserA
                 switch (which) {
                     case 0:
                     {
-
-
                         //TODO: SET PRECISE LOCATION
                         dialog.dismiss();
 
+                        FriendViewModel friendViewModel= new ViewModelProvider(getActivity()).get(FriendViewModel.class);
+                        friendViewModel.turnOffFrozen(getArguments().getString("uid"));
                         break;
                     }
                     case 1:
                     {
                         //TODO: SET FROZEN LOCATION
                         dialog.dismiss();
+
+                        FriendViewModel friendViewModel= new ViewModelProvider(getActivity()).get(FriendViewModel.class);
+                        friendViewModel.turnOnFrozen(getArguments().getString("uid"));
                         break;
 
                     }

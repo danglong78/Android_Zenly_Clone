@@ -71,7 +71,6 @@ public class MapViewModel extends ViewModel {
     private Context activity;
     private MutableLiveData<Boolean> isInited = new MutableLiveData<Boolean>();
 
-
     public void setActivity(Context activity) {
         this.activity = activity;
     }
