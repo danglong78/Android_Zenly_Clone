@@ -172,6 +172,7 @@ public class ConversationRepository {
                                                     Conversation temp = doc.toObject(Conversation.class);
                                                     int count=0;
                                                     User u = new User();
+                                                    Log.d("abc123",temp.getMember().toString());
                                                     for(User aUser : temp.getMember()){
                                                         count++;
                                                         if(!aUser.getUID().equals(FirebaseAuth.getInstance().getUid())){
@@ -264,7 +265,8 @@ public class ConversationRepository {
 
     // ham tao chat nhom. uIDCreator : id nguoi tao nhom - member : mang id nguoi them vao
     public LiveData<String> createGroupChat(String uidCreator,ArrayList<String> member){
-        MutableLiveData<String> res = new MutableLiveData<String>();
+        Log.d("abc456",member.toString());
+        /*MutableLiveData<String> res = new MutableLiveData<String>();
         DocumentReference convRef = mDb.collection(CONV_COLLECTION).document();
         Conversation aConv = new Conversation();
         String conID = convRef.getId();
@@ -294,9 +296,10 @@ public class ConversationRepository {
                     Log.d(TAG, "Error getting documents: ", task.getException());
                 }
             }
-        });
-        return res;
-    };
+        });*/
+//        return res;
+        return new MutableLiveData<String>("abc");
+    }
 
     public LiveData<String> getP2PConv(ArrayList<String> convId){
         MutableLiveData<String> res = new MutableLiveData<String>();
@@ -306,7 +309,7 @@ public class ConversationRepository {
                 if(task.isSuccessful()){
                     for(DocumentSnapshot doc : task.getResult()){
                         ArrayList<User> temp = (ArrayList<User>)doc.get("members");
-                        if(temp!=null && temp.size()==2){
+                        if(temp!=null && temp.size()<=2){
                             res.postValue((String)doc.get("id"));
                             break;
                         }
