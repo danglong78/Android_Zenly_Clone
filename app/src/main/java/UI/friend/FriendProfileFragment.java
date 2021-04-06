@@ -30,6 +30,7 @@ import viewModel.FriendViewModel;
 
 
 public class FriendProfileFragment extends Fragment implements ListFriendOfUserAdapter.onClickUser{
+    FriendViewModel friendViewModel;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -58,23 +59,27 @@ public class FriendProfileFragment extends Fragment implements ListFriendOfUserA
         friendListRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         //        ListFriendOfUserAdapter adapter= new ListFriendOfUserAdapter();
 
-
+        friendViewModel = new ViewModelProvider(getActivity()).get(FriendViewModel.class);
         Button settingBtn = view.findViewById(R.id.userSettingBtn);
         settingBtn.setOnClickListener(v->{
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setTitle(getArguments().getString("name"));
-            builder.setItems(new String[]{"Delete friend","Cancel"},new DialogInterface.OnClickListener() {
+            builder.setItems(new String[]{"Delete friend","Block","Cancel"},new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
                     switch (which) {
                         case 0:
                         {
-                            FriendViewModel friendViewModel= new ViewModelProvider(getActivity()).get(FriendViewModel.class);
+                            dialog.dismiss();
                             friendViewModel.deleteFriend(getArguments().getString("uid"));
-
-                            //TODO: Delete Friend Function
                             break;
                         }
                         case 1:
+                        {
+                            dialog.dismiss();
+                            friendViewModel.blockFriend(getArguments().getString("uid"));
+                            break;
+                        }
+                        case 2:
                         {
                             dialog.dismiss();
                             break;
@@ -109,8 +114,6 @@ public class FriendProfileFragment extends Fragment implements ListFriendOfUserA
                     {
                         //TODO: SET PRECISE LOCATION
                         dialog.dismiss();
-
-                        FriendViewModel friendViewModel= new ViewModelProvider(getActivity()).get(FriendViewModel.class);
                         friendViewModel.turnOffFrozen(getArguments().getString("uid"));
                         break;
                     }
@@ -118,8 +121,6 @@ public class FriendProfileFragment extends Fragment implements ListFriendOfUserA
                     {
                         //TODO: SET FROZEN LOCATION
                         dialog.dismiss();
-
-                        FriendViewModel friendViewModel= new ViewModelProvider(getActivity()).get(FriendViewModel.class);
                         friendViewModel.turnOnFrozen(getArguments().getString("uid"));
                         break;
 

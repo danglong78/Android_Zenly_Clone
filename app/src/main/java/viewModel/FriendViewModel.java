@@ -18,11 +18,14 @@ import data.models.User;
 import data.models.UserLocation;
 import data.models.UserRef;
 import data.models.UserRefFriend;
+import data.repositories.BlockRepository;
+import data.repositories.BlockedByRepository;
 import data.repositories.FriendsRepository;
 
 public class FriendViewModel extends ViewModel {
     private final String TAG = "FriendViewModel";
     private final String FRIENDS_COLLECTION = "Friends";
+    private final String BLOCK_COLLECTION = "Block";
 
     FriendsRepository repository;
     private MutableLiveData<List<UserRefFriend>> friendsRefList;
@@ -31,6 +34,13 @@ public class FriendViewModel extends ViewModel {
     private MutableLiveData<List<Boolean>> isInited = new MutableLiveData<List<Boolean>>();
     private MutableLiveData<List<User>> friendsPreciseList;
     private MutableLiveData<List<User>> friendsFrozenList;
+
+    BlockRepository blockRepository;
+    private MutableLiveData<List<User>> blockList;
+
+    BlockedByRepository blockedByRepository;
+    private MutableLiveData<List<User>> blockedByList;
+
     private String hostUserUID;
 
 
@@ -42,10 +52,8 @@ public class FriendViewModel extends ViewModel {
             friendsRefList =  (MutableLiveData<List<UserRefFriend>>) repository.getListUserReference();
             friendsList = repository.getListUser();
             friendLocationList = repository.getUserLocationList(lifecycleOwner);
-
             friendsPreciseList = repository.getUserPreciseList();
             friendsFrozenList = repository.getUserFrozenList();
-
             repository.getAll();
 
             friendsRefList.observe(lifecycleOwner, new Observer<List<UserRefFriend>>() {
@@ -84,6 +92,14 @@ public class FriendViewModel extends ViewModel {
                     friendsList.removeObserver(this);
                 }
             });
+
+            blockRepository = BlockRepository.getInstance(BLOCK_COLLECTION, hostUserUID);
+            blockList = blockRepository.getListUser();
+            blockRepository.getAll();
+
+            blockedByRepository = BlockedByRepository.getInstance(BLOCK_COLLECTION, hostUserUID);
+            blockedByList = blockedByRepository.getListUser();
+            blockRepository.getAll();
         }
     }
 
@@ -131,5 +147,23 @@ public class FriendViewModel extends ViewModel {
 
     public void turnOffFrozen(String friendUID) {
         repository.toggleFrozen(hostUserUID, friendUID, false);
+    }
+
+    public LiveData<List<User>> getBlockList(){
+        return blockList;
+    }
+
+    public LiveData<List<User>> getBlockedByList() {
+        return blockedByList;
+    }
+
+    public void blockFriend(String friendUID){
+        blockRepository.addToMyRepository(friendUID);
+        blockedByRepository.addToOtherRepository(friendUID);
+    }
+
+    public void unBlockFriend(String friendUID){
+        blockRepository.removeFromMyRepository(friendUID);
+        blockedByRepository.removeFromOtherRepository(friendUID);
     }
 }
