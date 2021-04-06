@@ -115,13 +115,14 @@ public class CreateChatFragment extends Fragment implements CreateChatAdapter.on
             for (int childCount = nav_drawer_recycler_view.getChildCount(), i = 0; i < childCount; ++i) {
                 final CreateChatAdapter.ViewHolder holder = (CreateChatAdapter.ViewHolder) nav_drawer_recycler_view.getChildViewHolder(nav_drawer_recycler_view.getChildAt(i));
                 holder.unCheck();
+                madapter.getCheckList().clear();
             }
             ChatListFragment chatListFragment= (ChatListFragment) getParentFragment();
             chatListFragment.setBottomSheetState(BottomSheetBehavior.STATE_HIDDEN);
             //TODO  Create CHat Function
             List<User> users = madapter.getCheckList();
-            Log.d("abc456",Integer.toString(users.size()));
-            Log.d("abc456",users.toString());
+            Log.d("checkList",Integer.toString(users.size()));
+            Log.d("checkList",users.toString());
             if(users.size()==0){
 //                navController.navigate(R.id.action_chatListFragment_to_chatFragment);
             }
@@ -145,7 +146,8 @@ public class CreateChatFragment extends Fragment implements CreateChatAdapter.on
                                 @Override
                                 public void onChanged(String s) {
                                     Bundle aBundle = new Bundle();
-                                    aBundle.putString("convID",aId.getValue());
+                                    aBundle.putString("id",aId.getValue());
+
                                     aId.removeObserver(this);
                                 }
                             });
@@ -188,26 +190,7 @@ public class CreateChatFragment extends Fragment implements CreateChatAdapter.on
 
     }
 
-//    @Override
-//    public void onChatClick(int position) {
-//        MainActivity activity = (MainActivity) getActivity();
-//        activity.setFragmentTag(FragmentTag.CHAT,homeFragmentMotionLayout,navController);
-//        InputMethodManager inputMethodManager =
-//                (InputMethodManager) activity.getSystemService(
-//                        Activity.INPUT_METHOD_SERVICE);
-//        if(activity.getCurrentFocus()!=null)
-//        {inputMethodManager.hideSoftInputFromWindow(
-//                activity.getCurrentFocus().getWindowToken(), 0);}
-//        Bundle args = new Bundle();
-//        Conversation aConv = madapter.getConv(position);
-//        String name = aConv.getName();
-//        String id = aConv.getID();
-//        Log.d("Them ID ne",id);
-//        args.putString("name",name);
-//        args.putString("id",id);
-//        args.putParcelableArrayList("listUserID", aConv.getMember());
-//        navController.navigate(R.id.action_searchChatFragment_to_chatFragment2,args);
-//    }
+
 
     @Override
     public void onItemClick() {

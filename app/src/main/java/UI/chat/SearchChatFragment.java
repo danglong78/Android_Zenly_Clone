@@ -68,9 +68,7 @@ public class SearchChatFragment extends Fragment implements ChatListAdapter.OnCh
         });
         searchText= view.findViewById(R.id.searchInput);
 
-        searchText.requestFocus();
-        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
-        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+
         RecyclerView nav_drawer_recycler_view = view.findViewById(R.id.nav_drawer_recycler_view);
         madapter = new ChatListAdapter(getActivity(),this);
         nav_drawer_recycler_view.setAdapter(madapter);

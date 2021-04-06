@@ -4,9 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/cyan"
-    tools:context="UI.login.PhoneFragment"
-    android:fitsSystemWindows="true">
+    android:background="@color/white"
+    tools:context="UI.friend.AddFriendByPhoneFragment"
+    >
 
     <TextView
         android:id="@+id/name_question"
@@ -14,8 +14,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:text="@string/phone_text_view"
-        android:textColor="@color/white"
+        android:text="ADD BY PHONE NUMBER"
+        android:textColor="@color/cyan_900"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
@@ -35,6 +35,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/countrycodepicker_shape"
+            android:backgroundTint="#D8CDCD"
             app:ccp_autoFormatNumber="false"
             app:ccp_showNameCode="false"/>
 
@@ -42,7 +43,7 @@
             android:id="@+id/editText_carrierNumber"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="phone"
+            android:hint="Phone number"
             android:inputType="phone"
             android:singleLine="true"
             android:autofillHints="" />
@@ -52,16 +53,18 @@
         android:id="@+id/buttonPhone"
         android:layout_width="59dp"
         android:layout_height="47dp"
-        android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:backgroundTint="@color/pink"
         android:textAlignment="center"
         android:textSize="24sp"
         android:textStyle="bold"
         app:cornerRadius="15dp"
-        app:icon="@drawable/ic_baseline_arrow_forward_24"
+        app:icon="@drawable/ic_baseline_search_24"
         app:iconTint="@color/white"
+        app:iconSize="28dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

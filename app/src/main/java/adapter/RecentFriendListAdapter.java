@@ -57,6 +57,10 @@ public class RecentFriendListAdapter extends RecyclerView.Adapter<RecentFriendLi
                 callback.onClick(list.get(position).getUID());
             }
         });
+        holder.itemView.setOnLongClickListener(v->{
+            callback.onLongClick(list.get(position));
+            return true;
+        });
     }
     public void setList(ArrayList<User>newList){
         DiffUtil.Callback diffUtilCallback= new DiffUtil.Callback() {
@@ -115,5 +119,6 @@ public class RecentFriendListAdapter extends RecyclerView.Adapter<RecentFriendLi
     }
     public interface Callback {
         void onClick(String UID);
+        void onLongClick(User user);
     }
 }

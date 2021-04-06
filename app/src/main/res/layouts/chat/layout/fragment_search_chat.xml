@@ -55,7 +55,6 @@
             android:text="Cancel"
             android:textColor="@color/teal"
             android:textStyle="bold"
-
             app:cornerRadius="30dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

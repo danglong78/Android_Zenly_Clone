@@ -28,6 +28,7 @@ import viewModel.FriendViewModel;
 
 
 public class StrangerProfileFragment extends Fragment implements ListFriendOfUserAdapter.onClickUser {
+    FriendViewModel friendViewModel;
 
 
     @Override
@@ -52,6 +53,7 @@ public class StrangerProfileFragment extends Fragment implements ListFriendOfUse
                         .into(avatar);
             });
         }
+        friendViewModel = new ViewModelProvider(getActivity()).get(FriendViewModel.class);
         RecyclerView friendListRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
         friendListRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         Button settingBtn = view.findViewById(R.id.userSettingBtn);
@@ -65,6 +67,8 @@ public class StrangerProfileFragment extends Fragment implements ListFriendOfUse
                         {
 
                             //TODO: Block Friend Function
+                            friendViewModel.blockFriend(getArguments().getString("uid"));
+                            dialog.dismiss();
                             break;
                         }
                         case 1:

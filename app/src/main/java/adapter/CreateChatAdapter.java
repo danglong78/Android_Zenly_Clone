@@ -51,6 +51,10 @@ public class CreateChatAdapter extends RecyclerView.Adapter<CreateChatAdapter.Vi
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         StorageReference ref= FirebaseStorage.getInstance().
                 getReference().child("avatars").child(userList.get(position).getAvatarURL());
+
+        holder.getCheckbox().setChecked(checkList.contains(userList.get(position)));
+
+
         if(ref!=null) {
             ref.getDownloadUrl().addOnSuccessListener(uri -> {
                 String imageURL = uri.toString();
@@ -61,17 +65,15 @@ public class CreateChatAdapter extends RecyclerView.Adapter<CreateChatAdapter.Vi
             });
         }
         holder.itemView.setOnClickListener(v->{
-            callback.onItemClick();
-
             if(checkList.contains(userList.get(position)))
                checkList.remove(userList.get(position));
             else{
             checkList.add(userList.get(position));
             }
+            callback.onItemClick();
             notifyItemChanged(position);
         });
         holder.getName().setText(userList.get(position).getName());
-        holder.getCheckbox().setChecked(checkList.contains(userList.get(position)));
     }
 
     @Override
