@@ -214,6 +214,9 @@ public class UserRepository {
                     User user = dc.toObject(User.class);
                     UserFriendList userFriendList = new UserFriendList(user);
 
+                    if(!user.getName().contains(name))
+                        continue;
+
                     if(invitingInstance.getListUser().getValue().contains(user))
                         userFriendList.setTag("Invited");
 
