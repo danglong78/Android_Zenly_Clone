@@ -120,6 +120,8 @@ public class CreateChatFragment extends Fragment implements CreateChatAdapter.on
             chatListFragment.setBottomSheetState(BottomSheetBehavior.STATE_HIDDEN);
             //TODO  Create CHat Function
             List<User> users = madapter.getCheckList();
+            Log.d("abc456",Integer.toString(users.size()));
+            Log.d("abc456",users.toString());
             if(users.size()==0){
 //                navController.navigate(R.id.action_chatListFragment_to_chatFragment);
             }
@@ -168,9 +170,9 @@ public class CreateChatFragment extends Fragment implements CreateChatAdapter.on
                                 public void onChanged(String s) {
                                     if(s!=null){
                                         memberId.add(uidCreator);
-                                        for(String aId : memberId){
-                                            UserRepository.getInstance().addConv(aId,s);
-                                        }
+//                                        for(String aId : memberId){
+//                                            UserRepository.getInstance().addConv(aId,s);
+//                                        }
                                     }
                                     convID.removeObserver(this);
                                 }
