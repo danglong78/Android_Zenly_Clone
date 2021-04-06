@@ -86,7 +86,7 @@ public class ListUsersRepository <T extends UserRef> {
         return listUserRef;
     }
 
-    protected void processAddUser(Task<DocumentSnapshot> task) {
+    protected User processAddUser(Task<DocumentSnapshot> task) {
         if (task.isSuccessful()) {
             DocumentSnapshot document = task.getResult();
             if (document.exists()) {
@@ -105,12 +105,14 @@ public class ListUsersRepository <T extends UserRef> {
                 }
                 Log.d(TAG, "processSnapshots: listUser " + COLLECTION + " " + check);
 
-
+                return addUser;
             } else {
                 Log.d(TAG, "No such document");
+                return null;
             }
         } else {
             Log.d(TAG, "get failed with ", task.getException());
+            return null;
         }
     }
 

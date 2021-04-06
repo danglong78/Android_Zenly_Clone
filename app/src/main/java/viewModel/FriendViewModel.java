@@ -29,6 +29,8 @@ public class FriendViewModel extends ViewModel {
     private MutableLiveData<List<User>> friendsList;
     private MutableLiveData<List<UserLocation>> friendLocationList;
     private MutableLiveData<List<Boolean>> isInited = new MutableLiveData<List<Boolean>>();
+    private MutableLiveData<List<User>> friendsPreciseList;
+    private MutableLiveData<List<User>> friendsFrozenList;
     private String hostUserUID;
 
 
@@ -40,6 +42,9 @@ public class FriendViewModel extends ViewModel {
             friendsRefList =  (MutableLiveData<List<UserRefFriend>>) repository.getListUserReference();
             friendsList = repository.getListUser();
             friendLocationList = repository.getUserLocationList(lifecycleOwner);
+
+            friendsPreciseList = repository.getUserPreciseList();
+            friendsFrozenList = repository.getUserFrozenList();
 
             repository.getAll();
 
@@ -98,6 +103,16 @@ public class FriendViewModel extends ViewModel {
     public LiveData<List<User>> getFriendsList() {
         Log.d(TAG, "getFriendsList: " + friendsList);
         return friendsList;
+    }
+
+    public LiveData<List<User>> getFriendsPreciseList(){
+        Log.d(TAG, "getFriendsPreciseList: " + friendsPreciseList);
+        return friendsPreciseList;
+    }
+
+    public LiveData<List<User>> getFriendsFrozenList(){
+        Log.d(TAG, "getFriendsPreciseList: " + friendsFrozenList);
+        return friendsFrozenList;
     }
 
     public void acceptFriendRequest(String friendUID){

@@ -36,12 +36,20 @@ public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
 
     private static FriendsRepository mInstance;
     MutableLiveData<List<UserLocation>> userLocationList;
+    MutableLiveData<List<User>> userFrozenList;
+    MutableLiveData<List<User>> userPreciseList;
 
     private FriendsRepository(String FRIENDS_COLLECTION, String UID) {
         super(FRIENDS_COLLECTION, UID);
         myUserRef = new UserRefFriend(mDb.document(USER_COLLECTION + "/" + UID), false, null, Timestamp.now());
         userLocationList = new MutableLiveData<List<UserLocation>>();
         userLocationList.setValue(new ArrayList<UserLocation>());
+
+        userFrozenList = new MutableLiveData<List<User>>();
+        userFrozenList.setValue(new ArrayList<User>());
+
+        userPreciseList = new MutableLiveData<List<User>>();
+        userPreciseList.setValue(new ArrayList<User>());
     }
 
     public static FriendsRepository getInstance(String FRIENDS_COLLECTION, String UID) {
@@ -61,7 +69,7 @@ public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
             public void onChanged(List<? extends UserRef> userRefs) {
                 Log.d(TAG, "onChanged: userRef changed");
                 UserLocation foundUserLocation = null;
-                Log.d(TAG, "onChanged: " + userRefs.get(0));
+//                Log.d(TAG, "onChanged: " + userRefs.get(0));
                 for (UserRefFriend userRef : (List<UserRefFriend>)userRefs) {
                     boolean isExisted = false;
                     for (UserLocation userLocation : userLocationList.getValue()) {
@@ -159,6 +167,20 @@ public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
         addToMyRepository(new UserRefFriend(mDb.document(USER_COLLECTION + "/" + UID), false, null, Timestamp.now()) );
     }
 
+    protected void processAddFrozenUser(Task<DocumentSnapshot> task){
+        User addUser =  super.processAddUser(task);
+        userFrozenList.getValue().remove(addUser);
+        userFrozenList.getValue().add(addUser);
+        userFrozenList.postValue(listUser.getValue());
+    }
+
+    protected void processAddPreciseUser(Task<DocumentSnapshot> task){
+        User addUser =  super.processAddUser(task);
+        userPreciseList.getValue().remove(addUser);
+        userPreciseList.getValue().add(addUser);
+        userPreciseList.postValue(listUser.getValue());
+    }
+
     protected void handleADDED(List<UserRefFriend> newRefList, MutableLiveData<List<User>> listUser, DocumentChange dc) {
         Log.d(TAG, "handleADDED: " + COLLECTION + " " + UserRef.toUserRef(dc));
         UserRefFriend addUserRef = UserRefFriend.toUserRef(dc);
@@ -168,11 +190,19 @@ public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
                 newRefList.add(addUserRef);
             }
 
-        if(addUserRef.filterAddUserList())
+        if(addUserRef.getFrozen())
             addUserRef.getRef().get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    processAddUser(task);
+                    processAddFrozenUser(task);
+
+                }
+            });
+        else
+            addUserRef.getRef().get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    processAddPreciseUser(task);
                 }
             });
 
@@ -185,6 +215,7 @@ public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
         }
     }
 
+
     protected void handleMODIFIED(List<UserRefFriend> newRefList, MutableLiveData<List<User>> listUser, DocumentChange dc) {
         Log.d(TAG, "handleMODIFIED: " + COLLECTION + " " + UserRef.toUserRef(dc));
         UserRefFriend modifyUserRef = UserRefFriend.toUserRef(dc);
@@ -194,19 +225,21 @@ public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
 
         Log.d(TAG, "onEventMODIFIED: " + COLLECTION + " " + modifyUserRef.getRef().getPath());
 
-        if(modifyUserRef.filterAddUserList()){
-            Log.d(TAG, "handleMODIFIED: if yes");
+        if(modifyUserRef.getFrozen())
             modifyUserRef.getRef().get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    processAddUser(task);
+                    processAddFrozenUser(task);
+
                 }
             });
-        }
-        else{
-            Log.d(TAG, "handleMODIFIED: if no");
-            removeList(toUID(modifyUserRef.getRef().getPath()), listUser);
-        }
+        else
+            modifyUserRef.getRef().get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    processAddPreciseUser(task);
+                }
+            });
 
 
         if (newRefList != null)
@@ -236,5 +269,13 @@ public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
                 }
             }
         });
+    }
+
+    public MutableLiveData<List<User>> getUserFrozenList(){
+        return this.userFrozenList;
+    }
+
+    public MutableLiveData<List<User>> getUserPreciseList(){
+        return this.userPreciseList;
     }
 }
