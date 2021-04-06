@@ -48,7 +48,7 @@ public class ListUsersRepository <T extends UserRef> {
 
     protected T myUserRef;
 
-    private CollectionReference getListRef(String UID) {
+    protected CollectionReference getListRef(String UID) {
         Log.d(TAG, "getListRef: " + COLLECTION);
         mDb.collection(COLLECTION).document(UID).collection(LIST_COLLECTION).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override

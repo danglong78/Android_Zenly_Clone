@@ -15,17 +15,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import data.models.User;
+import data.models.UserFriendList;
 import data.models.UserLocation;
 import data.models.UserRef;
 import data.models.UserRefFriend;
 import data.repositories.BlockRepository;
 import data.repositories.BlockedByRepository;
 import data.repositories.FriendsRepository;
+import data.repositories.SuggestFriendRepository;
 
 public class FriendViewModel extends ViewModel {
     private final String TAG = "FriendViewModel";
     private final String FRIENDS_COLLECTION = "Friends";
     private final String BLOCK_COLLECTION = "Block";
+    private final String SUGGESTIONS_COLLECTION = "Suggestions";
 
     FriendsRepository repository;
     private MutableLiveData<List<UserRefFriend>> friendsRefList;
@@ -40,6 +43,8 @@ public class FriendViewModel extends ViewModel {
 
     BlockedByRepository blockedByRepository;
     private MutableLiveData<List<User>> blockedByList;
+
+    SuggestFriendRepository suggestRepository;
 
     private String hostUserUID;
 
@@ -100,6 +105,8 @@ public class FriendViewModel extends ViewModel {
             blockedByRepository = BlockedByRepository.getInstance(BLOCK_COLLECTION, hostUserUID);
             blockedByList = blockedByRepository.getListUser();
             blockRepository.getAll();
+
+            suggestRepository = SuggestFriendRepository.getInstance(SUGGESTIONS_COLLECTION, hostUserUID);
         }
     }
 
@@ -160,10 +167,21 @@ public class FriendViewModel extends ViewModel {
     public void blockFriend(String friendUID){
         blockRepository.addToMyRepository(friendUID);
         blockedByRepository.addToOtherRepository(friendUID);
+        suggestRepository.modify(friendUID, true);
+        repository.removeFromMyRepository(friendUID);
     }
 
     public void unBlockFriend(String friendUID){
         blockRepository.removeFromMyRepository(friendUID);
         blockedByRepository.removeFromOtherRepository(friendUID);
+        suggestRepository.modify(friendUID, false);
+    }
+
+    public LiveData<List<UserFriendList>> getFriendListOfFriends(String friendUID){
+        return repository.getFriendListOfFriends(friendUID);
+    }
+
+    public void resetListFriendOfFriends(){
+        repository.resetFriendListOfFriends();
     }
 }

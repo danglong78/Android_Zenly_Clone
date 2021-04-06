@@ -176,7 +176,9 @@ public class UserFragment extends Fragment implements UserSettingApdater.UserSet
         friendViewModel.getFriendsList().observe(getViewLifecycleOwner(),friendList->{
             adapter.setNumFriends(friendList.size());
         });
-        //TODO observe Blocked User List
+        friendViewModel.getBlockList().observe(getViewLifecycleOwner(),blockList->{
+            adapter.setNumBlocks(blockList.size());
+        });
 
     }
 
@@ -185,7 +187,6 @@ public class UserFragment extends Fragment implements UserSettingApdater.UserSet
         int month= prefs.getInt("month",0);
         int day= prefs.getInt("day",0);
         return DateFormatter.format(new Date(year-1900,month,day),"dd MMMM yyyy");
-
     }
 
 

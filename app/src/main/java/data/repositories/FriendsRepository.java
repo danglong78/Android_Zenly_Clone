@@ -19,11 +19,14 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.ListenerRegistration;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import data.models.User;
+import data.models.UserFriendList;
 import data.models.UserLocation;
 import data.models.UserRef;
 import data.models.UserRefFriend;
@@ -33,11 +36,19 @@ public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
     private final String TAG = "FriendsReposity";
     private final String USER_COLLECTION = "Users";
     private final String FRIEND_COLLECTION = "Friends";
+    private final String BLOCK_COLLECTION = "Block";
+    private final String INVITING_COLLECTION = "Inviting";
+    private final String INVITATIONS_COLLECTION = "Invitations";
 
     private static FriendsRepository mInstance;
+    private static BlockRepository blockInstance;
+    private static InvitingRepository invitingInstance;
+    private static InvitationsRepository invitationInstance;
+
     MutableLiveData<List<UserLocation>> userLocationList;
     MutableLiveData<List<User>> userFrozenList;
     MutableLiveData<List<User>> userPreciseList;
+    MutableLiveData<List<UserFriendList>> userFriendList;
 
     private FriendsRepository(String FRIENDS_COLLECTION, String UID) {
         super(FRIENDS_COLLECTION, UID);
@@ -50,6 +61,10 @@ public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
 
         userPreciseList = new MutableLiveData<List<User>>();
         userPreciseList.setValue(new ArrayList<User>());
+
+        blockInstance = BlockRepository.getInstance(BLOCK_COLLECTION, UID);
+        invitingInstance = InvitingRepository.getInstance(INVITING_COLLECTION, UID);
+        invitationInstance = InvitationsRepository.getInstance(INVITATIONS_COLLECTION, UID);
     }
 
     public static FriendsRepository getInstance(String FRIENDS_COLLECTION, String UID) {
@@ -277,5 +292,40 @@ public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
 
     public MutableLiveData<List<User>> getUserPreciseList(){
         return this.userPreciseList;
+    }
+
+    public MutableLiveData<List<UserFriendList>> getFriendListOfFriends(String friendUID){
+        getListRef(friendUID).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> snapshots) {
+                List<UserFriendList> newList = new ArrayList<UserFriendList>();
+
+                for (QueryDocumentSnapshot dc : snapshots.getResult()) {
+                    User user = dc.toObject(User.class);
+                    UserFriendList userFriendList = new UserFriendList(user);
+
+                    if(invitingInstance.getListUser().getValue().contains(user))
+                        userFriendList.setTag("Invited");
+
+                    if(invitationInstance.getListUser().getValue().contains(user))
+                        userFriendList.setTag("Pending");
+
+                    if(listUser.getValue().contains(user))
+                        userFriendList.setTag("Mutual");
+
+                    if(!blockInstance.getListUser().getValue().contains(user)){
+                        newList.add(userFriendList);
+                    }
+                }
+
+                userFriendList.setValue(newList);
+            }
+        });
+
+        return userFriendList;
+    }
+
+    public void resetFriendListOfFriends(){
+        userFriendList.setValue((new ArrayList<UserFriendList>()));
     }
 }

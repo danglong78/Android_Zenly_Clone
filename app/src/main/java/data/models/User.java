@@ -14,14 +14,14 @@ import java.util.Arrays;
 
 public class User implements Parcelable {
     @Exclude
-    private Bitmap avatar;
+    protected Bitmap avatar;
 
-    private String name;
-    private String UID;
-    private String avatarURL;
-    private String dob;
-    private String phone;
-    private ArrayList<String> conversation;
+    protected String name;
+    protected String UID;
+    protected String avatarURL;
+    protected String dob;
+    protected String phone;
+    protected ArrayList<String> conversation;
 
     public User(Bitmap avatar, String name, String UID, String avatarURL, String dob, String phone, ArrayList<String> conversation) {
         this.avatar = avatar;
