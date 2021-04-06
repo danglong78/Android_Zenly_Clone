@@ -45,10 +45,10 @@ public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
     private static InvitingRepository invitingInstance;
     private static InvitationsRepository invitationInstance;
 
-    MutableLiveData<List<UserLocation>> userLocationList;
-    MutableLiveData<List<User>> userFrozenList;
-    MutableLiveData<List<User>> userPreciseList;
-    MutableLiveData<List<UserFriendList>> userFriendList;
+    private MutableLiveData<List<UserLocation>> userLocationList;
+    private MutableLiveData<List<User>> userFrozenList;
+    private MutableLiveData<List<User>> userPreciseList;
+    private MutableLiveData<List<UserFriendList>> userFriendList;
 
     private FriendsRepository(String FRIENDS_COLLECTION, String UID) {
         super(FRIENDS_COLLECTION, UID);

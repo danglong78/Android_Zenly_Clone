@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 import data.models.User;
+import data.models.UserFriendList;
 import data.models.UserLocation;
 import data.repositories.UserRepository;
 
@@ -138,5 +139,13 @@ public class UserViewModel extends ViewModel {
     }
     public Task <QuerySnapshot> getUserWithPhone(String phone){
         return repository.getUserWithPhone(phone);
+    }
+
+    public LiveData<List<UserFriendList>> getSearchList(String name) {
+        return repository.getUserWithName(name, mUser.getValue().getUID());
+    }
+
+    public void resetSearchList(){
+        repository.resetSearchList();
     }
 }

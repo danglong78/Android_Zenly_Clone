@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import data.models.User;
+import data.models.UserFriendList;
 import data.models.UserLocation;
 
 public class UserRepository {
@@ -39,10 +40,23 @@ public class UserRepository {
     private final String USER_COLLECTION = "Users";
     private final String USER_LOCATION_COLLECTION = "UserLocations";
     private final String FRIENDS_COLLECTION = "Friends";
+    private final String BLOCK_COLLECTION = "Block";
+    private final String INVITING_COLLECTION = "Inviting";
+    private final String INVITATIONS_COLLECTION = "Invitations";
+
+    private static FriendsRepository friendInstance;
+    private static BlockRepository blockInstance;
+    private static InvitingRepository invitingInstance;
+    private static InvitationsRepository invitationInstance;
+
     private FirebaseFirestore mDb;
+
+    private MutableLiveData<List<UserFriendList>> searchList;
 
     private UserRepository() {
         mDb = FirebaseFirestore.getInstance();
+
+
     }
 
 
@@ -185,5 +199,43 @@ public class UserRepository {
         return userRef.get();
     }
 
+    public MutableLiveData<List<UserFriendList>> getUserWithName(String name, String myUID){
+        friendInstance = FriendsRepository.getInstance(FRIENDS_COLLECTION, myUID);
+        blockInstance = BlockRepository.getInstance(BLOCK_COLLECTION, myUID);
+        invitingInstance = InvitingRepository.getInstance(INVITING_COLLECTION, myUID);
+        invitationInstance = InvitationsRepository.getInstance(INVITATIONS_COLLECTION, myUID);
 
+        mDb.collection(USER_COLLECTION).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> snapshots) {
+                List<UserFriendList> newList = new ArrayList<UserFriendList>();
+
+                for (QueryDocumentSnapshot dc : snapshots.getResult()) {
+                    User user = dc.toObject(User.class);
+                    UserFriendList userFriendList = new UserFriendList(user);
+
+                    if(invitingInstance.getListUser().getValue().contains(user))
+                        userFriendList.setTag("Invited");
+
+                    if(invitationInstance.getListUser().getValue().contains(user))
+                        userFriendList.setTag("Pending");
+
+                    if(friendInstance.getListUser().getValue().contains(user))
+                        userFriendList.setTag("Friend");
+
+                    if(!blockInstance.getListUser().getValue().contains(user)){
+                        newList.add(userFriendList);
+                    }
+                }
+
+                searchList.setValue(newList);
+            }
+        });
+
+        return searchList;
+    }
+
+    public void resetSearchList(){
+        searchList.setValue(new ArrayList<>());
+    }
 }
