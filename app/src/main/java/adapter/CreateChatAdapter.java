@@ -94,7 +94,7 @@ public class CreateChatAdapter extends RecyclerView.Adapter<CreateChatAdapter.Vi
             @Override
             public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
                 User x=userListAll.get(oldItemPosition);
-                User y = userList.get(newItemPosition);
+                User y = newList.get(newItemPosition);
                 return x.equals(y);
             }
 

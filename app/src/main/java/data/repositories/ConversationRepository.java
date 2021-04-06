@@ -178,7 +178,7 @@ public class ConversationRepository {
                                                             u = aUser;
                                                         }
                                                     }
-                                                    if(count<=2){
+                                                    if(count<=2 && u.getName()!=null){
                                                         temp.setAvatarURL(u.getAvatarURL());
                                                         temp.setName(u.getName());
                                                     }
@@ -275,12 +275,17 @@ public class ConversationRepository {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
+                    String name = "";
                     ArrayList<User> memberList = new ArrayList<User>();
                     for(QueryDocumentSnapshot doc : task.getResult()) {
                         User temp = doc.toObject(User.class);
                         memberList.add(temp);
+                        name += temp.getName();
+                        name+=",";
                     }
                     aConv.setMember(memberList);
+                    aConv.setName(name);
+                    aConv.setAvatarURL("Zenly_appicon.png");
                     Message aMess = MessageRepository.getInstance().createInitMessGroup(conID,uidCreator);
                     aConv.setRecentMessage(aMess);
                     convRef.set(aConv);

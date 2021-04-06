@@ -82,19 +82,18 @@ public class CreateChatFragment extends Fragment implements CreateChatAdapter.on
         nav_drawer_recycler_view.setLayoutManager(new LinearLayoutManager(getActivity()));
         ChatListViewModel mChatListViewModel = new ViewModelProvider(requireActivity()).get(ChatListViewModel.class);
         FriendViewModel friendViewModel = new ViewModelProvider(requireActivity()).get(FriendViewModel.class);
-        List<User> listUser=new ArrayList<>();
-        listUser.add(new User(null,"Long","1234","7ddee776-92b6-11eb-a8b3-0242ac130003.png","23/9/2000","012345567",null));
-        listUser.add(new User(null,"Dai","12312334","2d6b54f0-92b6-11eb-a8b3-0242ac130003.jpg","23/9/2000","012345567",null));
-        listUser.add(new User(null,"Tri","1233434","0e974d50-8978-11eb-8dcd-0242ac130003.png","23/9/2000","012345567",null));
-        listUser.add(new User(null,"Tam","112234","0e9748c8-8978-11eb-8dcd-0242ac130003.png","23/9/2000","012345567",null));
-//        friendViewModel.getFriendsList().observe(getViewLifecycleOwner(), new Observer<List<User>>() {
-//            @Override
-//            public void onChanged(List<User> listUser) {
-//                Log.d("CREATCHAT", String.valueOf(listUser.size()));
+//        List<User> listUser=new ArrayList<>();
+//        listUser.add(new User(null,"Long","1234","7ddee776-92b6-11eb-a8b3-0242ac130003.png","23/9/2000","012345567",null));
+//        listUser.add(new User(null,"Dai","12312334","2d6b54f0-92b6-11eb-a8b3-0242ac130003.jpg","23/9/2000","012345567",null));
+//        listUser.add(new User(null,"Tri","1233434","0e974d50-8978-11eb-8dcd-0242ac130003.png","23/9/2000","012345567",null));
+//        listUser.add(new User(null,"Tam","112234","0e9748c8-8978-11eb-8dcd-0242ac130003.png","23/9/2000","012345567",null));
+        friendViewModel.getFriendsList().observe(getViewLifecycleOwner(), new Observer<List<User>>() {
+            @Override
+            public void onChanged(List<User> listUser) {
+                Log.d("CREATCHAT", String.valueOf(listUser.size()));
                 madapter.updateListItems(listUser);
-//
-//            }
-//        });
+            }
+        });
         searchText.addTextChangedListener(new TextWatcher(){
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -122,7 +121,7 @@ public class CreateChatFragment extends Fragment implements CreateChatAdapter.on
             //TODO  Create CHat Function
             List<User> users = madapter.getCheckList();
             if(users.size()==0){
-                navController.navigate(R.id.action_chatListFragment_to_chatFragment);
+//                navController.navigate(R.id.action_chatListFragment_to_chatFragment);
             }
             if(users.size()==1){
                 UserViewModel userViewModel = new ViewModelProvider(getActivity()).get(UserViewModel.class);
@@ -145,8 +144,6 @@ public class CreateChatFragment extends Fragment implements CreateChatAdapter.on
                                 public void onChanged(String s) {
                                     Bundle aBundle = new Bundle();
                                     aBundle.putString("convID",aId.getValue());
-                                    aId.removeObserver(this);
-                                    navController.navigate(R.id.action_chatListFragment_to_chatFragment,aBundle);
                                     aId.removeObserver(this);
                                 }
                             });
@@ -180,7 +177,6 @@ public class CreateChatFragment extends Fragment implements CreateChatAdapter.on
                             });
                         }
                         userViewModel.getIsInited().removeObserver(this);
-                        navController.navigate(R.id.action_chatListFragment_to_chatFragment);
                     }
                 });
             }
