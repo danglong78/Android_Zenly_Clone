@@ -95,7 +95,7 @@ public class FriendRequestAdapter extends RecyclerView.Adapter<FriendRequestAdap
             @Override
             public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
                 User x=list.get(oldItemPosition);
-                User y = list.get(newItemPosition);
+                User y = newList.get(newItemPosition);
                 return x.equals(y);
             }
 
