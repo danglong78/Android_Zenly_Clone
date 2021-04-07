@@ -5,9 +5,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Looper;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -19,6 +21,12 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -29,14 +37,23 @@ import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.GeoPoint;
+import com.google.maps.android.PolyUtil;
 import com.google.maps.android.clustering.ClusterManager;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -53,6 +70,11 @@ import ultis.ClusterManagerRenderer;
 public class MapViewModel extends ViewModel {
     private final String TAG = "MapViewModel";
     private static final int REQUEST_CHECK_SETTINGS = 10001;
+    private static final String Direction = "https://maps.googleapis.com/maps/api/directions/json?";
+    private static final String API_key = "AIzaSyA6oclAbLdL78dYMi1u8MVUW-6xiaTTqLQ";
+
+    private List<Polyline> pathList;
+    private RequestQueue mrequestQueue;
 
     MutableLiveData<UserLocation> mUserLocation = new MutableLiveData<UserLocation>();
     DocumentReference mHostUserLocationRef;
@@ -61,8 +83,11 @@ public class MapViewModel extends ViewModel {
     private ClusterMarker mHostMarker = null;
     private List<ClusterMarker> mFriendMarkers = new ArrayList<ClusterMarker>();
 
-    private LiveData<List<UserLocation>> mFriendLocationList;
+    private LiveData<List<UserLocation>> mFriendLocationList = new MutableLiveData<List<UserLocation>>(null);
     private LiveData<List<UserRefFriend>> mFriendRefList;
+
+    private LiveData<UserLocation> directionUser;
+    FriendViewModel mFriendViewModel;
 
     private LocationRequest locationRequest;
     private ClusterManagerRenderer mClusterManagerRenderer;
@@ -91,6 +116,8 @@ public class MapViewModel extends ViewModel {
 
         mUserLocation = UserRepository.getInstance().getHostUserLocation(activity);
 
+        mFriendViewModel = new ViewModelProvider((FragmentActivity) activity).get(FriendViewModel.class);
+
         mUserLocation.observe(lifecycleOwner, new Observer<UserLocation>() {
             @Override
             public void onChanged(UserLocation userLocation) {
@@ -110,7 +137,6 @@ public class MapViewModel extends ViewModel {
                     moveTo(new LatLng(userLocation.getLocation().getLatitude(), userLocation.getLocation().getLongitude()));
 
                     // Add friend markers
-                    FriendViewModel mFriendViewModel = new ViewModelProvider((FragmentActivity) activity).get(FriendViewModel.class);
                     mFriendLocationList = mFriendViewModel.getFriendLocationList();
                     Log.d(TAG, "onChanged: mFriendLocationList " + mFriendLocationList.getValue().size());
                     mFriendLocationList.observe(lifecycleOwner, new Observer<List<UserLocation>>() {
@@ -119,7 +145,8 @@ public class MapViewModel extends ViewModel {
                         public void onChanged(List<UserLocation> userLocations) {
                             Log.d(TAG, "onChanged: userLocations " + userLocations.size());
                             for (UserLocation userLocation : userLocations) {
-                                if (userLocation.getUserUID().equals(mHostMarker.getUserUID())) continue;
+                                if (userLocation.getUserUID().equals(mHostMarker.getUserUID()))
+                                    continue;
                                 Log.d(TAG, "onChanged: " + userLocation.getUserUID());
                                 Log.d(TAG, "onChanged: userLocation " + userLocation.getUserUID());
                                 Boolean isExisted = false;
@@ -138,6 +165,19 @@ public class MapViewModel extends ViewModel {
 
                                 // Update location real time
                                 updateMarker(userLocation.getUserUID(), new LatLng(userLocation.getLocation().getLatitude(), userLocation.getLocation().getLongitude()));
+
+                                // Update direction real time
+                                Log.d(TAG, "direction: Friend redirect");
+                                if(userLocations != null && (directionUser.getValue() != null)){
+                                    Log.d(TAG, "direction: Friend redirect yes");
+                                    for (UserLocation u : userLocations) {
+                                        if (u.getUserUID().equals(directionUser.getValue().getUserUID())){
+                                            Log.d(TAG, "direction: Friend redirect match");
+                                            showDirection(String.valueOf(u.getLocation().getLatitude()), String.valueOf(u.getLocation().getLongitude()));
+                                            break;
+                                        }
+                                    }
+                                }
                             }
                         }
                     });
@@ -152,6 +192,8 @@ public class MapViewModel extends ViewModel {
                     });
 
 
+
+
                     mClusterManager.cluster();
 
 
@@ -162,7 +204,53 @@ public class MapViewModel extends ViewModel {
                 }
                 mUserLocation.removeObserver(this);
             }
+
         });
+
+        pathList = new ArrayList<>();
+        directionUser = mFriendViewModel.getUserDirection("");
+        directionUser.observe(lifecycleOwner, new Observer<UserLocation>() {
+            @Override
+            public void onChanged(UserLocation userLocation) {
+                Log.d(TAG, "direction: redirect ");
+                if (userLocation != null) {
+                    // request Direction
+                    Log.d(TAG, "direction: redirect if yes");
+                    showDirection(String.valueOf(userLocation.getLocation().getLatitude()), String.valueOf(userLocation.getLocation().getLongitude()));
+                }
+                else {
+                    Log.d(TAG, "direction: redirect if no");
+                    for (Polyline p : pathList)  {
+                        p.setVisible(false);
+                    }
+                }
+            }
+        });
+
+        mFriendLocationList.observe(lifecycleOwner, new Observer<List<UserLocation>>() {
+            @Override
+            public void onChanged(List<UserLocation> userLocations) {
+
+            }
+        });
+
+        mUserLocation.observe(lifecycleOwner, new Observer<UserLocation>() {
+            @Override
+            public void onChanged(UserLocation userLocation) {
+                Log.d(TAG, "direction: Host");
+                if (directionUser.getValue() != null){
+                    Log.d(TAG, "direction: Host if yes");
+                    showDirection(String.valueOf(directionUser.getValue().getLocation().getLatitude()), String.valueOf(directionUser.getValue().getLocation().getLongitude()));
+                }
+                else {
+                    Log.d(TAG, "direction: Host if not");
+                    for (Polyline p : pathList)  {
+                        p.setVisible(false);
+                    }
+                }
+            }
+        });
+
     }
 
     public MutableLiveData<Boolean> getIsInited() {
@@ -256,6 +344,12 @@ public class MapViewModel extends ViewModel {
                 data.put("location", geoPoint);
                 mHostUserLocationRef.update(data);
 
+                if(!mUserLocation.getValue().getLocation().equals(geoPoint)){
+                    mUserLocation.getValue().setLocation(geoPoint);
+                    mUserLocation.setValue(mUserLocation.getValue());
+                }
+
+
                 Log.d(TAG, "onLocationResult: " + location);
             }
         };
@@ -309,7 +403,7 @@ public class MapViewModel extends ViewModel {
 //    }
 
     public void updateHostMarker() {
-        Log.d(TAG, "updateHostMarker: "  + mClusterManager.updateItem(mHostMarker));
+        Log.d(TAG, "updateHostMarker: " + mClusterManager.updateItem(mHostMarker));
         mClusterManagerRenderer.updateClusterMarker(mHostMarker);
         mClusterManager.cluster();
     }
@@ -334,15 +428,115 @@ public class MapViewModel extends ViewModel {
     }
 
     public void focusOnFriend(String uid) {
-       for (ClusterMarker marker : mFriendMarkers) {
-           if (uid.equals(marker.getUserUID())) {
-               moveTo(marker.getPosition());
-               break;
-           }
-       }
+        for (ClusterMarker marker : mFriendMarkers) {
+            if (uid.equals(marker.getUserUID())) {
+                moveTo(marker.getPosition());
+                break;
+            }
+        }
     }
 
     public void focusOnHost() {
         moveTo(mHostMarker.getPosition());
+    }
+
+    public void onUserDirection(String friendUID) {
+        directionUser = mFriendViewModel.getUserDirection(friendUID);
+    }
+
+    public void offUserDirection() {
+        mFriendViewModel.offUserDirection();
+    }
+
+    static public String getDirectionRequest(String originLat, String originLng, String desLat, String desLng) {
+        return Direction + "origin=" + originLat + "," + originLng + "&destination=" + desLat + "," + desLng + "&key="
+                + API_key;
+    }
+
+    private String[] getFullPath(JSONArray jsonArr) {
+        int len = jsonArr.length();
+        String[] lines = new String[len];
+
+        for (int i = 0; i < len; i++) {
+            try {
+                lines[i] = getSinglePath(jsonArr.getJSONObject(i));
+            } catch (JSONException e) {
+                // error
+            }
+        }
+        return lines;
+    }
+
+    private String getSinglePath(JSONObject jsonObj) {
+        String line = "";
+        try {
+            line = jsonObj.getJSONObject("polyline").getString("points");
+        } catch (JSONException e) {
+            //
+        }
+        return line;
+    }
+
+    private void showDirection(String desLat, String desLng) {
+        for (Polyline p : pathList) {
+            p.remove(); // reset the previous path
+        }
+        pathList.clear();
+
+        mrequestQueue = Volley.newRequestQueue(activity);
+
+        String url = getDirectionRequest(String.valueOf(mUserLocation.getValue().getLocation().getLatitude()), String.valueOf(mUserLocation.getValue().getLocation().getLongitude()), desLat, desLng);
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+                        try {
+                            Log.d(TAG, response.toString());
+
+                            JSONArray jsonArray = response.getJSONArray("routes").getJSONObject(0).getJSONArray("legs");
+                            LatLng ori = new LatLng(
+                                    jsonArray.getJSONObject(0).getJSONObject("start_location").getDouble("lat"),
+                                    jsonArray.getJSONObject(0).getJSONObject("start_location").getDouble("lng"));
+//                            mMap.addMarker(new MarkerOptions().position(ori).title("origin_fromAuto")).showInfoWindow();
+
+                            CameraPosition mCameraPosition = new CameraPosition.Builder().target(ori).zoom(13).build();
+                            mMap.moveCamera(CameraUpdateFactory.newCameraPosition(mCameraPosition));
+
+                            // display direction!
+                            String[] polyPath = getFullPath(jsonArray.getJSONObject(0).getJSONArray("steps"));
+                            int path_len = polyPath.length;
+
+                            for (int i = 0; i < path_len; i++) {
+                                PolylineOptions mPolylineOptions = new PolylineOptions();
+                                mPolylineOptions.color(Color.BLUE);
+                                mPolylineOptions.width(10);
+                                mPolylineOptions.addAll(PolyUtil.decode(polyPath[i]));
+
+                                pathList.add(mMap.addPolyline(mPolylineOptions));
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Toast.makeText(activity.getApplicationContext(), "noting from json",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                Log.e(TAG, error.toString());
+
+                Toast.makeText(activity.getApplicationContext(), "Nothing found!", Toast.LENGTH_SHORT)
+                        .show();
+
+            }
+        });
+
+        mrequestQueue.add(jsonObjectRequest);
     }
 }

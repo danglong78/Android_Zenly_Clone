@@ -299,7 +299,10 @@ public class MainFriendFragment extends Fragment implements FriendSuggestListAda
                         case 1:
                         {
                             //TODO HÀm direction
-
+                            HomeFragment fragment = (HomeFragment) getParentFragment().getParentFragment();
+                            assert fragment != null;
+                            fragment.setBottomSheetState(BottomSheetBehavior.STATE_COLLAPSED);
+                            friendViewModel.getUserDirection(user.getUID());
                             viewHolder.setDirectionMode(true);
                             dialog.dismiss();
                             break;
@@ -314,7 +317,10 @@ public class MainFriendFragment extends Fragment implements FriendSuggestListAda
             builder.setItems(new String[]{"Turn off direction mode"}, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
                     //TODO tat direction
-
+                    HomeFragment fragment = (HomeFragment) getParentFragment().getParentFragment();
+                    assert fragment != null;
+                    fragment.setBottomSheetState(BottomSheetBehavior.STATE_COLLAPSED);
+                    friendViewModel.offUserDirection();
                     viewHolder.setDirectionMode(false);
                     dialog.dismiss();
                 }

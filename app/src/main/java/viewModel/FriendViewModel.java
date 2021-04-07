@@ -37,6 +37,7 @@ public class FriendViewModel extends ViewModel {
     private MutableLiveData<List<Boolean>> isInited = new MutableLiveData<List<Boolean>>();
     private MutableLiveData<List<User>> friendsPreciseList;
     private MutableLiveData<List<User>> friendsFrozenList;
+    private MutableLiveData<UserLocation> userDirection;
 
     BlockRepository blockRepository;
     private MutableLiveData<List<User>> blockList;
@@ -107,6 +108,8 @@ public class FriendViewModel extends ViewModel {
             blockRepository.getAll();
 
             suggestRepository = SuggestFriendRepository.getInstance(SUGGESTIONS_COLLECTION, hostUserUID);
+
+            userDirection = repository.getUserDirection("");
         }
     }
 
@@ -184,4 +187,13 @@ public class FriendViewModel extends ViewModel {
     public void resetListFriendOfFriends(){
         repository.resetFriendListOfFriends();
     }
+
+    public LiveData<UserLocation> getUserDirection(String friendUID){
+        return repository.getUserDirection(friendUID);
+    }
+
+    public void offUserDirection(){
+        repository.offUserDirection();
+    }
+
 }

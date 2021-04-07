@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -23,6 +24,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.study.android_zenly.R;
+
+import java.util.ArrayList;
 
 import data.models.User;
 import viewModel.MapViewModel;
@@ -84,4 +87,6 @@ public class MapsFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         Log.d(TAG, "onActivityCreated: order test");
     }
+
+
 }

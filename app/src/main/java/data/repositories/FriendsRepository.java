@@ -49,6 +49,7 @@ public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
     private MutableLiveData<List<User>> userFrozenList;
     private MutableLiveData<List<User>> userPreciseList;
     private MutableLiveData<List<UserFriendList>> userFriendList;
+    private MutableLiveData<UserLocation> userDirection;
 
     private FriendsRepository(String FRIENDS_COLLECTION, String UID) {
         super(FRIENDS_COLLECTION, UID);
@@ -68,6 +69,9 @@ public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
 
         userFriendList = new MutableLiveData<List<UserFriendList>>();
         userFriendList.setValue(new ArrayList<>());
+
+        userDirection = new MutableLiveData<UserLocation>();
+        userDirection.setValue(null);
     }
 
     public static FriendsRepository getInstance(String FRIENDS_COLLECTION, String UID) {
@@ -297,11 +301,7 @@ public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
         return this.userPreciseList;
     }
 
-    public MutableLiveData<List<UserFriendList>>
-
-
-
-    getFriendListOfFriends(String friendUID){
+    public MutableLiveData<List<UserFriendList>> getFriendListOfFriends(String friendUID){
         getListRef(friendUID).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> snapshots) {
@@ -360,5 +360,23 @@ public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
 
     public void resetFriendListOfFriends(){
         userFriendList.setValue((new ArrayList<UserFriendList>()));
+    }
+
+    public MutableLiveData<UserLocation> getUserDirection(String friendUID){
+        if (!friendUID.equals(""))
+            mDb.collection("UserLocations").document(friendUID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()){
+                        userDirection.setValue(task.getResult().toObject(UserLocation.class));
+                    }
+                }
+            });
+
+        return userDirection;
+    }
+
+    public void offUserDirection(){
+        userDirection.setValue(null);
     }
 }
