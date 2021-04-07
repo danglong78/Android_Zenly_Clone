@@ -305,34 +305,53 @@ public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
         getListRef(friendUID).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> snapshots) {
-                List<UserFriendList> newList = new ArrayList<UserFriendList>();
                 Log.d(TAG, "asdasd: " + snapshots.getResult().size());
 
                 for (QueryDocumentSnapshot dc : snapshots.getResult()) {
 
+                    UserRef addUserRef = dc.toObject(UserRef.class);
 
-                    User user = dc.toObject(User.class);
-                    UserFriendList userFriendList = new UserFriendList(user);
+                    addUserRef.getRef().get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot document = task.getResult();
+                                if (document.exists()) {
+                                    User addUser = document.toObject(User.class);
 
-                    if(invitingInstance.getListUser().getValue().contains(user))
-                        userFriendList.setTag("INVITED");
+                                    Log.d(TAG, "processSnapshots: " + COLLECTION + " " + UID + " add " + addUser.getUID());
+                                    if (!addUser.getUID().equals(friendUID)){
+                                        User userAdded = dc.toObject(User.class);
+                                        UserFriendList user = new UserFriendList(userAdded);
 
-                    if(invitationInstance.getListUser().getValue().contains(user))
-                        userFriendList.setTag("PENDING");
+                                        if(invitingInstance.getListUser().getValue().contains(user))
+                                            user.setTag("INVITED");
 
-                    if(listUser.getValue().contains(user))
-                        userFriendList.setTag("MUTUAL");
+                                        if(invitationInstance.getListUser().getValue().contains(user))
+                                            user.setTag("PENDING");
 
-                    if(user.getUID().compareTo(UID)==0)
-                        userFriendList.setTag("YOU");
+                                        if(listUser.getValue().contains(user))
+                                            user.setTag("MUTUAL");
 
-                    if(!blockInstance.getListUser().getValue().contains(user)){
-                        newList.add(userFriendList);
-                    }
+                                        if(user.getUID().compareTo(UID)==0)
+                                            user.setTag("YOU");
 
+                                        if(!blockInstance.getListUser().getValue().contains(user)){
+                                            userFriendList.getValue().add(user);
+                                            userFriendList.postValue(userFriendList.getValue());
+                                        }
+
+                                    }
+
+                                } else {
+                                    Log.d(TAG, "No such document");
+                                }
+                            } else {
+                                Log.d(TAG, "get failed with ", task.getException());
+                            }
+                        }
+                    });
                 }
-
-                userFriendList.setValue(newList);
             }
         });
 
