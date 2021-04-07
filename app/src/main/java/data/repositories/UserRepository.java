@@ -221,8 +221,8 @@ public class UserRepository {
                             if (task.isSuccessful()) {
                                 DocumentSnapshot document = task.getResult();
                                 if (document.exists()) {
-                                    User userAdded = dc.toObject(User.class);
-                                    UserFriendList user = new UserFriendList(userAdded);
+                                    User userAdd = document.toObject(User.class);
+                                    UserFriendList user = new UserFriendList(userAdd);
 
                                     if(!user.getName().contains(name))
                                         return;
@@ -237,13 +237,12 @@ public class UserRepository {
                                         user.setTag("Friend");
 
                                     if(user.getUID().compareTo(myUID)==0)
-                                        user.setTag("YOU");
+                                        user.setTag("ME");
 
                                     if(!blockInstance.getListUser().getValue().contains(user)){
                                         searchList.getValue().add(user);
                                         searchList.postValue(searchList.getValue());
                                     }
-
 
 
                                 } else {

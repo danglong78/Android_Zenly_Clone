@@ -67,7 +67,7 @@ public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
         invitationInstance = InvitationsRepository.getInstance(INVITATIONS_COLLECTION, UID);
 
         userFriendList = new MutableLiveData<List<UserFriendList>>();
-        //userFriendList.setValue(new ArrayList<>());
+        userFriendList.setValue(new ArrayList<>());
     }
 
     public static FriendsRepository getInstance(String FRIENDS_COLLECTION, String UID) {
@@ -319,10 +319,9 @@ public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
                                 if (document.exists()) {
                                     User addUser = document.toObject(User.class);
 
-                                    Log.d(TAG, "processSnapshots: " + COLLECTION + " " + UID + " add " + addUser.getUID());
+
                                     if (!addUser.getUID().equals(friendUID)){
-                                        User userAdded = dc.toObject(User.class);
-                                        UserFriendList user = new UserFriendList(userAdded);
+                                        UserFriendList user = new UserFriendList(addUser);
 
                                         if(invitingInstance.getListUser().getValue().contains(user))
                                             user.setTag("INVITED");
@@ -334,11 +333,12 @@ public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
                                             user.setTag("MUTUAL");
 
                                         if(user.getUID().compareTo(UID)==0)
-                                            user.setTag("YOU");
+                                            user.setTag("ME");
 
                                         if(!blockInstance.getListUser().getValue().contains(user)){
                                             userFriendList.getValue().add(user);
                                             userFriendList.postValue(userFriendList.getValue());
+                                            Log.d(TAG, "processSnapshots: " + COLLECTION + " " + friendUID + " add " + addUser.getUID() + " size=" + userFriendList.getValue().size());
                                         }
 
                                     }

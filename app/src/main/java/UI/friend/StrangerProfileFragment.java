@@ -13,6 +13,7 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -67,6 +68,7 @@ public class StrangerProfileFragment extends Fragment implements ListFriendOfUse
         ListFriendOfUserAdapter adapter= new ListFriendOfUserAdapter(this,getActivity());
         friendListRecyclerView.setAdapter(adapter);
         friendViewModel.getFriendListOfFriends(getArguments().getString("uid")).observe(getViewLifecycleOwner(),userFriendLists -> {
+            Log.d("StrangerProfileFragment", "callback: " + userFriendLists.size());
             adapter.setList((ArrayList<UserFriendList>) userFriendLists);
         });
         Button settingBtn = view.findViewById(R.id.userSettingBtn);
