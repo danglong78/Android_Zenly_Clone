@@ -26,10 +26,12 @@
             app:destination="@id/addFriendFragment" />
         <action
             android:id="@+id/action_addFriendFragment2_to_friendProfileFragment2"
-            app:destination="@id/friendProfileFragment2" />
+            app:destination="@id/friendProfileFragment2"
+            app:popUpTo="@id/friendProfileFragment2" />
         <action
             android:id="@+id/action_addFriendFragment2_to_strangerProfileFragment2"
-            app:destination="@id/strangerProfileFragment2" />
+            app:destination="@id/strangerProfileFragment2"
+            app:popUpTo="@id/addFriendFragment2" />
     </fragment>
     <fragment
         android:id="@+id/searchFriendFragment"
@@ -67,10 +69,28 @@
         android:id="@+id/friendProfileFragment2"
         android:name="UI.friend.FriendProfileFragment"
         android:label="fragment_friend_profile"
-        tools:layout="@layout/fragment_friend_profile" />
+        tools:layout="@layout/fragment_friend_profile" >
+        <action
+            android:id="@+id/action_friendProfileFragment2_to_strangerProfileFragment2"
+            app:destination="@id/strangerProfileFragment2"
+            app:popUpTo="@id/addFriendFragment2" />
+        <action
+            android:id="@+id/action_friendProfileFragment2_self"
+            app:destination="@id/friendProfileFragment2"
+            app:popUpTo="@id/addFriendFragment2" />
+    </fragment>
     <fragment
         android:id="@+id/strangerProfileFragment2"
         android:name="UI.friend.StrangerProfileFragment"
         android:label="fragment_stranger_profile"
-        tools:layout="@layout/fragment_stranger_profile" />
+        tools:layout="@layout/fragment_stranger_profile" >
+        <action
+            android:id="@+id/action_strangerProfileFragment2_to_friendProfileFragment2"
+            app:destination="@id/friendProfileFragment2"
+            app:popUpTo="@id/addFriendFragment2" />
+        <action
+            android:id="@+id/action_strangerProfileFragment2_self"
+            app:destination="@id/strangerProfileFragment2"
+            app:popUpTo="@id/addFriendFragment2" />
+    </fragment>
 </navigation>

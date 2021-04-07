@@ -65,6 +65,9 @@ public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
         blockInstance = BlockRepository.getInstance(BLOCK_COLLECTION, UID);
         invitingInstance = InvitingRepository.getInstance(INVITING_COLLECTION, UID);
         invitationInstance = InvitationsRepository.getInstance(INVITATIONS_COLLECTION, UID);
+
+        userFriendList = new MutableLiveData<List<UserFriendList>>();
+        //userFriendList.setValue(new ArrayList<>());
     }
 
     public static FriendsRepository getInstance(String FRIENDS_COLLECTION, String UID) {
@@ -294,28 +297,39 @@ public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
         return this.userPreciseList;
     }
 
-    public MutableLiveData<List<UserFriendList>> getFriendListOfFriends(String friendUID){
+    public MutableLiveData<List<UserFriendList>>
+
+
+
+    getFriendListOfFriends(String friendUID){
         getListRef(friendUID).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> snapshots) {
                 List<UserFriendList> newList = new ArrayList<UserFriendList>();
+                Log.d(TAG, "asdasd: " + snapshots.getResult().size());
 
                 for (QueryDocumentSnapshot dc : snapshots.getResult()) {
+
+
                     User user = dc.toObject(User.class);
                     UserFriendList userFriendList = new UserFriendList(user);
 
                     if(invitingInstance.getListUser().getValue().contains(user))
-                        userFriendList.setTag("Invited");
+                        userFriendList.setTag("INVITED");
 
                     if(invitationInstance.getListUser().getValue().contains(user))
-                        userFriendList.setTag("Pending");
+                        userFriendList.setTag("PENDING");
 
                     if(listUser.getValue().contains(user))
-                        userFriendList.setTag("Mutual");
+                        userFriendList.setTag("MUTUAL");
+
+                    if(user.getUID().compareTo(UID)==0)
+                        userFriendList.setTag("YOU");
 
                     if(!blockInstance.getListUser().getValue().contains(user)){
                         newList.add(userFriendList);
                     }
+
                 }
 
                 userFriendList.setValue(newList);

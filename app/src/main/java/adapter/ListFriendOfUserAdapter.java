@@ -1,6 +1,7 @@
 package adapter;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -23,31 +25,24 @@ import java.util.List;
 import java.util.Objects;
 
 import data.models.User;
+import data.models.UserFriendList;
 
 public class ListFriendOfUserAdapter extends RecyclerView.Adapter<ListFriendOfUserAdapter.BaseViewHolder> {
     private static final int VIEW_TYPE_BUTTON = 0x00;
     private static final int VIEW_TYPE_TEXT = 0x01;
-    private List<User> list;
-    private List<String> UID_Friend_List;
-    private List<String> UID_Invited_List;
-    private String hostUserUID;
+    private List<UserFriendList> list;
+
     private onClickUser callback;
     private Context context;
 
 
-    public ListFriendOfUserAdapter(List<User> list, String hostUserUID, List<String>UID_Friend_List, List<String>UID_Invited_List, List<String> UID_Blocked_list, onClickUser callback, Context context) {
+    public ListFriendOfUserAdapter(onClickUser callback, Context context) {
         this.list = new ArrayList<>();
-        this.hostUserUID = hostUserUID;
-        this.UID_Friend_List=UID_Friend_List;
-        this.UID_Invited_List=UID_Invited_List;
         this.callback=callback;
         this.context=context;
-        for(User user: list)
-        {
-            if(!UID_Blocked_list.contains(user.getUID()))
-                this.list.add(user);
-        }
+
     }
+
 
     private <HOLDER extends BaseViewHolder>
     ListFriendOfUserAdapter.BaseViewHolder getHolder(ViewGroup parent, @LayoutRes int layout, Class<HOLDER> holderClass) {
@@ -65,7 +60,7 @@ public class ListFriendOfUserAdapter extends RecyclerView.Adapter<ListFriendOfUs
 
     @Override
     public int getItemViewType(int position) {
-        if(UID_Invited_List.contains(list.get(position).getUID())||UID_Friend_List.contains(list.get(position).getUID()) || list.get(position).getUID().compareTo(hostUserUID)==0)
+        if(list.get(position).getTag().compareTo("")!=0)
         {
             return VIEW_TYPE_TEXT;
         }
@@ -106,33 +101,58 @@ public class ListFriendOfUserAdapter extends RecyclerView.Adapter<ListFriendOfUs
             });
         }
         boolean isYourfriend= false;
-        if(list.get(position).getUID().compareTo(hostUserUID)==0)
+
+        if(list.get(position).getTag().compareTo("YOU")==0)
         {
             holder.onBind(name,"YOU");
         }
-        else if(UID_Friend_List.contains(list.get(position).getUID()))
-        {
-            holder.onBind(name,"MUTUAL");
-            holder.getItem().setOnClickListener(v->{
-                callback.onClickUser(list.get(position).getUID(),true );
-            });
-        }
-        else if (UID_Invited_List.contains(list.get(position).getUID()))
-        {
-            holder.onBind(name,"INVITED");
-            holder.getItem().setOnClickListener(v->{
-                callback.onClickUser(list.get(position).getUID(),false );
-            });
-        }
         else
         {
-            holder.onBind(name,"ADD");
-            holder.getItem().setOnClickListener(v->{
-                callback.onClickUser(list.get(position).getUID(),false );
+            holder.onBind(name,list.get(position).getTag());
+            holder.itemView.setOnClickListener(v->{
+                callback.onClickUser(list.get(position),list.get(position).getTag().compareTo("MUTUAL")==0);
             });
+            if(list.get(position).getTag().compareTo("")==0)
+                ((ButtonViewHolder)holder).getButton().setOnClickListener(v->{
+                    list.get(position).setTag("INVITED");
+                    callback.onClickAdd(list.get(position).getUID());
+                    notifyItemChanged(position);
+                });
         }
 
+    }
+    public void setList(ArrayList<UserFriendList> newList){
+        DiffUtil.Callback diffUtilCallback= new DiffUtil.Callback() {
+            @Override
+            public int getOldListSize() {
+                return list.size();
+            }
 
+            @Override
+            public int getNewListSize() {
+                return newList.size();
+            }
+
+            @Override
+            public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
+                User x=list.get(oldItemPosition);
+                User y = newList.get(newItemPosition);
+                return x.equals(y);
+            }
+
+            @Override
+            public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
+                final User x = list.get(oldItemPosition);
+                final User y = newList.get(newItemPosition);
+
+                return x.getUID().equals(y.getUID());
+            }
+        };
+        final DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffUtilCallback);
+
+        list.clear();
+        list.addAll(newList);
+        diffResult.dispatchUpdatesTo(this);
     }
 
     @Override
@@ -141,16 +161,11 @@ public class ListFriendOfUserAdapter extends RecyclerView.Adapter<ListFriendOfUs
     }
 
     public class BaseViewHolder extends RecyclerView.ViewHolder {
-        protected View item;
         protected ImageView image;
 
         public BaseViewHolder(View itemView) {
             super(itemView);
-            item=itemView;
             image=(ImageView) itemView.findViewById(R.id.avatar);
-        }
-        public View getItem() {
-            return item;
         }
         public ImageView getAvatar(){
             return image;
@@ -183,6 +198,7 @@ public class ListFriendOfUserAdapter extends RecyclerView.Adapter<ListFriendOfUs
         public ButtonViewHolder(View itemView) {
             super(itemView);
             username=itemView.findViewById(R.id.userNameText);
+            button=itemView.findViewById(R.id.button);
         }
 
 
@@ -192,10 +208,14 @@ public class ListFriendOfUserAdapter extends RecyclerView.Adapter<ListFriendOfUs
             button.setText("ADD");
             username.setText(name);
         }
+        public Button getButton(){
+            return button;
+        }
 
     }
     public interface onClickUser{
-        void onClickUser(String UID,boolean isYourFriend);
+        void onClickUser(User user,boolean isYourFriend);
+        void onClickAdd(String UID);
     }
 
 }

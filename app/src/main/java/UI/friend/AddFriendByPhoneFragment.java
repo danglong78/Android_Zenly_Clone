@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -68,6 +69,7 @@ public class AddFriendByPhoneFragment extends Fragment {
                             }
                             else{
                                 user=task.getResult().getDocuments().get(0).toObject(User.class);
+                                Log.d("Search by phone",user.toString());
                             }
                         }
                     }

@@ -106,7 +106,7 @@ public class MainFriendFragment extends Fragment implements FriendSuggestListAda
             friendSuggestViewModel.init(getActivity());
             invitationViewModel.init(getActivity());
             invitingViewModel.init(getActivity());
-            friendViewModel.init(requireActivity(), getViewLifecycleOwner());
+            friendViewModel.init(requireActivity(), requireActivity());
 
             Log.d(TAG, "Dang chay ne");
 
@@ -260,8 +260,8 @@ public class MainFriendFragment extends Fragment implements FriendSuggestListAda
                 }
 
             }).show();
+
         }
-        
     }
 
     @Override
@@ -292,4 +292,5 @@ public class MainFriendFragment extends Fragment implements FriendSuggestListAda
         });
         builder.create().show();
     }
+
 }

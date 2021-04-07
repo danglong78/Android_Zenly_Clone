@@ -8,6 +8,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -23,8 +25,14 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.study.android_zenly.R;
 
+import java.util.ArrayList;
+
 import adapter.ListFriendOfUserAdapter;
+import data.models.User;
+import data.models.UserFriendList;
 import viewModel.FriendViewModel;
+import viewModel.InvitationViewModel;
+import viewModel.InvitingViewModel;
 
 
 public class StrangerProfileFragment extends Fragment implements ListFriendOfUserAdapter.onClickUser {
@@ -56,6 +64,11 @@ public class StrangerProfileFragment extends Fragment implements ListFriendOfUse
         friendViewModel = new ViewModelProvider(getActivity()).get(FriendViewModel.class);
         RecyclerView friendListRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
         friendListRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        ListFriendOfUserAdapter adapter= new ListFriendOfUserAdapter(this,getActivity());
+        friendListRecyclerView.setAdapter(adapter);
+        friendViewModel.getFriendListOfFriends(getArguments().getString("uid")).observe(getViewLifecycleOwner(),userFriendLists -> {
+            adapter.setList((ArrayList<UserFriendList>) userFriendLists);
+        });
         Button settingBtn = view.findViewById(R.id.userSettingBtn);
         settingBtn.setOnClickListener(v->{
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -81,11 +94,34 @@ public class StrangerProfileFragment extends Fragment implements ListFriendOfUse
             });
             builder.create().show();
         });
-        //        ListFriendOfUserAdapter adapter= new ListFriendOfUserAdapter();
+
+
+
     }
 
     @Override
-    public void onClickUser(String UID, boolean isYourFriend) {
+    public void onClickUser(User user, boolean isYourFriend) {
+        Bundle bundle = new Bundle();
+        bundle.putString("name",user.getName());
+        bundle.putString("uid",user.getUID());
+        bundle.putString("avatar",user.getAvatarURL());
+        bundle.putString("phone",user.getPhone());
+        NavController navController = Navigation.findNavController(this.getView());
+        if(!isYourFriend)
+        {
+            navController.navigate(R.id.action_strangerProfileFragment2_to_friendProfileFragment2,bundle);
+        }
+        else{
+            navController.navigate(R.id.action_strangerProfileFragment2_self,bundle);
+        }
 
+    }
+
+    @Override
+    public void onClickAdd(String UID) {
+        InvitationViewModel invitationViewModel = new ViewModelProvider(getActivity()).get(InvitationViewModel.class);
+        InvitingViewModel invitingViewModel = new ViewModelProvider(getActivity()).get(InvitingViewModel.class);
+        invitationViewModel.sendInvitation(UID);
+        invitingViewModel.addToMyInviting(UID);
     }
 }
