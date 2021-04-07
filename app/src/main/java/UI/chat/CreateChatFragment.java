@@ -115,7 +115,6 @@ public class CreateChatFragment extends Fragment implements CreateChatAdapter.on
             for (int childCount = nav_drawer_recycler_view.getChildCount(), i = 0; i < childCount; ++i) {
                 final CreateChatAdapter.ViewHolder holder = (CreateChatAdapter.ViewHolder) nav_drawer_recycler_view.getChildViewHolder(nav_drawer_recycler_view.getChildAt(i));
                 holder.unCheck();
-                madapter.getCheckList().clear();
             }
             ChatListFragment chatListFragment= (ChatListFragment) getParentFragment();
             chatListFragment.setBottomSheetState(BottomSheetBehavior.STATE_HIDDEN);
@@ -185,6 +184,7 @@ public class CreateChatFragment extends Fragment implements CreateChatAdapter.on
                 });
             }
             //navController.navigate(R.id.action_chatListFragment_to_chatFragment);
+            madapter.getCheckList().clear();
         });
 
 

@@ -152,16 +152,16 @@ public class ChatListFragment extends Fragment implements ChatListAdapter.OnChat
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
                 if(newState ==BottomSheetBehavior.STATE_HIDDEN)
-                homeFragmentMotionLayout.setTransition(R.id.left, R.id.hideLeft);
-                homeFragmentMotionLayout.setProgress(0f);
+                {homeFragmentMotionLayout.setTransition(R.id.left, R.id.hideLeft);
+                homeFragmentMotionLayout.setProgress(0f);}
+                else
+                {homeFragmentMotionLayout.setTransition(R.id.left, R.id.hideLeft);
+                    homeFragmentMotionLayout.setProgress(1f);}
 
             }
 
             @Override
             public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-                    homeFragmentMotionLayout.setTransition(R.id.left, R.id.hideLeft);
-
-                    homeFragmentMotionLayout.setProgress(slideOffset);
 
             }
         });
