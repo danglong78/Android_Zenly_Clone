@@ -274,22 +274,53 @@ public class MainFriendFragment extends Fragment implements FriendSuggestListAda
     }
 
     @Override
-    public void onLongClick(User user) {
+    public void onLongClick(User user, boolean isDirectionMode, RecentFriendListAdapter.ViewHolder viewHolder) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setItems(new String[]{"User profile"}, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                Bundle bundle= new Bundle();
-                bundle.putString("name",user.getName());
-                bundle.putString("phone",user.getPhone());
-                bundle.putString("uid",user.getUID());
-                bundle.putString("avatar",user.getAvatarURL());
-                HomeFragment fragment = (HomeFragment) getParentFragment().getParentFragment();
-                assert fragment != null;
-                fragment.setBottomSheetState(BottomSheetBehavior.STATE_EXPANDED);
-                ((MainActivity) getActivity()).setFragmentTag(FragmentTag.FRIEND, null, navController);
-                navController.navigate(R.id.action_addFriendFragment2_to_friendProfileFragment2,bundle);
-            }
-        });
+        if(!isDirectionMode)
+        {
+            builder.setItems(new String[]{"User profile","Direction"}, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    switch (which) {
+                        case 0:
+                        {
+                            Bundle bundle= new Bundle();
+                            bundle.putString("name",user.getName());
+                            bundle.putString("phone",user.getPhone());
+                            bundle.putString("uid",user.getUID());
+                            bundle.putString("avatar",user.getAvatarURL());
+                            HomeFragment fragment = (HomeFragment) getParentFragment().getParentFragment();
+                            assert fragment != null;
+                            fragment.setBottomSheetState(BottomSheetBehavior.STATE_EXPANDED);
+                            ((MainActivity) getActivity()).setFragmentTag(FragmentTag.FRIEND, null, navController);
+                            navController.navigate(R.id.action_addFriendFragment2_to_friendProfileFragment2,bundle);
+                            dialog.dismiss();
+                            break;
+                        }
+                        case 1:
+                        {
+                            //TODO HÀm direction
+
+                            viewHolder.setDirectionMode(true);
+                            dialog.dismiss();
+                            break;
+                        }
+                    }
+
+                }
+            });
+        }
+        else
+        {
+            builder.setItems(new String[]{"Turn off direction mode"}, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    //TODO tat direction
+
+                    viewHolder.setDirectionMode(false);
+                    dialog.dismiss();
+                }
+            });
+        }
+
         builder.create().show();
     }
 

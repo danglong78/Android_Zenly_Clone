@@ -59,7 +59,16 @@
         android:id="@+id/addFriendByPhoneFragment"
         android:name="UI.friend.AddFriendByPhoneFragment"
         android:label="fragment_add_friend_by_phone"
-        tools:layout="@layout/fragment_add_friend_by_phone" />
+        tools:layout="@layout/fragment_add_friend_by_phone" >
+        <action
+            android:id="@+id/action_addFriendByPhoneFragment_to_friendProfileFragment2"
+            app:destination="@id/friendProfileFragment2"
+            app:popUpTo="@id/addFriendFragment2" />
+        <action
+            android:id="@+id/action_addFriendByPhoneFragment_to_strangerProfileFragment2"
+            app:destination="@id/strangerProfileFragment2"
+            app:popUpTo="@id/addFriendFragment2" />
+    </fragment>
     <fragment
         android:id="@+id/addFriendByUsernameFragment"
         android:name="UI.friend.AddFriendByUsernameFragment"

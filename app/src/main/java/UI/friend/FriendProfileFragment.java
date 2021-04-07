@@ -1,4 +1,4 @@
-package UI.friend;
+    package UI.friend;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -15,6 +15,7 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,11 +65,14 @@ public class FriendProfileFragment extends Fragment implements ListFriendOfUserA
             });
         }
         RecyclerView friendListRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
+
+        ListFriendOfUserAdapter adapter= new ListFriendOfUserAdapter(this,requireActivity());
         friendListRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        ListFriendOfUserAdapter adapter= new ListFriendOfUserAdapter(this,getActivity());
+        friendListRecyclerView.setAdapter(adapter);
         friendViewModel = new ViewModelProvider(getActivity()).get(FriendViewModel.class);
         friendViewModel.getFriendListOfFriends(getArguments().getString("uid")).observe(getViewLifecycleOwner(),userFriendLists -> {
             adapter.setList((ArrayList<UserFriendList>) userFriendLists);
+
         });
         Button settingBtn = view.findViewById(R.id.userSettingBtn);
         settingBtn.setOnClickListener(v->{
@@ -172,5 +176,11 @@ public class FriendProfileFragment extends Fragment implements ListFriendOfUserA
         InvitingViewModel invitingViewModel = new ViewModelProvider(getActivity()).get(InvitingViewModel.class);
         invitationViewModel.sendInvitation(UID);
         invitingViewModel.addToMyInviting(UID);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        friendViewModel.resetListFriendOfFriends();
     }
 }

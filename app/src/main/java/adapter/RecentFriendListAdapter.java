@@ -57,8 +57,8 @@ public class RecentFriendListAdapter extends RecyclerView.Adapter<RecentFriendLi
                 callback.onClick(list.get(position).getUID());
             }
         });
-        holder.itemView.setOnLongClickListener(v->{
-            callback.onLongClick(list.get(position));
+        holder.getView().setOnLongClickListener(v->{
+            callback.onLongClick(list.get(position),holder.getisDirectionMode(),holder);
             return true;
         });
     }
@@ -104,6 +104,7 @@ public class RecentFriendListAdapter extends RecyclerView.Adapter<RecentFriendLi
     public class ViewHolder extends RecyclerView.ViewHolder{
         private ImageView image;
         private View item;
+        private boolean isDirectionMode=false;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -116,9 +117,17 @@ public class RecentFriendListAdapter extends RecyclerView.Adapter<RecentFriendLi
         public View getView() {
             return item;
         }
+
+        public boolean getisDirectionMode() {
+            return isDirectionMode;
+        }
+        public void setDirectionMode(boolean isDirectionMode) {
+            this.isDirectionMode = isDirectionMode;
+        }
     }
     public interface Callback {
         void onClick(String UID);
-        void onLongClick(User user);
+        void onLongClick(User user,boolean isDirectionMode,ViewHolder viewHolder);
+
     }
 }

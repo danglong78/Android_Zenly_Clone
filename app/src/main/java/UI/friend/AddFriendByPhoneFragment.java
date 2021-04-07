@@ -9,6 +9,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -40,6 +42,7 @@ public class AddFriendByPhoneFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+
         return inflater.inflate(R.layout.fragment_add_friend_by_phone, container, false);
     }
 
@@ -70,6 +73,13 @@ public class AddFriendByPhoneFragment extends Fragment {
                             else{
                                 user=task.getResult().getDocuments().get(0).toObject(User.class);
                                 Log.d("Search by phone",user.toString());
+                                Bundle bundle = new Bundle();
+                                bundle.putString("name",user.getName());
+                                bundle.putString("phone",user.getPhone());
+                                bundle.putString("uid",user.getUID());
+                                bundle.putString("avatar",user.getAvatarURL());
+                                NavController navController = Navigation.findNavController(getActivity(),R.id.friend_nav_host_fragment);
+                                navController.navigate(R.id.action_addFriendByPhoneFragment_to_strangerProfileFragment2,bundle);
                             }
                         }
                     }

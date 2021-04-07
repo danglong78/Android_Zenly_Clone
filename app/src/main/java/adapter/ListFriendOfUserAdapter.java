@@ -2,6 +2,7 @@ package adapter;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,29 +38,16 @@ public class ListFriendOfUserAdapter extends RecyclerView.Adapter<ListFriendOfUs
 
 
     public ListFriendOfUserAdapter(onClickUser callback, Context context) {
+        Log.d("listfriendoffriend", "constructor");
         this.list = new ArrayList<>();
         this.callback=callback;
         this.context=context;
 
     }
-
-
-    private <HOLDER extends BaseViewHolder>
-    ListFriendOfUserAdapter.BaseViewHolder getHolder(ViewGroup parent, @LayoutRes int layout, Class<HOLDER> holderClass) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(layout, parent, false);
-
-        try {
-            Constructor<HOLDER> constructor = holderClass.getDeclaredConstructor(View.class);
-            constructor.setAccessible(true);
-            HOLDER holder = constructor.newInstance(v);
-            return holder;
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
     @Override
     public int getItemViewType(int position) {
+        Log.d("listfriendoffriend", "getItemViewType");
+
         if(list.get(position).getTag().compareTo("")!=0)
         {
             return VIEW_TYPE_TEXT;
@@ -72,15 +60,18 @@ public class ListFriendOfUserAdapter extends RecyclerView.Adapter<ListFriendOfUs
     @NonNull
     @Override
     public BaseViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        Log.d("listfriendoffriend", String.valueOf(viewType));
 
-
-        View v;
         switch (viewType) {
             case VIEW_TYPE_TEXT: {
-                return Objects.requireNonNull(getHolder(parent, R.layout.friend_list_item_of_your_friend_text_layout, TextViewHolder.class));
+                Log.d("listfriendoffriend", "TEXT");
+
+                return getHolder(parent, R.layout.friend_list_item_of_your_friend_text_layout, TextViewHolder.class);
+
             }
             case VIEW_TYPE_BUTTON: {
-                return Objects.requireNonNull(getHolder(parent, R.layout.friend_list_item_of_your_friend_button_layout, ButtonViewHolder.class));
+                Log.d("listfriendoffriend", "BUTTON");
+                return getHolder(parent, R.layout.friend_list_item_of_your_friend_button_layout, ButtonViewHolder.class);
             }
 
         }
@@ -90,6 +81,7 @@ public class ListFriendOfUserAdapter extends RecyclerView.Adapter<ListFriendOfUs
     @Override
     public void onBindViewHolder(@NonNull BaseViewHolder holder, int position) {
         String name=list.get(position).getName();
+        Log.d("username", "onBindViewHolder: " +list.get(position).getName());
         StorageReference ref = FirebaseStorage.getInstance().getReference().child("avatars").child(list.get(position).getAvatarURL());
         if(ref!=null)
         {
@@ -100,8 +92,6 @@ public class ListFriendOfUserAdapter extends RecyclerView.Adapter<ListFriendOfUs
                         .into(holder.getAvatar());
             });
         }
-        boolean isYourfriend= false;
-
         if(list.get(position).getTag().compareTo("YOU")==0)
         {
             holder.onBind(name,"YOU");
@@ -109,7 +99,8 @@ public class ListFriendOfUserAdapter extends RecyclerView.Adapter<ListFriendOfUs
         else
         {
             holder.onBind(name,list.get(position).getTag());
-            holder.itemView.setOnClickListener(v->{
+
+            holder.getItem().setOnClickListener(v->{
                 callback.onClickUser(list.get(position),list.get(position).getTag().compareTo("MUTUAL")==0);
             });
             if(list.get(position).getTag().compareTo("")==0)
@@ -119,8 +110,8 @@ public class ListFriendOfUserAdapter extends RecyclerView.Adapter<ListFriendOfUs
                     notifyItemChanged(position);
                 });
         }
-
     }
+
     public void setList(ArrayList<UserFriendList> newList){
         DiffUtil.Callback diffUtilCallback= new DiffUtil.Callback() {
             @Override
@@ -153,6 +144,7 @@ public class ListFriendOfUserAdapter extends RecyclerView.Adapter<ListFriendOfUs
         list.clear();
         list.addAll(newList);
         diffResult.dispatchUpdatesTo(this);
+        notifyDataSetChanged();
     }
 
     @Override
@@ -160,29 +152,49 @@ public class ListFriendOfUserAdapter extends RecyclerView.Adapter<ListFriendOfUs
         return list.size();
     }
 
-    public class BaseViewHolder extends RecyclerView.ViewHolder {
+    private <HOLDER extends BaseViewHolder>
+    BaseViewHolder getHolder(ViewGroup parent, @LayoutRes int layout, Class<HOLDER> holderClass) {
+        View v = LayoutInflater.from(parent.getContext()).inflate(layout, parent, false);
+        Log.d("listfriendoffriend", "getHolder");
+        try {
+            Log.d("listfriendoffriend", "STEP1");
+            Constructor<HOLDER> constructor = holderClass.getDeclaredConstructor(View.class);
+            Log.d("listfriendoffriend", "STEP2");
+            constructor.setAccessible(true);
+            Log.d("listfriendoffriend", "STEP3");
+            HOLDER holder = constructor.newInstance(v);
+            Log.d("listfriendoffriend", holder.toString());
+
+            return holder;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static class BaseViewHolder extends RecyclerView.ViewHolder {
         protected ImageView image;
+        protected View item;
 
         public BaseViewHolder(View itemView) {
             super(itemView);
             image=(ImageView) itemView.findViewById(R.id.avatar);
+            item= itemView;
         }
         public ImageView getAvatar(){
             return image;
         }
+        public View getItem(){return item;}
         public void onBind(String name,String type) {
 
         }
     }
-    public class TextViewHolder extends  BaseViewHolder {
+    public static class TextViewHolder extends  BaseViewHolder {
         TextView username;
         TextView text;
-        View item;
         public TextViewHolder(View itemView) {
             super(itemView);
             username=itemView.findViewById(R.id.userNameText);
             text= itemView.findViewById(R.id.text);
-            this.item=itemView;
         }
         @Override
         public void onBind(String name,String type) {
@@ -192,13 +204,13 @@ public class ListFriendOfUserAdapter extends RecyclerView.Adapter<ListFriendOfUs
 
         }
     }
-    public class ButtonViewHolder extends  BaseViewHolder {
+    public static class ButtonViewHolder extends  BaseViewHolder {
         TextView username;
         Button button;
         public ButtonViewHolder(View itemView) {
             super(itemView);
             username=itemView.findViewById(R.id.userNameText);
-            button=itemView.findViewById(R.id.button);
+            button=itemView.findViewById(R.id.settingBtn);
         }
 
 

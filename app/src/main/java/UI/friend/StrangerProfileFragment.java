@@ -63,14 +63,18 @@ public class StrangerProfileFragment extends Fragment implements ListFriendOfUse
             });
         }
         friendViewModel = new ViewModelProvider(getActivity()).get(FriendViewModel.class);
-        RecyclerView friendListRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
-        friendListRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         ListFriendOfUserAdapter adapter= new ListFriendOfUserAdapter(this,getActivity());
+        RecyclerView friendListRecyclerView = view.findViewById(R.id.recyclerview);
+        friendListRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         friendListRecyclerView.setAdapter(adapter);
         friendViewModel.getFriendListOfFriends(getArguments().getString("uid")).observe(getViewLifecycleOwner(),userFriendLists -> {
             Log.d("StrangerProfileFragment", "callback: " + userFriendLists.size());
+
             adapter.setList((ArrayList<UserFriendList>) userFriendLists);
+            Log.d("TB",String.valueOf(userFriendLists.size()));
         });
+
+
         Button settingBtn = view.findViewById(R.id.userSettingBtn);
         settingBtn.setOnClickListener(v->{
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -125,5 +129,10 @@ public class StrangerProfileFragment extends Fragment implements ListFriendOfUse
         InvitingViewModel invitingViewModel = new ViewModelProvider(getActivity()).get(InvitingViewModel.class);
         invitationViewModel.sendInvitation(UID);
         invitingViewModel.addToMyInviting(UID);
+    }
+    @Override
+    public void onPause() {
+        super.onPause();
+        friendViewModel.resetListFriendOfFriends();
     }
 }
