@@ -266,7 +266,7 @@ public class ConversationRepository {
     // ham tao chat nhom. uIDCreator : id nguoi tao nhom - member : mang id nguoi them vao
     public LiveData<String> createGroupChat(String uidCreator,ArrayList<String> member){
         Log.d("abc456",member.toString());
-        /*MutableLiveData<String> res = new MutableLiveData<String>();
+        MutableLiveData<String> res = new MutableLiveData<String>();
         DocumentReference convRef = mDb.collection(CONV_COLLECTION).document();
         Conversation aConv = new Conversation();
         String conID = convRef.getId();
@@ -296,9 +296,8 @@ public class ConversationRepository {
                     Log.d(TAG, "Error getting documents: ", task.getException());
                 }
             }
-        });*/
-//        return res;
-        return new MutableLiveData<String>("abc");
+        });
+        return res;
     }
 
     public LiveData<String> getP2PConv(ArrayList<String> convId){

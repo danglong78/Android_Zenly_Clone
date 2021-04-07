@@ -154,7 +154,8 @@ public class CreateChatFragment extends Fragment implements CreateChatAdapter.on
                         }
                     }
                 });
-            }else{
+            }
+            if(users.size()>=2){
                 ArrayList<String> memberId = new ArrayList<String>();
                 for(User temp : users){
                     memberId.add(temp.getUID());
@@ -171,9 +172,9 @@ public class CreateChatFragment extends Fragment implements CreateChatAdapter.on
                                 public void onChanged(String s) {
                                     if(s!=null){
                                         memberId.add(uidCreator);
-//                                        for(String aId : memberId){
-//                                            UserRepository.getInstance().addConv(aId,s);
-//                                        }
+                                        for(String aId : memberId){
+                                            UserRepository.getInstance().addConv(aId,s);
+                                        }
                                     }
                                     convID.removeObserver(this);
                                 }
