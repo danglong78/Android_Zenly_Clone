@@ -39,6 +39,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -173,7 +174,7 @@ public class MapViewModel extends ViewModel {
                                     for (UserLocation u : userLocations) {
                                         if (u.getUserUID().equals(directionUser.getValue().getUserUID())){
                                             Log.d(TAG, "direction: Friend redirect match");
-                                            showDirection(String.valueOf(u.getLocation().getLatitude()), String.valueOf(u.getLocation().getLongitude()));
+                                            showDirection(String.valueOf(u.getLocation().getLatitude()), String.valueOf(u.getLocation().getLongitude()), false);
                                             break;
                                         }
                                     }
@@ -216,7 +217,7 @@ public class MapViewModel extends ViewModel {
                 if (userLocation != null) {
                     // request Direction
                     Log.d(TAG, "direction: redirect if yes");
-                    showDirection(String.valueOf(userLocation.getLocation().getLatitude()), String.valueOf(userLocation.getLocation().getLongitude()));
+                    showDirection(String.valueOf(userLocation.getLocation().getLatitude()), String.valueOf(userLocation.getLocation().getLongitude()), true);
                 }
                 else {
                     Log.d(TAG, "direction: redirect if no");
@@ -240,7 +241,7 @@ public class MapViewModel extends ViewModel {
                 Log.d(TAG, "direction: Host");
                 if (directionUser.getValue() != null){
                     Log.d(TAG, "direction: Host if yes");
-                    showDirection(String.valueOf(directionUser.getValue().getLocation().getLatitude()), String.valueOf(directionUser.getValue().getLocation().getLongitude()));
+                    showDirection(String.valueOf(directionUser.getValue().getLocation().getLatitude()), String.valueOf(directionUser.getValue().getLocation().getLongitude()), false);
                 }
                 else {
                     Log.d(TAG, "direction: Host if not");
@@ -477,7 +478,7 @@ public class MapViewModel extends ViewModel {
         return line;
     }
 
-    private void showDirection(String desLat, String desLng) {
+    private void showDirection(String desLat, String desLng, boolean isChange) {
         for (Polyline p : pathList) {
             p.remove(); // reset the previous path
         }
@@ -495,16 +496,17 @@ public class MapViewModel extends ViewModel {
                         try {
                             Log.d(TAG, response.toString());
 
-                            JSONArray jsonArray = response.getJSONArray("routes").getJSONObject(0).getJSONArray("legs");
-                            LatLng ori = new LatLng(
-                                    jsonArray.getJSONObject(0).getJSONObject("start_location").getDouble("lat"),
-                                    jsonArray.getJSONObject(0).getJSONObject("start_location").getDouble("lng"));
-//                            mMap.addMarker(new MarkerOptions().position(ori).title("origin_fromAuto")).showInfoWindow();
-
-                            CameraPosition mCameraPosition = new CameraPosition.Builder().target(ori).zoom(13).build();
-                            mMap.moveCamera(CameraUpdateFactory.newCameraPosition(mCameraPosition));
+                            if(isChange){
+                                JSONObject southwest = response.getJSONArray("routes").getJSONObject(0).getJSONObject("bounds").getJSONObject("southwest");
+                                JSONObject northeast = response.getJSONArray("routes").getJSONObject(0).getJSONObject("bounds").getJSONObject("northeast");
+                                LatLngBounds bound = new LatLngBounds(
+                                        new LatLng(southwest.getDouble("lat"), southwest.getDouble("lng")),
+                                        new LatLng(northeast.getDouble("lat"), northeast.getDouble("lng")));
+                                mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bound, 300));
+                            }
 
                             // display direction!
+                            JSONArray jsonArray = response.getJSONArray("routes").getJSONObject(0).getJSONArray("legs");
                             String[] polyPath = getFullPath(jsonArray.getJSONObject(0).getJSONArray("steps"));
                             int path_len = polyPath.length;
 
