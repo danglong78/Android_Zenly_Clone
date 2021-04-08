@@ -80,8 +80,8 @@ public class GhostModeFragment extends Fragment implements GhostModeListAdapter.
         Button frozenBtn= view.findViewById(R.id.frozenBtn);
         frozenBtn.setOnClickListener(v->{
             //TODO ADD TEMP LIST TO FROZEN LIST
-            frozenAdapter.addUser(tempList);
-            preciseAdapter.deleteUser(tempList);
+//            frozenAdapter.addUser(tempList);
+//            preciseAdapter.deleteUser(tempList);
             for(User user : tempList)
             {
                 friendViewModel.turnOnFrozen(user.getUID());
@@ -101,8 +101,8 @@ public class GhostModeFragment extends Fragment implements GhostModeListAdapter.
         });
         Button preciseBtn = view.findViewById(R.id.preciseBtn);
         preciseBtn.setOnClickListener(v->{
-            preciseAdapter.addUser(tempList);
-            frozenAdapter.deleteUser(tempList);
+//            preciseAdapter.addUser(tempList);
+//            frozenAdapter.deleteUser(tempList);
             for(User user : tempList)
             {
                 friendViewModel.turnOffFrozen(user.getUID());

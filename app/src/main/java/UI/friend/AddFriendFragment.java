@@ -20,13 +20,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.study.android_zenly.R;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import UI.MainActivity.HomeFragment;
+import UI.MainActivity.MainActivity;
 import adapter.FriendSuggestListAdapter;
 import data.models.User;
+import ultis.FragmentTag;
 import viewModel.FriendSuggestViewModel;
 import viewModel.InvitationViewModel;
 import viewModel.InvitingViewModel;
@@ -35,11 +39,12 @@ import viewModel.UserViewModel;
 
 public class AddFriendFragment extends Fragment implements FriendSuggestListAdapter.AddFriendsFragmentCallback {
 
-    RecyclerView friendSuggestRecyclerView;
-    FriendSuggestListAdapter adapter;
+    private RecyclerView friendSuggestRecyclerView;
+    private FriendSuggestListAdapter adapter;
     private FriendSuggestViewModel friendSuggestViewModel;
     private InvitationViewModel invitationViewModel;
     private InvitingViewModel invitingViewModel;
+    private NavController navController;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -57,7 +62,7 @@ public class AddFriendFragment extends Fragment implements FriendSuggestListAdap
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         friendSuggestRecyclerView.setLayoutManager(layoutManager);
 
-        NavController navController = Navigation.findNavController(requireActivity(), R.id.friend_nav_host_fragment);
+         navController = Navigation.findNavController(requireActivity(), R.id.friend_nav_host_fragment);
 
         friendSuggestViewModel = new ViewModelProvider(requireActivity()).get(FriendSuggestViewModel.class);
         invitationViewModel = new ViewModelProvider(requireActivity()).get(InvitationViewModel.class);
@@ -109,6 +114,15 @@ public class AddFriendFragment extends Fragment implements FriendSuggestListAdap
 
     @Override
     public void onClickVIew(User user) {
-
+        Bundle bundle= new Bundle();
+        bundle.putString("name",user.getName());
+        bundle.putString("phone",user.getPhone());
+        bundle.putString("uid",user.getUID());
+        bundle.putString("avatar",user.getAvatarURL());
+        HomeFragment fragment = (HomeFragment) getParentFragment().getParentFragment();
+        assert fragment != null;
+        fragment.setBottomSheetState(BottomSheetBehavior.STATE_EXPANDED);
+        ((MainActivity) getActivity()).setFragmentTag(FragmentTag.FRIEND, null, navController);
+        navController.navigate(R.id.action_addFriendFragment_to_strangerProfileFragment2,bundle);
     }
 }

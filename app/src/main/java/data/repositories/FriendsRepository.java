@@ -345,7 +345,7 @@ public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
                                             user.setTag("MUTUAL");
 
                                         if(user.getUID().compareTo(UID)==0)
-                                            user.setTag("ME");
+                                            user.setTag("YOU");
 
                                         if(!blockInstance.getListUser().getValue().contains(user)){
                                             userFriendList.getValue().add(user);
