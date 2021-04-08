@@ -93,6 +93,7 @@ public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
                 UserLocation foundUserLocation = null;
 //                Log.d(TAG, "onChanged: " + userRefs.get(0));
                 for (UserRefFriend userRef : (List<UserRefFriend>)userRefs) {
+
                     boolean isExisted = false;
                     for (UserLocation userLocation : userLocationList.getValue()) {
                         if (userLocation.getUserUID().equals(userRef.getRef().getId())) {
@@ -218,21 +219,22 @@ public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
                 newRefList.add(addUserRef);
             }
 
-        if(addUserRef.getFrozen())
-            addUserRef.getRef().get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    processAddFrozenUser(task);
+        if(!toUID(addUserRef.getRef().getPath()).equals(UID))
+            if(addUserRef.getFrozen())
+                addUserRef.getRef().get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        processAddFrozenUser(task);
 
-                }
-            });
-        else
-            addUserRef.getRef().get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    processAddPreciseUser(task);
-                }
-            });
+                    }
+                });
+            else
+                addUserRef.getRef().get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        processAddPreciseUser(task);
+                    }
+                });
 
         if(listUserRef.getValue()!=null){
             String x = "size() = " + listUserRef.getValue().size();
