@@ -52,7 +52,7 @@ public class UserRepository {
 
     private FirebaseFirestore mDb;
 
-    private MutableLiveData<List<UserFriendList>> searchList;
+    private MutableLiveData<List<UserFriendList>> searchList = new MutableLiveData<>(new ArrayList<UserFriendList>());
 
     private UserRepository() {
         mDb = FirebaseFirestore.getInstance();
@@ -213,46 +213,29 @@ public class UserRepository {
 
                 for (QueryDocumentSnapshot dc : snapshots.getResult()) {
 
-                    UserRef addUserRef = dc.toObject(UserRef.class);
+                    User userAdd = dc.toObject(User.class);
+                    UserFriendList user = new UserFriendList(userAdd);
 
-                    addUserRef.getRef().get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                            if (task.isSuccessful()) {
-                                DocumentSnapshot document = task.getResult();
-                                if (document.exists()) {
-                                    User userAdd = document.toObject(User.class);
-                                    UserFriendList user = new UserFriendList(userAdd);
+                    if(!user.getName().contains(name))
+                        return;
 
-                                    if(!user.getName().contains(name))
-                                        return;
+                    if(invitingInstance.getListUser().getValue().contains(user))
+                        user.setTag("Invited");
 
-                                    if(invitingInstance.getListUser().getValue().contains(user))
-                                        user.setTag("Invited");
+                    if(invitationInstance.getListUser().getValue().contains(user))
+                        user.setTag("Pending");
 
-                                    if(invitationInstance.getListUser().getValue().contains(user))
-                                        user.setTag("Pending");
+                    if(friendInstance.getListUser().getValue().contains(user))
+                        user.setTag("Friend");
 
-                                    if(friendInstance.getListUser().getValue().contains(user))
-                                        user.setTag("Friend");
+                    if(user.getUID().compareTo(myUID)==0)
+                        user.setTag("ME");
 
-                                    if(user.getUID().compareTo(myUID)==0)
-                                        user.setTag("ME");
-
-                                    if(!blockInstance.getListUser().getValue().contains(user)){
-                                        searchList.getValue().add(user);
-                                        searchList.postValue(searchList.getValue());
-                                    }
-
-
-                                } else {
-                                    Log.d(TAG, "No such document");
-                                }
-                            } else {
-                                Log.d(TAG, "get failed with ", task.getException());
-                            }
-                        }
-                    });
+                    if(!blockInstance.getListUser().getValue().contains(user)){
+                        Log.d(TAG, "searchList: added " +  userAdd.getUID());
+                        searchList.getValue().add(user);
+                        searchList.postValue(searchList.getValue());
+                    };
                 }
             }
         });

@@ -60,6 +60,7 @@ public class AddFriendByUsernameFragment extends Fragment implements ListFriendO
             }
             else
             {
+                userViewModel.resetSearchList();
                 userViewModel.getSearchList(searchInput.getText().toString()).observe(getViewLifecycleOwner(),userFriendLists -> {
                     adapter.setList((ArrayList<UserFriendList>) userFriendLists);
                 });
@@ -81,7 +82,6 @@ public class AddFriendByUsernameFragment extends Fragment implements ListFriendO
             @Override
             public void afterTextChanged(Editable s) {
                 if(s.length()==0) {
-                    userViewModel.resetSearchList();
                     btn.setText("CANCEL");
                 }
                 else
