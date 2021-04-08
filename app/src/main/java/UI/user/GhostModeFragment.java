@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,6 +62,7 @@ public class GhostModeFragment extends Fragment implements GhostModeListAdapter.
         friendViewModel.getFriendsFrozenList().observe(getViewLifecycleOwner(), new Observer<List<User>>() {
             @Override
             public void onChanged(List<User> users) {
+                Log.d("asdasdasd", "frozen: " + users.size());
                 frozenAdapter.updateListItems((ArrayList<User>) users);
             }
         });
@@ -72,6 +74,7 @@ public class GhostModeFragment extends Fragment implements GhostModeListAdapter.
         friendViewModel.getFriendsPreciseList().observe(getViewLifecycleOwner(), new Observer<List<User>>() {
             @Override
             public void onChanged(List<User> users) {
+                Log.d("asdasdasd", "precise: " + users.size());
                 preciseAdapter.updateListItems((ArrayList<User>) users);
             }
         });

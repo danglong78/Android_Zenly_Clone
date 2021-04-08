@@ -191,16 +191,22 @@ public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
 
     protected void processAddFrozenUser(Task<DocumentSnapshot> task){
         User addUser =  super.processAddUser(task);
-        userFrozenList.getValue().remove(addUser);
+
+        userPreciseList.getValue().remove(addUser);
+        userPreciseList.postValue(userPreciseList.getValue());
+
         userFrozenList.getValue().add(addUser);
-        userFrozenList.postValue(listUser.getValue());
+        userFrozenList.postValue(userFrozenList.getValue());
     }
 
     protected void processAddPreciseUser(Task<DocumentSnapshot> task){
         User addUser =  super.processAddUser(task);
-        userPreciseList.getValue().remove(addUser);
+
+        userFrozenList.getValue().remove(addUser);
+        userFrozenList.postValue(userFrozenList.getValue());
+
         userPreciseList.getValue().add(addUser);
-        userPreciseList.postValue(listUser.getValue());
+        userPreciseList.postValue(userPreciseList.getValue());
     }
 
     protected void handleADDED(List<UserRefFriend> newRefList, MutableLiveData<List<User>> listUser, DocumentChange dc) {
@@ -252,7 +258,6 @@ public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                     processAddFrozenUser(task);
-
                 }
             });
         else
