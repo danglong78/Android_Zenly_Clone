@@ -127,13 +127,17 @@ public class ChatFragment extends Fragment {
         profileBtn.setOnClickListener(v->{
             if(listUser.size()==2)
             {
-                User friend= listUser.get(0);
-                Bundle bundle= new Bundle();
-                bundle.putString("name",friend.getName());
-                bundle.putString("phone",friend.getPhone());
-                bundle.putString("uid",friend.getUID());
-                bundle.putString("avatar",friend.getAvatarURL());
-                navController.navigate(R.id.action_chatFragment_to_friendProfileFragment,bundle);
+                for(User temp : listUser){
+                    if(!temp.getUID().equals(FirebaseAuth.getInstance().getUid())){
+                        Bundle bundle= new Bundle();
+                        bundle.putString("name",temp.getName());
+                        bundle.putString("phone",temp.getPhone());
+                        bundle.putString("uid",temp.getUID());
+                        bundle.putString("avatar",temp.getAvatarURL());
+                        navController.navigate(R.id.action_chatFragment_to_friendProfileFragment,bundle);
+                        break;
+                    }
+                }
             }
         });
         if (listUser.size() !=2)

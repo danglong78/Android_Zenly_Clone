@@ -81,6 +81,7 @@ public class GhostModeListAdapter extends RecyclerView.Adapter<GhostModeListAdap
         list.clear();
         list.addAll(newList);
         diffResult.dispatchUpdatesTo(this);
+        notifyDataSetChanged();
     }
 
 
