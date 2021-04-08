@@ -101,10 +101,10 @@ public class AddFriendByUsernameFragment extends Fragment implements ListFriendO
         NavController navController = Navigation.findNavController(this.getView());
         if(!isYourFriend)
         {
-            navController.navigate(R.id.action_strangerProfileFragment2_to_friendProfileFragment2,bundle);
+            navController.navigate(R.id.action_addFriendByUsernameFragment_to_strangerProfileFragment2,bundle);
         }
         else{
-            navController.navigate(R.id.action_strangerProfileFragment2_self,bundle);
+            navController.navigate(R.id.action_addFriendByUsernameFragment_to_friendProfileFragment2,bundle);
         }
 
     }
