@@ -220,16 +220,16 @@ public class UserRepository {
                         return;
 
                     if(invitingInstance.getListUser().getValue().contains(user))
-                        user.setTag("Invited");
+                        user.setTag("INVITED");
 
                     if(invitationInstance.getListUser().getValue().contains(user))
-                        user.setTag("Pending");
+                        user.setTag("PENDING");
 
                     if(friendInstance.getListUser().getValue().contains(user))
-                        user.setTag("Friend");
+                        user.setTag("MUTUAL");
 
                     if(user.getUID().compareTo(myUID)==0)
-                        user.setTag("ME");
+                        user.setTag("YOU");
 
                     if(!blockInstance.getListUser().getValue().contains(user)){
                         Log.d(TAG, "searchList: added " +  userAdd.getUID());

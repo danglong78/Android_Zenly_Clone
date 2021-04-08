@@ -155,15 +155,10 @@ public class ListFriendOfUserAdapter extends RecyclerView.Adapter<ListFriendOfUs
     private <HOLDER extends BaseViewHolder>
     BaseViewHolder getHolder(ViewGroup parent, @LayoutRes int layout, Class<HOLDER> holderClass) {
         View v = LayoutInflater.from(parent.getContext()).inflate(layout, parent, false);
-        Log.d("listfriendoffriend", "getHolder");
         try {
-            Log.d("listfriendoffriend", "STEP1");
             Constructor<HOLDER> constructor = holderClass.getDeclaredConstructor(View.class);
-            Log.d("listfriendoffriend", "STEP2");
             constructor.setAccessible(true);
-            Log.d("listfriendoffriend", "STEP3");
             HOLDER holder = constructor.newInstance(v);
-            Log.d("listfriendoffriend", holder.toString());
 
             return holder;
         } catch (Exception e) {
