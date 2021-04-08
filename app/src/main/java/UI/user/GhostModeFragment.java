@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 import androidx.constraintlayout.motion.widget.MotionLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -52,7 +53,7 @@ public class GhostModeFragment extends Fragment implements GhostModeListAdapter.
 //        users2.add(new User(null,"Tai","2312334","2d6b54f0-92b6-11eb-a8b3-0242ac130003.jpg","23/9/2000","012345567",null));
 //        users2.add(new User(null,"Minh","233434","0e974d50-8978-11eb-8dcd-0242ac130003.png","23/9/2000","012345567",null));
 //        users2.add(new User(null,"VaN","12234","0e9748c8-8978-11eb-8dcd-0242ac130003.png","23/9/2000","012345567",null));
-
+        friendViewModel = new ViewModelProvider(getActivity()).get(FriendViewModel.class);
         RecyclerView frozenList = view.findViewById(R.id.frozenRecyclerView);
         GhostModeListAdapter frozenAdapter = new GhostModeListAdapter(requireActivity(),this);
         frozenList.setAdapter(frozenAdapter);
@@ -81,6 +82,10 @@ public class GhostModeFragment extends Fragment implements GhostModeListAdapter.
             //TODO ADD TEMP LIST TO FROZEN LIST
             frozenAdapter.addUser(tempList);
             preciseAdapter.deleteUser(tempList);
+            for(User user : tempList)
+            {
+                friendViewModel.turnOnFrozen(user.getUID());
+            }
             tempList.clear();
             motionLayout.transitionToStart();
             for (int childCount = preciseList.getChildCount(), i = 0; i < childCount; ++i) {
@@ -98,7 +103,10 @@ public class GhostModeFragment extends Fragment implements GhostModeListAdapter.
         preciseBtn.setOnClickListener(v->{
             preciseAdapter.addUser(tempList);
             frozenAdapter.deleteUser(tempList);
-            //TODO ADD TEMP LIST TO PRECISE LIST
+            for(User user : tempList)
+            {
+                friendViewModel.turnOffFrozen(user.getUID());
+            }
             tempList.clear();
             motionLayout.transitionToStart();
             for (int childCount = preciseList.getChildCount(), i = 0; i < childCount; ++i) {

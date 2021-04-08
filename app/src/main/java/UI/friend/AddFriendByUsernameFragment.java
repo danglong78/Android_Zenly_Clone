@@ -16,19 +16,24 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 
 import com.study.android_zenly.R;
 
+import java.util.ArrayList;
+
 import adapter.ListFriendOfUserAdapter;
 import data.models.User;
+import data.models.UserFriendList;
 import viewModel.FriendViewModel;
 import viewModel.InvitationViewModel;
 import viewModel.InvitingViewModel;
+import viewModel.UserViewModel;
 
 
 public class AddFriendByUsernameFragment extends Fragment implements ListFriendOfUserAdapter.onClickUser {
-    FriendViewModel friendViewModel;
+    UserViewModel userViewModel;
     EditText searchInput;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -41,10 +46,26 @@ public class AddFriendByUsernameFragment extends Fragment implements ListFriendO
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ListFriendOfUserAdapter adapter= new ListFriendOfUserAdapter(this,getActivity());
-        RecyclerView friendListRecyclerView = view.findViewById(R.id.recyclerview);
+        RecyclerView friendListRecyclerView = view.findViewById(R.id.nav_drawer_recycler_view);
         friendListRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         friendListRecyclerView.setAdapter(adapter);
-        friendViewModel= new ViewModelProvider(getActivity()).get(FriendViewModel.class);
+        userViewModel= new ViewModelProvider(getActivity()).get(UserViewModel.class);
+
+        Button btn= view.findViewById(R.id.cancelBtn);
+        btn.setOnClickListener(v->{
+            if(btn.getText().toString().compareTo("CANCEL")==0)
+            {
+                NavController navController = Navigation.findNavController(view);
+                navController.popBackStack();
+            }
+            else
+            {
+                userViewModel.getSearchList(searchInput.getText().toString()).observe(getViewLifecycleOwner(),userFriendLists -> {
+                    adapter.setList((ArrayList<UserFriendList>) userFriendLists);
+                });
+            }
+        });
+
         searchInput=view.findViewById(R.id.searchInput);
         searchInput.addTextChangedListener(new TextWatcher() {
             @Override
@@ -59,7 +80,12 @@ public class AddFriendByUsernameFragment extends Fragment implements ListFriendO
 
             @Override
             public void afterTextChanged(Editable s) {
-                //SEARCH FUNCTION
+                if(s.length()==0) {
+                    userViewModel.resetSearchList();
+                    btn.setText("CANCEL");
+                }
+                else
+                    btn.setText("SEARCH");
             }
         });
 
@@ -93,6 +119,5 @@ public class AddFriendByUsernameFragment extends Fragment implements ListFriendO
     @Override
     public void onPause() {
         super.onPause();
-        friendViewModel.resetListFriendOfFriends();
     }
 }
