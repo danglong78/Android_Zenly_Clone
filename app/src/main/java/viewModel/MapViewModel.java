@@ -71,7 +71,7 @@ public class MapViewModel extends ViewModel {
     private final String TAG = "MapViewModel";
     private static final int REQUEST_CHECK_SETTINGS = 10001;
     private static final String Direction = "https://maps.googleapis.com/maps/api/directions/json?";
-    private static final String API_key = "AIzaSyA6oclAbLdL78dYMi1u8MVUW-6xiaTTqLQ";
+    private static final String API_key = "AIzaSyCN2uaHqAIiQrEtjz8simo7UintppEL9DQ";
 
     private List<Polyline> pathList;
     private RequestQueue mrequestQueue;
