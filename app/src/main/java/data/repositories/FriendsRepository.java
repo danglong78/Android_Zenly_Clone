@@ -284,7 +284,7 @@ public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
     }
 
     public void toggleFrozen(String hostUserUID, String friendUID, boolean flag) {
-        DocumentReference friend = mDb.collection(FRIEND_COLLECTION).document(hostUserUID).collection("List").document(friendUID);
+        DocumentReference friend = mDb.collection(FRIEND_COLLECTION).document(friendUID).collection("List").document(hostUserUID);
 
         if (flag) {
             DocumentReference curLocationRef = mDb.collection("UserLocations").document(friendUID);

@@ -39,6 +39,7 @@ import java.util.List;
 import UI.MainActivity.HomeFragment;
 import UI.MainActivity.MainActivity;
 import adapter.FriendSuggestListAdapter;
+import adapter.GhostModeListAdapter;
 import adapter.RecentFriendListAdapter;
 import data.models.User;
 import ultis.FragmentTag;
@@ -65,7 +66,7 @@ public class MainFriendFragment extends Fragment implements FriendSuggestListAda
     FriendSuggestListAdapter adapter;
     private FriendSuggestViewModel friendSuggestViewModel;
     private InvitationViewModel invitationViewModel;
-
+    RecyclerView recentFriendRecyclerView;
     private UserViewModel userViewModel;
     private InvitingViewModel invitingViewModel;
     private FriendViewModel friendViewModel;
@@ -90,7 +91,7 @@ public class MainFriendFragment extends Fragment implements FriendSuggestListAda
 
 
         friendSuggestRecyclerView = view.findViewById(R.id.suggest_friend_recycler_view);
-        RecyclerView recentFriendRecyclerView = view.findViewById(R.id.recent_friend_recycler_view);
+        recentFriendRecyclerView = view.findViewById(R.id.recent_friend_recycler_view);
 
         Log.d(TAG, String.valueOf(friendSuggestRecyclerView.getId()));
 
@@ -283,6 +284,7 @@ public class MainFriendFragment extends Fragment implements FriendSuggestListAda
                     switch (which) {
                         case 0:
                         {
+
                             Bundle bundle= new Bundle();
                             bundle.putString("name",user.getName());
                             bundle.putString("phone",user.getPhone());
@@ -293,11 +295,16 @@ public class MainFriendFragment extends Fragment implements FriendSuggestListAda
                             fragment.setBottomSheetState(BottomSheetBehavior.STATE_EXPANDED);
                             ((MainActivity) getActivity()).setFragmentTag(FragmentTag.FRIEND, null, navController);
                             navController.navigate(R.id.action_addFriendFragment2_to_friendProfileFragment2,bundle);
+
                             dialog.dismiss();
                             break;
                         }
                         case 1:
                         {
+                            for (int childCount = recentFriendRecyclerView.getChildCount(), i = 0; i < childCount; ++i) {
+                                final RecentFriendListAdapter.ViewHolder holder = (RecentFriendListAdapter.ViewHolder)recentFriendRecyclerView.getChildViewHolder(recentFriendRecyclerView.getChildAt(i));
+                                holder.setDirectionMode(false);
+                            }
                             //TODO HÀm direction
                             HomeFragment fragment = (HomeFragment) getParentFragment().getParentFragment();
                             assert fragment != null;
