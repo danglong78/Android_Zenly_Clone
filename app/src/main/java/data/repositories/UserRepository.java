@@ -180,7 +180,7 @@ public class UserRepository {
         StorageReference ref = FirebaseStorage.getInstance().getReference().child("avatars/" + UID + file.getLastPathSegment());
         ref.putFile(file).addOnSuccessListener(task -> {
             mDb.collection(USER_COLLECTION).document(UID).update("avatarURL", UID + file.getLastPathSegment());
-
+            mDb.collection(USER_LOCATION_COLLECTION).document(UID).update("imageURL", UID + ".jpg");
         });
     }
 
@@ -191,6 +191,7 @@ public class UserRepository {
         byte[] data = baos.toByteArray();
         ref.putBytes(data).addOnSuccessListener(task -> {
             mDb.collection(USER_COLLECTION).document(UID).update("avatarURL", UID + ".jpg");
+            mDb.collection(USER_LOCATION_COLLECTION).document(UID).update("imageURL", UID + ".jpg");
 
         });
     }

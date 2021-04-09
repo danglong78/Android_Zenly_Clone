@@ -152,10 +152,14 @@ public class FriendViewModel extends ViewModel {
     }
 
     public void turnOnFrozen(String friendUID) {
+        Log.d(TAG, "turnOnFrozen: hostUserID " + hostUserUID);
+        Log.d(TAG, "turnOnFrozen: friend " + friendUID);
         repository.toggleFrozen(hostUserUID, friendUID, true);
     }
 
     public void turnOffFrozen(String friendUID) {
+        Log.d(TAG, "turnOnFrozen: hostUserID " + hostUserUID);
+        Log.d(TAG, "turnOnFrozen: friend " + friendUID);
         repository.toggleFrozen(hostUserUID, friendUID, false);
     }
 
