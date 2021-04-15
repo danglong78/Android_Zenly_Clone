@@ -284,7 +284,7 @@ public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
     }
 
     public void toggleFrozen(String hostUserUID, String friendUID, boolean flag) {
-        DocumentReference friend = mDb.collection(FRIEND_COLLECTION).document(friendUID).collection("List").document(hostUserUID);
+        DocumentReference hostOfFriend = mDb.collection(FRIEND_COLLECTION).document(friendUID).collection("List").document(hostUserUID);
 
         if (flag) {
             DocumentReference curLocationRef = mDb.collection("UserLocations").document(friendUID);
@@ -294,10 +294,10 @@ public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                     if (task.isSuccessful()) {
                         UserLocation curLocation = task.getResult().toObject(UserLocation.class);
-                        friend.update("frozenLocation", curLocation.getLocation()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        hostOfFriend.update("frozenLocation", curLocation.getLocation()).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
-                                friend.update("frozen", true);
+                                hostOfFriend.update("frozen", true);
                             }
                         });
                     }
@@ -305,11 +305,11 @@ public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
             });
         }
         else {
-            friend.update("frozen", false);
+            hostOfFriend.update("frozen", false);
         }
 
-
-
+        DocumentReference friendOfHost = mDb.collection(FRIEND_COLLECTION).document(hostUserUID).collection("List").document(friendUID);
+        friendOfHost.update("isSetFrozen", flag);
     }
 
     public MutableLiveData<List<User>> getUserFrozenList(){
