@@ -191,6 +191,7 @@ public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
     }
 
     protected void processAddFrozenUser(Task<DocumentSnapshot> task){
+        Log.d(TAG, "processAddFrozenUser: asdadasdsa");
         User addUser =  super.processAddUser(task);
 
         userPreciseList.getValue().remove(addUser);
@@ -201,6 +202,7 @@ public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
     }
 
     protected void processAddPreciseUser(Task<DocumentSnapshot> task){
+        Log.d(TAG, "processAddPreciseUser: dasdsadsadsa");
         User addUser =  super.processAddUser(task);
 
         userFrozenList.getValue().remove(addUser);
@@ -218,9 +220,9 @@ public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
             if (!newRefList.contains(addUserRef)) {
                 newRefList.add(addUserRef);
             }
-
+        Log.d(TAG, "handleADDED: frozen " + toUID(addUserRef.getRef().getPath()) + " setfrozen " + addUserRef.getSetFrozen() );
         if(!toUID(addUserRef.getRef().getPath()).equals(UID))
-            if(addUserRef.isSetFrozen())
+            if(addUserRef.getSetFrozen())
                 addUserRef.getRef().get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -255,7 +257,7 @@ public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
 
         Log.d(TAG, "onEventMODIFIED: " + COLLECTION + " " + modifyUserRef.getRef().getPath());
 
-        if(modifyUserRef.getFrozen())
+        if(modifyUserRef.getSetFrozen())
             modifyUserRef.getRef().get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {

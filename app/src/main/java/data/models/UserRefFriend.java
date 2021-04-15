@@ -6,9 +6,9 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.GeoPoint;
 
 public class UserRefFriend extends UserRef {
-    private boolean frozen = false;
+    private boolean frozen;
     GeoPoint frozenLocation;
-    private boolean isSetFrozen = false;
+    private boolean isSetFrozen;
 
     public UserRefFriend(){
 
@@ -18,13 +18,12 @@ public class UserRefFriend extends UserRef {
         super(ref, time);
         this.frozen = frozen;
         this.frozenLocation = frozenLocation;
+        this.isSetFrozen = false;
+        this.frozen = false;
     }
 
-    public boolean isFrozen() {
-        return frozen;
-    }
 
-    public boolean isSetFrozen() {
+    public boolean getSetFrozen() {
         return isSetFrozen;
     }
 
