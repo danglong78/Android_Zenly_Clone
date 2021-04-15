@@ -220,7 +220,7 @@ public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
             }
 
         if(!toUID(addUserRef.getRef().getPath()).equals(UID))
-            if(addUserRef.getFrozen())
+            if(addUserRef.isSetFrozen())
                 addUserRef.getRef().get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
