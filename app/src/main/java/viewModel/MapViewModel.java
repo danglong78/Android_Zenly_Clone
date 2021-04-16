@@ -87,6 +87,7 @@ public class MapViewModel extends ViewModel {
     private LiveData<List<UserLocation>> mFriendLocationList = new MutableLiveData<List<UserLocation>>(null);
     private LiveData<List<UserRefFriend>> mFriendRefList;
 
+    private LiveData<UserRefFriend> directionUserRef;
     private LiveData<UserLocation> directionUser;
     FriendViewModel mFriendViewModel;
 
@@ -192,11 +193,7 @@ public class MapViewModel extends ViewModel {
                         }
                     });
 
-
-
-
                     mClusterManager.cluster();
-
 
                     mHostUserLocationRef = UserRepository.getInstance().getUserLocationReference(userLocation.getUserUID());
 
@@ -210,6 +207,9 @@ public class MapViewModel extends ViewModel {
 
         pathList = new ArrayList<>();
         directionUser = mFriendViewModel.getUserDirection("");
+        directionUserRef = mFriendViewModel.getUserRefFriend("");
+
+
         directionUser.observe(lifecycleOwner, new Observer<UserLocation>() {
             @Override
             public void onChanged(UserLocation userLocation) {
@@ -228,29 +228,23 @@ public class MapViewModel extends ViewModel {
             }
         });
 
-        mFriendLocationList.observe(lifecycleOwner, new Observer<List<UserLocation>>() {
-            @Override
-            public void onChanged(List<UserLocation> userLocations) {
 
-            }
-        });
-
-        mUserLocation.observe(lifecycleOwner, new Observer<UserLocation>() {
-            @Override
-            public void onChanged(UserLocation userLocation) {
-                Log.d(TAG, "direction: Host");
-                if (directionUser.getValue() != null){
-                    Log.d(TAG, "direction: Host if yes");
-                    showDirection(String.valueOf(directionUser.getValue().getLocation().getLatitude()), String.valueOf(directionUser.getValue().getLocation().getLongitude()), false);
-                }
-                else {
-                    Log.d(TAG, "direction: Host if not");
-                    for (Polyline p : pathList)  {
-                        p.setVisible(false);
-                    }
-                }
-            }
-        });
+//        mUserLocation.observe(lifecycleOwner, new Observer<UserLocation>() {
+//            @Override
+//            public void onChanged(UserLocation userLocation) {
+//                Log.d(TAG, "direction: Host");
+//                if (directionUser.getValue() != null){
+//                    Log.d(TAG, "direction: Host if yes");
+//                    showDirection(String.valueOf(directionUser.getValue().getLocation().getLatitude()), String.valueOf(directionUser.getValue().getLocation().getLongitude()), false);
+//                }
+//                else {
+//                    Log.d(TAG, "direction: Host if not");
+//                    for (Polyline p : pathList)  {
+//                        p.setVisible(false);
+//                    }
+//                }
+//            }
+//        });
 
     }
 

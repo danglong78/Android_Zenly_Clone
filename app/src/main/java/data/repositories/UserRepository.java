@@ -217,7 +217,7 @@ public class UserRepository {
                     User userAdd = dc.toObject(User.class);
                     UserFriendList user = new UserFriendList(userAdd);
 
-                    if(!user.getName().contains(name))
+                    if(!user.getName().toUpperCase().contains(name.toUpperCase()))
                         return;
 
                     if(invitingInstance.getListUser().getValue().contains(user))

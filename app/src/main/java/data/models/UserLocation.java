@@ -51,6 +51,7 @@ public class UserLocation {
         this.imageURL = imageURL;
     }
 
+
     public UserLocation(String userUID) {
         this.userUID = userUID;
     }

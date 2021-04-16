@@ -49,7 +49,10 @@ public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
     private MutableLiveData<List<User>> userFrozenList;
     private MutableLiveData<List<User>> userPreciseList;
     private MutableLiveData<List<UserFriendList>> userFriendList;
+
+    private ListenerRegistration userDirectionListener;
     private MutableLiveData<UserLocation> userDirection;
+    private MutableLiveData<UserRefFriend> userDirectionRef;
 
     private FriendsRepository(String FRIENDS_COLLECTION, String UID) {
         super(FRIENDS_COLLECTION, UID);
@@ -72,6 +75,11 @@ public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
 
         userDirection = new MutableLiveData<UserLocation>();
         userDirection.setValue(null);
+
+        userDirectionRef = new MutableLiveData<UserRefFriend>();
+        userDirectionRef.setValue(null);
+
+
     }
 
     public static FriendsRepository getInstance(String FRIENDS_COLLECTION, String UID) {
@@ -311,7 +319,7 @@ public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
         }
 
         DocumentReference friendOfHost = mDb.collection(FRIEND_COLLECTION).document(hostUserUID).collection("List").document(friendUID);
-        friendOfHost.update("isSetFrozen", flag);
+        friendOfHost.update("canTrackMe", flag);
     }
 
     public MutableLiveData<List<User>> getUserFrozenList(){
@@ -385,16 +393,52 @@ public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
 
     public MutableLiveData<UserLocation> getUserDirection(String friendUID){
         if (!friendUID.equals(""))
-            mDb.collection("UserLocations").document(friendUID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            userDirectionListener = mDb.collection("UserLocations").document(friendUID).addSnapshotListener(new EventListener<DocumentSnapshot>() {
                 @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    if (task.isSuccessful()){
-                        userDirection.setValue(task.getResult().toObject(UserLocation.class));
+                public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException e) {
+                    if (e != null) {
+                        Log.w(TAG, "Listen failed.", e);
+                        return;
+                    }
+
+                    if (value != null && value.exists()) {
+                        Log.d(TAG, "Current data: " + value.getData());
+
+                        userDirection.setValue(value.toObject(UserLocation.class));
+                    } else {
+                        Log.d(TAG, "Current data: null");
                     }
                 }
             });
 
         return userDirection;
+    }
+
+    public MutableLiveData<UserRefFriend> getUserRefFriend(String friendUID){
+        if (!friendUID.equals(""))
+            mDb.collection("Friends").document(UID).collection(LIST_COLLECTION).document(friendUID).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                @Override
+                public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException e) {
+                    if (e != null) {
+                        Log.w(TAG, "Listen failed.", e);
+                        return;
+                    }
+
+                    if (value != null && value.exists()) {
+                        Log.d(TAG, "Current data: " + value.getData());
+
+                        userDirectionRef.setValue(value.toObject(UserRefFriend.class));
+                    } else {
+                        Log.d(TAG, "Current data: null");
+                    }
+                }
+            });
+
+        return userDirectionRef;
+    }
+
+    public void removeUserDirectionListener() {
+        userDirectionListener.remove();
     }
 
     public void offUserDirection(){

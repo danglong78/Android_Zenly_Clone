@@ -22,6 +22,7 @@ import data.models.UserRefFriend;
 import data.repositories.BlockRepository;
 import data.repositories.BlockedByRepository;
 import data.repositories.FriendsRepository;
+import data.repositories.InvitingRepository;
 import data.repositories.SuggestFriendRepository;
 
 public class FriendViewModel extends ViewModel {
@@ -39,13 +40,14 @@ public class FriendViewModel extends ViewModel {
     private MutableLiveData<List<User>> friendsFrozenList;
     private MutableLiveData<UserLocation> userDirection;
 
-    BlockRepository blockRepository;
+        BlockRepository blockRepository;
     private MutableLiveData<List<User>> blockList;
 
     BlockedByRepository blockedByRepository;
     private MutableLiveData<List<User>> blockedByList;
 
     SuggestFriendRepository suggestRepository;
+    InvitingRepository invitingRepository;
 
     private String hostUserUID;
 
@@ -144,6 +146,7 @@ public class FriendViewModel extends ViewModel {
     public void acceptFriendRequest(String friendUID){
         repository.addToOtherRepository(friendUID);
         repository.addToMyRepository(friendUID);
+
     }
 
     public void deleteFriend(String friendUID){
@@ -200,4 +203,7 @@ public class FriendViewModel extends ViewModel {
         repository.offUserDirection();
     }
 
+    public LiveData<UserRefFriend> getUserRefFriend(String friendUID){
+        return repository.getUserRefFriend(friendUID);
+    }
 }
