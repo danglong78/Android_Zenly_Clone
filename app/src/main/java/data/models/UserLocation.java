@@ -1,5 +1,7 @@
 package data.models;
 
+import android.util.Log;
+
 import androidx.annotation.Nullable;
 
 import com.google.firebase.firestore.Exclude;
@@ -99,8 +101,9 @@ public class UserLocation {
 
 
 
-//    @Override
-//    public boolean equals(@Nullable Object obj) {
-//        return userUID.equals(((UserLocation)obj).getUserUID());
-//    }
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        Log.d("UserLocation", "equals UserLocation : " + userUID.equals(((UserLocation)obj).getUserUID()));
+        return userUID.equals(((UserLocation)obj).getUserUID());
+    }
 }

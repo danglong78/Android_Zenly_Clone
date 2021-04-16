@@ -309,7 +309,7 @@ public class MainFriendFragment extends Fragment implements FriendSuggestListAda
                             HomeFragment fragment = (HomeFragment) getParentFragment().getParentFragment();
                             assert fragment != null;
                             fragment.setBottomSheetState(BottomSheetBehavior.STATE_COLLAPSED);
-                            friendViewModel.getUserDirection(user.getUID());
+                            friendViewModel.getUserRefFriend(user.getUID());
                             viewHolder.setDirectionMode(true);
                             dialog.dismiss();
                             break;

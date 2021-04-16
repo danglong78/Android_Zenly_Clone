@@ -105,4 +105,13 @@ public class ClusterManagerRenderer extends DefaultClusterRenderer<ClusterMarker
             marker.setPosition(clusterMarker.getPosition());
         }
     }
+
+    public void removeMarker(ClusterMarker clusterMarker) {
+        Marker marker = getMarker(clusterMarker);
+        if (marker != null) {
+            Log.d(TAG, "removeMarker: in renderer");
+            marker.remove();
+        }
+        
+    }
 }

@@ -54,6 +54,8 @@ public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
     private MutableLiveData<UserLocation> userDirection;
     private MutableLiveData<UserRefFriend> userDirectionRef;
 
+    private List<UserRef> lastUserRefList = new ArrayList<UserRef>();
+
     private FriendsRepository(String FRIENDS_COLLECTION, String UID) {
         super(FRIENDS_COLLECTION, UID);
         myUserRef = new UserRefFriend(mDb.document(USER_COLLECTION + "/" + UID), Timestamp.now(), false, null , false);
@@ -100,7 +102,19 @@ public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
                 Log.d(TAG, "onChanged: userRef changed");
                 UserLocation foundUserLocation = null;
 //                Log.d(TAG, "onChanged: " + userRefs.get(0));
-                for (UserRefFriend userRef : (List<UserRefFriend>)userRefs) {
+
+                for (UserRef userRef: lastUserRefList) {
+                    if (!userRefs.contains(userRef)) {
+                        Log.d(TAG, "onChanged: remove FriendLocation");
+                        userLocationList.getValue().remove(new UserLocation(userRef.getRef().getId()));
+                    }
+                }
+                userLocationList.postValue(userLocationList.getValue());
+
+                lastUserRefList.clear();
+                lastUserRefList.addAll(userRefs);
+
+                for (UserRefFriend userRef : (List<UserRefFriend>) userRefs) {
 
                     boolean isExisted = false;
                     for (UserLocation userLocation : userLocationList.getValue()) {
@@ -228,9 +242,9 @@ public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
             if (!newRefList.contains(addUserRef)) {
                 newRefList.add(addUserRef);
             }
-        Log.d(TAG, "handleADDED: frozen " + toUID(addUserRef.getRef().getPath()) + " setfrozen " + addUserRef.getCanTrackMe() );
+        Log.d(TAG, "handleADDED: frozen " + toUID(addUserRef.getRef().getPath()) + " setfrozen " + addUserRef.getCannotTrackMe() );
         if(!toUID(addUserRef.getRef().getPath()).equals(UID))
-            if(addUserRef.getCanTrackMe())
+            if(addUserRef.getCannotTrackMe())
                 addUserRef.getRef().get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -265,7 +279,7 @@ public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
 
         Log.d(TAG, "onEventMODIFIED: " + COLLECTION + " " + modifyUserRef.getRef().getPath());
 
-        if(modifyUserRef.getCanTrackMe())
+        if(modifyUserRef.getCannotTrackMe())
             modifyUserRef.getRef().get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -438,7 +452,8 @@ public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
     }
 
     public void removeUserDirectionListener() {
-        userDirectionListener.remove();
+        if (userDirectionListener!=null)
+            userDirectionListener.remove();
     }
 
     public void offUserDirection(){
