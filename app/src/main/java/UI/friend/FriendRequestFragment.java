@@ -78,6 +78,7 @@ public class FriendRequestFragment extends Fragment implements FriendRequestAdap
         friendViewModel.acceptFriendRequest(friendUID);
         invitationViewModel.removeMyInvitation(friendUID);
         invitingViewModel.removeFriendInviting(friendUID);
+        invitingViewModel.removeMyInviting(friendUID);
 
 
         //TODO CREATE A CONVERSATION WITH NEW FRIEND

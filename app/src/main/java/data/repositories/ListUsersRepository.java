@@ -334,7 +334,7 @@ public class ListUsersRepository <T extends UserRef> {
         Log.d(TAG, "removeOnPaginations: " + COLLECTION + " " + UID + " remove " + removeUID);
     }
 
-    protected String toUID(String userRef) {
+    public static  String toUID(String userRef) {
         return userRef.substring(userRef.lastIndexOf('/') + 1);
     }
 

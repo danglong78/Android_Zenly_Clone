@@ -65,6 +65,7 @@ import data.models.User;
 import data.models.UserLocation;
 import data.models.UserRef;
 import data.models.UserRefFriend;
+import data.repositories.FriendsRepository;
 import data.repositories.UserRepository;
 import ultis.ClusterManagerRenderer;
 
@@ -206,9 +207,23 @@ public class MapViewModel extends ViewModel {
         });
 
         pathList = new ArrayList<>();
-        directionUser = mFriendViewModel.getUserDirection("");
-        directionUserRef = mFriendViewModel.getUserRefFriend("");
 
+        directionUserRef = mFriendViewModel.getUserRefFriend("");
+        directionUser = mFriendViewModel.getUserDirection("");
+
+        directionUserRef.observe(lifecycleOwner, new Observer<UserRefFriend>() {
+            @Override
+            public void onChanged(UserRefFriend userRefFriend) {
+                if(userRefFriend != null)
+                    if(userRefFriend.getFrozen()) {
+                        mFriendViewModel.removeUserDirectionListener();
+
+                    }
+                    else {
+                        directionUser = mFriendViewModel.getUserDirection(FriendsRepository.toUID(userRefFriend.getRef().getPath()));
+                    }
+            }
+        });
 
         directionUser.observe(lifecycleOwner, new Observer<UserLocation>() {
             @Override

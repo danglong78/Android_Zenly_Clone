@@ -206,4 +206,8 @@ public class FriendViewModel extends ViewModel {
     public LiveData<UserRefFriend> getUserRefFriend(String friendUID){
         return repository.getUserRefFriend(friendUID);
     }
+
+    public void removeUserDirectionListener() {
+        repository.removeUserDirectionListener();
+    }
 }

@@ -263,7 +263,7 @@ public class ConversationRepository {
                             }
                         }
                     }
-                    if(listConv.size()>0){
+                    if(listConv.size()<=0){
                         Message aMess = MessageRepository.getInstance().createInitMess(conID,uid1,uid2);
                         aConv.setRecentMessage(aMess);
                         convRef.set(aConv);

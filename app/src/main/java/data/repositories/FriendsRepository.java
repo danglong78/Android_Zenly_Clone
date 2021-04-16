@@ -228,9 +228,9 @@ public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
             if (!newRefList.contains(addUserRef)) {
                 newRefList.add(addUserRef);
             }
-        Log.d(TAG, "handleADDED: frozen " + toUID(addUserRef.getRef().getPath()) + " setfrozen " + addUserRef.getCanTrackMe() );
+        Log.d(TAG, "handleADDED: frozen " + toUID(addUserRef.getRef().getPath()) + " setfrozen " + addUserRef.getCanNotTrackMe() );
         if(!toUID(addUserRef.getRef().getPath()).equals(UID))
-            if(addUserRef.getCanTrackMe())
+            if(addUserRef.getCanNotTrackMe())
                 addUserRef.getRef().get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -265,7 +265,7 @@ public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
 
         Log.d(TAG, "onEventMODIFIED: " + COLLECTION + " " + modifyUserRef.getRef().getPath());
 
-        if(modifyUserRef.getCanTrackMe())
+        if(modifyUserRef.getCanNotTrackMe())
             modifyUserRef.getRef().get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -438,7 +438,8 @@ public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
     }
 
     public void removeUserDirectionListener() {
-        userDirectionListener.remove();
+        if (userDirectionListener!=null)
+            userDirectionListener.remove();
     }
 
     public void offUserDirection(){
