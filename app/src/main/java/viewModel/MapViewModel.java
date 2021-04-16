@@ -390,10 +390,11 @@ public class MapViewModel extends ViewModel {
                 data.put("location", geoPoint);
                 mHostUserLocationRef.update(data);
 
-                if(!mUserLocation.getValue().getLocation().equals(geoPoint)){
-                    mUserLocation.getValue().setLocation(geoPoint);
-                    mUserLocation.setValue(mUserLocation.getValue());
-                }
+                if(mUserLocation.getValue() != null)
+                    if(!mUserLocation.getValue().getLocation().equals(geoPoint)){
+                        mUserLocation.getValue().setLocation(geoPoint);
+                        mUserLocation.setValue(mUserLocation.getValue());
+                    }
 
 
                 Log.d(TAG, "onLocationResult: " + location);

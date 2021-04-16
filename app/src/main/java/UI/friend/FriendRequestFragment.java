@@ -42,6 +42,7 @@ public class FriendRequestFragment extends Fragment implements FriendRequestAdap
     private InvitationViewModel invitationViewModel;
     private FriendViewModel friendViewModel;
     private InvitingViewModel invitingViewModel;
+    private FriendSuggestViewModel friendSuggestViewModel;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -57,6 +58,7 @@ public class FriendRequestFragment extends Fragment implements FriendRequestAdap
         invitingViewModel = new ViewModelProvider(requireActivity()).get(InvitingViewModel.class);
         invitationViewModel = new ViewModelProvider(requireActivity()).get(InvitationViewModel.class);
         friendViewModel = new ViewModelProvider(requireActivity()).get(FriendViewModel.class);
+        friendSuggestViewModel = new ViewModelProvider(requireActivity()).get(FriendSuggestViewModel.class);
         FriendRequestAdapter adapter = new FriendRequestAdapter(requireActivity(), FriendRequestFragment.this);
         RecyclerView recyclerView = view.findViewById(R.id.friend_recycler_view);
         recyclerView.setAdapter(adapter);
@@ -79,7 +81,7 @@ public class FriendRequestFragment extends Fragment implements FriendRequestAdap
         invitationViewModel.removeMyInvitation(friendUID);
         invitingViewModel.removeFriendInviting(friendUID);
         invitingViewModel.removeMyInviting(friendUID);
-
+        friendSuggestViewModel.hideSuggest(friendUID);
 
         //TODO CREATE A CONVERSATION WITH NEW FRIEND
         LiveData<String> convID = ConversationRepository.getInstance().createNewConv(FirebaseAuth.getInstance().getUid(),friendUID);
