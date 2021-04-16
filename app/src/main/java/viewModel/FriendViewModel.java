@@ -178,7 +178,7 @@ public class FriendViewModel extends ViewModel {
         blockRepository.addToMyRepository(friendUID);
         blockedByRepository.addToOtherRepository(friendUID);
         suggestRepository.modify(friendUID, true);
-        repository.removeFromMyRepository(friendUID);
+        deleteFriend(friendUID);
     }
 
     public void unBlockFriend(String friendUID){

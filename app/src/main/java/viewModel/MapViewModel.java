@@ -235,6 +235,18 @@ public class MapViewModel extends ViewModel {
         directionUserRef = mFriendViewModel.getUserRefFriend("");
         directionUser = mFriendViewModel.getUserDirection("");
 
+        mFriendViewModel.getFriendsRefList().observe(lifecycleOwner, new Observer<List<UserRefFriend>>() {
+            @Override
+            public void onChanged(List<UserRefFriend> userRefFriends) {
+                if (!userRefFriends.contains(directionUserRef)){
+                    Log.d(TAG, "direction: friend delete/block");
+                    for (Polyline p : pathList)  {
+                        p.setVisible(false);
+                    }
+                }
+            }
+        });
+
         directionUserRef.observe(lifecycleOwner, new Observer<UserRefFriend>() {
             @Override
             public void onChanged(UserRefFriend userRefFriend) {
