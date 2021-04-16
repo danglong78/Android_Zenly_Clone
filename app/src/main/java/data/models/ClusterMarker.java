@@ -1,5 +1,7 @@
 package data.models;
 
+import androidx.annotation.Nullable;
+
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.ClusterItem;
 
@@ -26,6 +28,10 @@ public class ClusterMarker implements ClusterItem {
         this.snippet = snippet;
         this.userUID = userUID;
         this.imageURL = imageURL;
+    }
+
+    public ClusterMarker(String userUID) {
+        this.userUID = userUID;
     }
 
     public void setPosition(LatLng position) {
@@ -55,4 +61,9 @@ public class ClusterMarker implements ClusterItem {
     public String getSnippet() {
         return snippet;
     }
+
+//    @Override
+//    public boolean equals(@Nullable Object obj) {
+//        return userUID.equals(((ClusterMarker)obj).getUserUID());
+//    }
 }

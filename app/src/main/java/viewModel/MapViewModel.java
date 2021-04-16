@@ -86,6 +86,7 @@ public class MapViewModel extends ViewModel {
     private List<ClusterMarker> mFriendMarkers = new ArrayList<ClusterMarker>();
 
     private LiveData<List<UserLocation>> mFriendLocationList = new MutableLiveData<List<UserLocation>>(null);
+    private List<UserLocation> lastUserLocationList = new ArrayList<UserLocation>();
     private LiveData<List<UserRefFriend>> mFriendRefList;
 
     private LiveData<UserRefFriend> directionUserRef;
@@ -146,6 +147,29 @@ public class MapViewModel extends ViewModel {
 
                         @Override
                         public void onChanged(List<UserLocation> userLocations) {
+
+                            // Check block, delete friends
+                            for (UserLocation lastUserLocation: lastUserLocationList) {
+                                Log.d(TAG, "onChanged: lastUserLocationList size " + lastUserLocationList.size());
+                                if (!userLocations.contains(lastUserLocation)) {
+                                    Log.d(TAG, "onChanged: one friend has been deleted");
+                                    // remove marker
+                                    for (ClusterMarker clusterMarker : mFriendMarkers) {
+                                        if (lastUserLocation.getUserUID().equals(clusterMarker.getUserUID())) {
+                                            Log.d(TAG, "onChanged: remove marker");
+                                            mClusterManager.removeItem(clusterMarker);
+                                            mClusterManagerRenderer.removeMarker(clusterMarker);
+                                            mFriendMarkers.remove(clusterMarker);
+                                            Log.d(TAG, "onChanged: size " + mFriendMarkers.size());
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+
+                            lastUserLocationList.clear();
+                            lastUserLocationList.addAll(userLocations);
+
                             Log.d(TAG, "onChanged: userLocations " + userLocations.size());
                             for (UserLocation userLocation : userLocations) {
                                 if (userLocation.getUserUID().equals(mHostMarker.getUserUID()))
@@ -187,12 +211,12 @@ public class MapViewModel extends ViewModel {
 
                     // Ghost mode
                     mFriendRefList = mFriendViewModel.getFriendsRefList();
-                    mFriendRefList.observe(lifecycleOwner, new Observer<List<UserRefFriend>>() {
-                        @Override
-                        public void onChanged(List<UserRefFriend> userRefs) {
-
-                        }
-                    });
+//                    mFriendRefList.observe(lifecycleOwner, new Observer<List<UserRefFriend>>() {
+//                        @Override
+//                        public void onChanged(List<UserRefFriend> userRefs) {
+//
+//                        }
+//                    });
 
                     mClusterManager.cluster();
 

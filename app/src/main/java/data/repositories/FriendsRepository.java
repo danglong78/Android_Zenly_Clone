@@ -54,6 +54,8 @@ public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
     private MutableLiveData<UserLocation> userDirection;
     private MutableLiveData<UserRefFriend> userDirectionRef;
 
+    private List<UserRef> lastUserRefList = new ArrayList<UserRef>();
+
     private FriendsRepository(String FRIENDS_COLLECTION, String UID) {
         super(FRIENDS_COLLECTION, UID);
         myUserRef = new UserRefFriend(mDb.document(USER_COLLECTION + "/" + UID), Timestamp.now(), false, null , false);
@@ -100,7 +102,19 @@ public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
                 Log.d(TAG, "onChanged: userRef changed");
                 UserLocation foundUserLocation = null;
 //                Log.d(TAG, "onChanged: " + userRefs.get(0));
-                for (UserRefFriend userRef : (List<UserRefFriend>)userRefs) {
+
+                for (UserRef userRef: lastUserRefList) {
+                    if (!userRefs.contains(userRef)) {
+                        Log.d(TAG, "onChanged: remove FriendLocation");
+                        userLocationList.getValue().remove(new UserLocation(userRef.getRef().getId()));
+                    }
+                }
+                userLocationList.postValue(userLocationList.getValue());
+
+                lastUserRefList.clear();
+                lastUserRefList.addAll(userRefs);
+
+                for (UserRefFriend userRef : (List<UserRefFriend>) userRefs) {
 
                     boolean isExisted = false;
                     for (UserLocation userLocation : userLocationList.getValue()) {
