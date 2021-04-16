@@ -84,8 +84,11 @@ public class FriendRequestFragment extends Fragment implements FriendRequestAdap
             @Override
             public void onChanged(String convId) {
                 if(convId!=null){
-                    UserRepository.getInstance().addConv(FirebaseAuth.getInstance().getUid(),convId);
-                    UserRepository.getInstance().addConv(friendUID,convId);
+                    if(!convId.equals("no")){
+                        UserRepository.getInstance().addConv(FirebaseAuth.getInstance().getUid(),convId);
+                        UserRepository.getInstance().addConv(friendUID,convId);
+                    }
+
                 }
             }
         });

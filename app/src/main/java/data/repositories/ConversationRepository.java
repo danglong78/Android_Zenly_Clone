@@ -4,6 +4,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.RecyclerView;
@@ -251,10 +252,48 @@ public class ConversationRepository {
                         memberList.add(temp);
                     }
                     aConv.setMember(memberList);
-                    Message aMess = MessageRepository.getInstance().createInitMess(conID,uid1,uid2);
-                    aConv.setRecentMessage(aMess);
-                    convRef.set(aConv);
-                    res.postValue(conID);
+                    ArrayList<String> convList1 = memberList.get(0).getConversation();
+                    ArrayList<String> convList2 = memberList.get(1).getConversation();
+                    ArrayList<String> listConv = new ArrayList<String>();
+                    for(String s : convList1) {
+                        for(String s1 : convList2) {
+                            if(s.equals(s1)){
+                                listConv.add(s);
+                                break;
+                            }
+                        }
+                    }
+                    if(listConv.size()>0){
+                        Message aMess = MessageRepository.getInstance().createInitMess(conID,uid1,uid2);
+                        aConv.setRecentMessage(aMess);
+                        convRef.set(aConv);
+                        res.postValue(conID);
+                    }else{
+                        mDb.collection(CONV_COLLECTION).whereIn("id",listConv).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>(){
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if(task.isSuccessful()){
+                                    Boolean abool = true;
+                                    for(QueryDocumentSnapshot doc : task.getResult()){
+                                        Conversation temp = doc.toObject(Conversation.class);
+                                        if(temp.getMember().size()==2){
+                                            abool = false;
+                                            break;
+                                        }
+                                    }
+                                    if(abool){
+                                        Message aMess = MessageRepository.getInstance().createInitMess(conID,uid1,uid2);
+                                        aConv.setRecentMessage(aMess);
+                                        convRef.set(aConv);
+                                        res.postValue(conID);
+                                    }else{
+                                        res.postValue("no");
+                                    }
+                                }
+                            }
+                        });
+                    }
+
                 } else {
                     Log.d(TAG, "Error getting documents: ", task.getException());
                 }
