@@ -245,11 +245,18 @@ public class FriendViewModel extends ViewModel {
     public String checkUserTag(String userUID) {
         User checkUser = new User(userUID);
 
+        if (userUID.equals(hostUserUID))
+            return "ME";
+
         if(friendsList.getValue().contains(checkUser))
             return "FRIEND";
 
+        // Mình bị block bởi người ta
         if(blockedByList.getValue().contains(checkUser))
             return "BLOCKEDBY";
+        // Mình block người ta
+        else if (blockList.getValue().contains(checkUser))
+            return "BLOCK";
 
         if(invitingViewModel.getInvitingList().getValue().contains(checkUser))
             return "INVITED";

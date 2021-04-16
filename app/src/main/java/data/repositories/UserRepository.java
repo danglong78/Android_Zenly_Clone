@@ -231,7 +231,7 @@ public class UserRepository {
                         user.setTag("PENDING");
 
                     if(friendInstance.getListUser().getValue().contains(user))
-                        user.setTag("MUTUAL");
+                        user.setTag("FRIEND");
 
                     if(user.getUID().compareTo(myUID)==0)
                         user.setTag("YOU");
