@@ -212,13 +212,17 @@ public class UserRepository {
             public void onComplete(@NonNull Task<QuerySnapshot> snapshots) {
                 List<UserFriendList> newList = new ArrayList<UserFriendList>();
 
+                Log.d(TAG, "getUserWithName: " + snapshots.getResult().size() );
+
                 for (QueryDocumentSnapshot dc : snapshots.getResult()) {
 
                     User userAdd = dc.toObject(User.class);
                     UserFriendList user = new UserFriendList(userAdd);
 
+                    Log.d(TAG, "getUserWithName: " + userAdd.getName() );
+
                     if(!user.getName().toUpperCase().contains(name.toUpperCase()))
-                        return;
+                        continue;
 
                     if(invitingInstance.getListUser().getValue().contains(user))
                         user.setTag("INVITED");
