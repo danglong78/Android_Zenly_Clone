@@ -53,7 +53,7 @@ public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
 
     private FriendsRepository(String FRIENDS_COLLECTION, String UID) {
         super(FRIENDS_COLLECTION, UID);
-        myUserRef = new UserRefFriend(mDb.document(USER_COLLECTION + "/" + UID), false, null, Timestamp.now());
+        myUserRef = new UserRefFriend(mDb.document(USER_COLLECTION + "/" + UID), Timestamp.now(), false, null , false);
         userLocationList = new MutableLiveData<List<UserLocation>>();
         userLocationList.setValue(new ArrayList<UserLocation>());
 
@@ -186,8 +186,8 @@ public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
         return userLocationList;
     }
 
-    public void addToMyRepository(String UID){
-        addToMyRepository(new UserRefFriend(mDb.document(USER_COLLECTION + "/" + UID), false, null, Timestamp.now()) );
+    public void addToMyRepository(String UID) {
+        addToMyRepository(new UserRefFriend(mDb.document(USER_COLLECTION + "/" + UID), Timestamp.now(), false, null , false));
     }
 
     protected void processAddFrozenUser(Task<DocumentSnapshot> task){
@@ -220,9 +220,9 @@ public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
             if (!newRefList.contains(addUserRef)) {
                 newRefList.add(addUserRef);
             }
-        Log.d(TAG, "handleADDED: frozen " + toUID(addUserRef.getRef().getPath()) + " setfrozen " + addUserRef.getSetFrozen() );
+        Log.d(TAG, "handleADDED: frozen " + toUID(addUserRef.getRef().getPath()) + " setfrozen " + addUserRef.getCanTrackMe() );
         if(!toUID(addUserRef.getRef().getPath()).equals(UID))
-            if(addUserRef.getSetFrozen())
+            if(addUserRef.getCanTrackMe())
                 addUserRef.getRef().get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -257,7 +257,7 @@ public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
 
         Log.d(TAG, "onEventMODIFIED: " + COLLECTION + " " + modifyUserRef.getRef().getPath());
 
-        if(modifyUserRef.getSetFrozen())
+        if(modifyUserRef.getCanTrackMe())
             modifyUserRef.getRef().get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {

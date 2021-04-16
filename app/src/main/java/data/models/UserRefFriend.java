@@ -8,27 +8,25 @@ import com.google.firebase.firestore.GeoPoint;
 public class UserRefFriend extends UserRef {
     private boolean frozen;
     GeoPoint frozenLocation;
-    private boolean isSetFrozen;
+    private boolean canTrackMe;
 
     public UserRefFriend(){
 
     }
 
-    public UserRefFriend(DocumentReference ref, boolean frozen, GeoPoint frozenLocation, Timestamp time){
+    public UserRefFriend(DocumentReference ref, Timestamp time, boolean frozen, GeoPoint frozenLocation, boolean canTrackMe) {
         super(ref, time);
         this.frozen = frozen;
         this.frozenLocation = frozenLocation;
-        this.isSetFrozen = false;
-        this.frozen = false;
+        this.canTrackMe = canTrackMe;
     }
 
-
-    public boolean getSetFrozen() {
-        return isSetFrozen;
+    public boolean getCanTrackMe() {
+        return canTrackMe;
     }
 
-    public void setSetFrozen(boolean setFrozen) {
-        isSetFrozen = setFrozen;
+    public void setCanTrackMe(boolean canTrackMe) {
+        this.canTrackMe = canTrackMe;
     }
 
     public boolean getFrozen(){
