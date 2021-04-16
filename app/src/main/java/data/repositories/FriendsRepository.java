@@ -313,15 +313,17 @@ public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
 
     public void toggleFrozen(String hostUserUID, String friendUID, boolean flag) {
         DocumentReference hostOfFriend = mDb.collection(FRIEND_COLLECTION).document(friendUID).collection("List").document(hostUserUID);
+        DocumentReference friendOfHost = mDb.collection(FRIEND_COLLECTION).document(hostUserUID).collection("List").document(friendUID);
 
         if (flag) {
-            DocumentReference curLocationRef = mDb.collection("UserLocations").document(friendUID);
+            DocumentReference curLocationRef = mDb.collection("UserLocations").document(hostUserUID);
             curLocationRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
 
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                     if (task.isSuccessful()) {
                         UserLocation curLocation = task.getResult().toObject(UserLocation.class);
+                        Log.d(TAG, "onComplete: frozenLocation " + curLocation.getLocation());
                         hostOfFriend.update("frozenLocation", curLocation.getLocation()).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
@@ -336,8 +338,7 @@ public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
             hostOfFriend.update("frozen", false);
         }
 
-        DocumentReference friendOfHost = mDb.collection(FRIEND_COLLECTION).document(hostUserUID).collection("List").document(friendUID);
-        friendOfHost.update("canTrackMe", flag);
+        friendOfHost.update("cannotTrackMe", flag);
     }
 
     public MutableLiveData<List<User>> getUserFrozenList(){
