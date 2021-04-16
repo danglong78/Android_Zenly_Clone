@@ -77,6 +77,8 @@ public class FriendRequestFragment extends Fragment implements FriendRequestAdap
         //TODO ACCEPT FRIEND REQUEST FUNCTION
         friendViewModel.acceptFriendRequest(friendUID);
         invitationViewModel.removeMyInvitation(friendUID);
+        invitingViewModel.removeFriendInviting(friendUID);
+
 
         //TODO CREATE A CONVERSATION WITH NEW FRIEND
         LiveData<String> convID = ConversationRepository.getInstance().createNewConv(FirebaseAuth.getInstance().getUid(),friendUID);

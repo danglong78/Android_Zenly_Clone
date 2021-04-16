@@ -66,4 +66,5 @@ public class InvitingViewModel extends ViewModel {
     public void removeFriendInviting(String UID) {
         repository.removeFromOtherRepository(UID);
     }
+
 }
