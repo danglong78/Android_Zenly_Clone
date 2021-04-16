@@ -1,5 +1,8 @@
 package UI.chat;
 
+import android.app.AlertDialog;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
 import androidx.activity.OnBackPressedCallback;
@@ -21,6 +24,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -39,6 +43,7 @@ import data.models.Message;
 import data.models.User;
 import ultis.FragmentTag;
 import viewModel.ChatViewModel;
+import viewModel.FriendViewModel;
 
 
 public class ChatFragment extends Fragment {
@@ -133,12 +138,43 @@ public class ChatFragment extends Fragment {
             {
                 for(User temp : listUser){
                     if(!temp.getUID().equals(FirebaseAuth.getInstance().getUid())){
-                        Bundle bundle= new Bundle();
-                        bundle.putString("name",temp.getName());
-                        bundle.putString("phone",temp.getPhone());
-                        bundle.putString("uid",temp.getUID());
-                        bundle.putString("avatar",temp.getAvatarURL());
-                        navController.navigate(R.id.action_chatFragment_to_friendProfileFragment,bundle);
+                        FriendViewModel friendViewModel= new ViewModelProvider(getActivity()).get(FriendViewModel.class);
+                        String type = friendViewModel.checkUserTag(temp.getUID());
+                        if(type.compareTo("BLOCKEDBY")!=0&&type.compareTo("BLOCK")!=0){
+                            Bundle bundle= new Bundle();
+                            bundle.putString("name",temp.getName());
+                            bundle.putString("phone",temp.getPhone());
+                            bundle.putString("uid",temp.getUID());
+                            bundle.putString("avatar",temp.getAvatarURL());
+                            bundle.putString("type",type);
+                            if(type.compareTo("FRIEND")==0)
+                                navController.navigate(R.id.action_chatFragment_to_friendProfileFragment,bundle);
+                            else
+                                navController.navigate(R.id.action_chatFragment_to_strangerProfileFragment,bundle);
+
+                        }
+                        else{
+                            AlertDialog.Builder myAlertBuilder = new
+                                    AlertDialog.Builder(getActivity());
+                            View layoutView = getLayoutInflater().inflate(R.layout.custom_dialog_layout, null);
+                            Button dialogButton = layoutView.findViewById(R.id.btnDialog);
+                            TextView dialogTitle= layoutView.findViewById(R.id.dialog_title);
+                            TextView dialogContent= layoutView.findViewById(R.id.dialog_content);
+                            dialogTitle.setText("User not exists");
+                            dialogContent.setText("");
+                            myAlertBuilder.setView(layoutView);
+                            AlertDialog alert= myAlertBuilder.create();
+                            alert.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+                            alert.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                            alert.show();
+                            dialogButton.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    alert.dismiss();
+                                }
+                            });
+
+                        }
                         break;
                     }
                 }
@@ -146,7 +182,7 @@ public class ChatFragment extends Fragment {
         });
         if (listUser.size() !=2)
         {
-            ((MaterialButton)profileBtn).setIconResource(R.drawable.ic_baseline_person_add_alt_1_24);
+            profileBtn.setVisibility(View.GONE);
         }
 
     }

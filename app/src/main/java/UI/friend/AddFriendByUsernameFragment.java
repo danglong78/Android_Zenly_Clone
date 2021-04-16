@@ -53,10 +53,9 @@ public class AddFriendByUsernameFragment extends Fragment implements ListFriendO
 
         Button btn= view.findViewById(R.id.cancelBtn);
         btn.setOnClickListener(v->{
-            if(btn.getText().toString().compareTo("CANCEL")==0)
+            if(searchInput.getText().length()==0)
             {
-                NavController navController = Navigation.findNavController(view);
-                navController.popBackStack();
+                getActivity().onBackPressed();
             }
             else
             {

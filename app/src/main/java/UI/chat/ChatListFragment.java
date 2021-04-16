@@ -105,7 +105,7 @@ public class ChatListFragment extends Fragment implements ChatListAdapter.OnChat
             homeFragmentMotionLayout.setTransition(R.id.left, R.id.hideLeft);
             homeFragmentMotionLayout.transitionToEnd();
             MainActivity activity = (MainActivity) getActivity();
-            activity.setFragmentTag(FragmentTag.CREATECHAT, homeFragmentMotionLayout, navController);
+            activity.setFragmentTag(FragmentTag.CREATECHAT, homeFragmentMotionLayout, bottomsheet);
             bottomsheet.setState(BottomSheetBehavior.STATE_EXPANDED);
 
         });
@@ -152,10 +152,12 @@ public class ChatListFragment extends Fragment implements ChatListAdapter.OnChat
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
                 if(newState ==BottomSheetBehavior.STATE_HIDDEN)
-                {homeFragmentMotionLayout.setTransition(R.id.left, R.id.hideLeft);
-                homeFragmentMotionLayout.setProgress(0f);}
+                {
+                    homeFragmentMotionLayout.setTransition(R.id.left, R.id.hideLeft);
+                    homeFragmentMotionLayout.setProgress(0f);}
                 else
-                {homeFragmentMotionLayout.setTransition(R.id.left, R.id.hideLeft);
+                {
+                    homeFragmentMotionLayout.setTransition(R.id.left, R.id.hideLeft);
                     homeFragmentMotionLayout.setProgress(1f);}
 
             }

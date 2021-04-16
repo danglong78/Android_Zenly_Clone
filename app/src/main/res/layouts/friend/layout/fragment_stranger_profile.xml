@@ -27,7 +27,7 @@ tools:context="UI.friend.StrangerProfileFragment">
     app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/callBtn"
+        android:id="@+id/addBtn"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
         android:backgroundTint="#f3f4f8"
@@ -84,7 +84,7 @@ tools:context="UI.friend.StrangerProfileFragment">
         android:textStyle="bold"
         android:layout_marginTop="24dp"
         app:layout_constraintStart_toStartOf="@+id/userName"
-        app:layout_constraintTop_toBottomOf="@+id/callBtn" />
+        app:layout_constraintTop_toBottomOf="@+id/addBtn" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerview"

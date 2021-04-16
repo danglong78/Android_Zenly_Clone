@@ -2,6 +2,7 @@ package UI.user;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -53,7 +54,10 @@ public class BlockedUsersFragment extends Fragment implements BlockedUserAdapter
             @Override
             public void onChanged(List<User> users) {
                 Log.d("BlockedUsersFragment", "onChanged: " + users.size());
+
+
                 adapter.setListUsers((ArrayList<User>) users);
+
             }
         });
 

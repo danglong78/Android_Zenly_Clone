@@ -7,5 +7,6 @@ public enum FragmentTag {
     FRIEND,
     CREATECHAT,
     CHATLIST,
-    USER
+    USER,
+    MAINFRIEND
 }

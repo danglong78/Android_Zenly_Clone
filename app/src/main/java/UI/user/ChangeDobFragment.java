@@ -77,7 +77,7 @@ public class ChangeDobFragment extends Fragment {
                     saveInformation();
                     userViewModel.setDob(DateFormatter.format(new Date(datePicker.getYear()-1900,datePicker.getDayOfMonth(),datePicker.getDayOfMonth()),"dd MMMM yyyy"))
                             .addOnCompleteListener(task -> {
-                                navController.popBackStack();
+                                getActivity().onBackPressed();
                             });
 
                 }

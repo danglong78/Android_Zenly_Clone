@@ -111,13 +111,14 @@ public class SplashFragment extends Fragment {
 
                     } else {
                         navController.navigate(R.id.action_splashFragment_to_request_location_nav);
-
+                        SplashFragment.this.onDestroy();
 
                     }
                 });
             } else {
 
                 navController.navigate(R.id.action_splashFragment_to_login_nav);
+                SplashFragment.this.onDestroy();
             }
         });
     }

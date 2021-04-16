@@ -71,7 +71,7 @@ public class ChangeNameFragment extends Fragment {
                 else{
                     saveInformation();
                     userViewModel.setName(nameInput.getText().toString()).addOnCompleteListener(task->{
-                        navController.popBackStack();
+                        getActivity().onBackPressed();
                     });
 
                     InputMethodManager inputMethodManager =

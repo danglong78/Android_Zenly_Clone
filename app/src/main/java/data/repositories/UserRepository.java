@@ -96,8 +96,7 @@ public class UserRepository {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
-                    Log.d(TAG, "onComplete: successfully set the user client.");
-                    Log.d(TAG, task.getResult().toObject(User.class).getUID());
+
                     user.postValue(task.getResult().toObject(User.class));
                 }
             }
@@ -113,7 +112,6 @@ public class UserRepository {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
-                    Log.d(TAG, "onComplete: successfully set the user client.");
                     userLocation.postValue(task.getResult().toObject(UserLocation.class));
                 }
             }
@@ -167,6 +165,7 @@ public class UserRepository {
     }
 
     public Task<Void> setName(String UID, String name) {
+        mDb.collection(USER_LOCATION_COLLECTION).document(UID).update("name", name);
         return mDb.collection(USER_COLLECTION).document(UID).update("name", name);
 
     }

@@ -22,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.button.MaterialButton;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.study.android_zenly.R;
@@ -62,6 +63,8 @@ public class StrangerProfileFragment extends Fragment implements ListFriendOfUse
                         .into(avatar);
             });
         }
+
+
         friendViewModel = new ViewModelProvider(getActivity()).get(FriendViewModel.class);
         ListFriendOfUserAdapter adapter= new ListFriendOfUserAdapter(this,getActivity());
         RecyclerView friendListRecyclerView = view.findViewById(R.id.recyclerview);
@@ -87,6 +90,7 @@ public class StrangerProfileFragment extends Fragment implements ListFriendOfUse
 
                             //TODO: Block Friend Function
                             friendViewModel.blockFriend(getArguments().getString("uid"));
+                            getActivity().onBackPressed();
                             dialog.dismiss();
                             break;
                         }
@@ -101,6 +105,32 @@ public class StrangerProfileFragment extends Fragment implements ListFriendOfUse
             builder.create().show();
         });
 
+        Button addBtn = view.findViewById(R.id.addBtn);
+        addBtn.setOnClickListener(v -> {
+            friendViewModel.addFriend(getArguments().getString("uid"));
+            addBtn.setText("INVITED");
+            addBtn.setActivated(false);
+
+        });
+        if(getArguments().getString("type") == "INVITED")
+        {
+            addBtn.setText("INVITED");
+            ((MaterialButton)addBtn).setIconResource(R.drawable.ic_baseline_check_24);
+            addBtn.setActivated(false);
+        }
+        else if(getArguments().getString("type") == "PENDING")
+        {
+            addBtn.setText("PENDING");
+            ((MaterialButton)addBtn).setIconResource(R.drawable.ic_baseline_check_24);
+
+            addBtn.setActivated(false);
+        }
+        else if (getArguments().getString("type") == "ME"){
+            addBtn.setVisibility(View.GONE);
+            settingBtn.setVisibility(View.GONE);
+        }
+
+
 
 
     }
@@ -112,6 +142,7 @@ public class StrangerProfileFragment extends Fragment implements ListFriendOfUse
         bundle.putString("uid",user.getUID());
         bundle.putString("avatar",user.getAvatarURL());
         bundle.putString("phone",user.getPhone());
+        bundle.putString("type",friendViewModel.checkUserTag(user.getUID()));
         NavController navController = Navigation.findNavController(this.getView());
         if(!isYourFriend)
         {

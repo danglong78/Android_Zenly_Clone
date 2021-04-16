@@ -28,6 +28,7 @@ import com.hbb20.CountryCodePicker;
 import com.study.android_zenly.R;
 
 import data.models.User;
+import viewModel.FriendViewModel;
 import viewModel.UserViewModel;
 
 public class AddFriendByPhoneFragment extends Fragment {
@@ -60,10 +61,11 @@ public class AddFriendByPhoneFragment extends Fragment {
                 showDialog("INVALID PHONE","Please input your phone correctly.");
             }
             else{
-                String phone = editTextCarrierNumber.getText().toString();
-                Log.d("AddFriendByPhoneFragment", "onViewCreated: " + phone);
-                phone = (phone.startsWith("0"))? phone.substring(1) : phone;
-                userViewmodel.getUserWithPhone(phone).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                String phoneNumber = editTextCarrierNumber.getText().toString();
+                phoneNumber = (phoneNumber.startsWith("0"))? phoneNumber.substring(1) : phoneNumber;
+                phoneNumber =ccp.getSelectedCountryCodeWithPlus()+phoneNumber;
+                Log.d("AddFriendByPhoneFragment", "onViewCreated: " + phoneNumber);
+                userViewmodel.getUserWithPhone(phoneNumber).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
@@ -73,14 +75,23 @@ public class AddFriendByPhoneFragment extends Fragment {
                             }
                             else{
                                 user=task.getResult().getDocuments().get(0).toObject(User.class);
-                                Log.d("Search by phone",user.toString());
-                                Bundle bundle = new Bundle();
-                                bundle.putString("name",user.getName());
-                                bundle.putString("phone",user.getPhone());
-                                bundle.putString("uid",user.getUID());
-                                bundle.putString("avatar",user.getAvatarURL());
-                                NavController navController = Navigation.findNavController(getActivity(),R.id.friend_nav_host_fragment);
-                                navController.navigate(R.id.action_addFriendByPhoneFragment_to_strangerProfileFragment2,bundle);
+                                FriendViewModel friendViewModel=new ViewModelProvider(getActivity()).get(FriendViewModel.class);
+                                String type=friendViewModel.checkUserTag(user.getUID());
+                                if(type.compareTo("BLOCKEDBY")!=0 && type.compareTo("BLOCK")!=0) {
+                                    Log.d("Search by phone", user.toString());
+                                    Bundle bundle = new Bundle();
+                                    bundle.putString("name", user.getName());
+                                    bundle.putString("phone", user.getPhone());
+                                    bundle.putString("uid", user.getUID());
+                                    bundle.putString("avatar", user.getAvatarURL());
+                                    bundle.putString("type", type);
+
+                                    NavController navController = Navigation.findNavController(getActivity(), R.id.friend_nav_host_fragment);
+                                    if(type.compareTo("FRIEND")==0)
+                                        navController.navigate(R.id.action_addFriendByPhoneFragment_to_friendProfileFragment2, bundle);
+                                    else
+                                        navController.navigate(R.id.action_addFriendByPhoneFragment_to_strangerProfileFragment2, bundle);
+                                }
                             }
                         }
                     }

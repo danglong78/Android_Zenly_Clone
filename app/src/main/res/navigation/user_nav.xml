@@ -12,19 +12,39 @@
         tools:layout="@layout/fragment_user" >
         <action
             android:id="@+id/action_userFragment_to_blockedUsersFragment"
-            app:destination="@id/blockedUsersFragment" />
+            app:destination="@id/blockedUsersFragment"
+            app:enterAnim="@anim/slide_in_bottom"
+            app:exitAnim="@anim/slide_out_bottom"
+            app:popEnterAnim="@anim/slide_in_bottom"
+            app:popExitAnim="@anim/slide_out_bottom"/>
         <action
             android:id="@+id/action_userFragment_to_changeDobFragment"
-            app:destination="@id/changeDobFragment" />
+            app:destination="@id/changeDobFragment"
+            app:enterAnim="@anim/slide_in_bottom"
+            app:exitAnim="@anim/slide_out_bottom"
+            app:popEnterAnim="@anim/slide_in_bottom"
+            app:popExitAnim="@anim/slide_out_bottom"/>
         <action
             android:id="@+id/action_userFragment_to_changeNameFragment"
-            app:destination="@id/changeNameFragment" />
+            app:destination="@id/changeNameFragment"
+            app:enterAnim="@anim/slide_in_bottom"
+            app:exitAnim="@anim/slide_out_bottom"
+            app:popEnterAnim="@anim/slide_in_bottom"
+            app:popExitAnim="@anim/slide_out_bottom"/>
         <action
             android:id="@+id/action_userFragment_to_ghostModeFragment"
-            app:destination="@id/ghostModeFragment" />
+            app:destination="@id/ghostModeFragment"
+            app:enterAnim="@anim/slide_in_bottom"
+            app:exitAnim="@anim/slide_out_bottom"
+            app:popEnterAnim="@anim/slide_in_bottom"
+            app:popExitAnim="@anim/slide_out_bottom"/>
         <action
             android:id="@+id/action_userFragment_to_searchFriendFragment2"
-            app:destination="@id/searchFriendFragment2" />
+            app:destination="@id/searchFriendFragment2"
+            app:enterAnim="@anim/slide_in_bottom"
+            app:exitAnim="@anim/slide_out_bottom"
+            app:popEnterAnim="@anim/slide_in_bottom"
+            app:popExitAnim="@anim/slide_out_bottom"/>
     </fragment>
     <fragment
         android:id="@+id/blockedUsersFragment"

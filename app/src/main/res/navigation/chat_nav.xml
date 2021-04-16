@@ -18,6 +18,14 @@
             app:popEnterAnim="@anim/slide_in_bottom"
             app:popExitAnim="@anim/slide_out_bottom"
             app:popUpTo="@id/chatListFragment" />
+        <action
+            android:id="@+id/action_chatFragment_to_strangerProfileFragment"
+            app:destination="@id/strangerProfileFragment"
+            app:enterAnim="@anim/slide_in_bottom"
+            app:exitAnim="@anim/slide_out_bottom"
+            app:popEnterAnim="@anim/slide_in_bottom"
+            app:popExitAnim="@anim/slide_out_bottom"
+            app:popUpTo="@id/chatListFragment"/>
     </fragment>
     <fragment
         android:id="@+id/chatListFragment"
@@ -63,10 +71,24 @@
         app:enterAnim="@anim/slide_in_bottom"
         app:exitAnim="@anim/slide_out_bottom"
         app:popEnterAnim="@anim/slide_in_bottom"
-        app:popExitAnim="@anim/slide_out_bottom"/>
+        app:popExitAnim="@anim/slide_out_bottom">
+        <action
+            android:id="@+id/action_friendProfileFragment2_to_strangerProfileFragment2"
+            app:destination="@id/strangerProfileFragment"
+            app:popUpTo="@id/chatFragment"/>
+    </fragment>
     <fragment
         android:id="@+id/strangerProfileFragment"
         android:name="UI.friend.StrangerProfileFragment"
         android:label="fragment_stranger_profile"
-        tools:layout="@layout/fragment_stranger_profile" />
+        tools:layout="@layout/fragment_stranger_profile"
+        app:enterAnim="@anim/slide_in_bottom"
+        app:exitAnim="@anim/slide_out_bottom"
+        app:popEnterAnim="@anim/slide_in_bottom"
+        app:popExitAnim="@anim/slide_out_bottom">
+        <action
+            android:id="@+id/action_strangerProfileFragment2_to_friendProfileFragment2"
+            app:destination="@id/friendProfileFragment"
+            app:popUpTo="@id/chatFragment"/>
+    </fragment>
 </navigation>

@@ -20,18 +20,34 @@
             />
         <action
             android:id="@+id/action_addFriendFragment2_to_friendRequestFragment"
-            app:destination="@id/friendRequestFragment" />
+            app:destination="@id/friendRequestFragment"
+            app:enterAnim="@anim/slide_in_top"
+            app:exitAnim="@anim/slide_out_bottom"
+            app:popEnterAnim="@anim/slide_in_bottom"
+            app:popExitAnim="@anim/slide_out_top"/>
         <action
             android:id="@+id/action_addFriendFragment2_to_addFriendFragment"
-            app:destination="@id/addFriendFragment" />
+            app:destination="@id/addFriendFragment"
+            app:enterAnim="@anim/slide_in_top"
+            app:exitAnim="@anim/slide_out_bottom"
+            app:popEnterAnim="@anim/slide_in_bottom"
+            app:popExitAnim="@anim/slide_out_top"/>
         <action
             android:id="@+id/action_addFriendFragment2_to_friendProfileFragment2"
             app:destination="@id/friendProfileFragment2"
-            app:popUpTo="@id/friendProfileFragment2" />
+            app:popUpTo="@id/friendProfileFragment2"
+            app:enterAnim="@anim/slide_in_top"
+            app:exitAnim="@anim/slide_out_bottom"
+            app:popEnterAnim="@anim/slide_in_bottom"
+            app:popExitAnim="@anim/slide_out_top"/>
         <action
             android:id="@+id/action_addFriendFragment2_to_strangerProfileFragment2"
             app:destination="@id/strangerProfileFragment2"
-            app:popUpTo="@id/addFriendFragment2" />
+            app:popUpTo="@id/addFriendFragment2"
+            app:enterAnim="@anim/slide_in_top"
+            app:exitAnim="@anim/slide_out_bottom"
+            app:popEnterAnim="@anim/slide_in_bottom"
+            app:popExitAnim="@anim/slide_out_top"/>
     </fragment>
     <fragment
         android:id="@+id/searchFriendFragment"
@@ -50,13 +66,25 @@
         tools:layout="@layout/fragment_detail_add_friend" >
         <action
             android:id="@+id/action_addFriendFragment_to_addFriendByUsernameFragment"
-            app:destination="@id/addFriendByUsernameFragment" />
+            app:destination="@id/addFriendByUsernameFragment"
+            app:enterAnim="@anim/slide_in_top"
+            app:exitAnim="@anim/slide_out_bottom"
+            app:popEnterAnim="@anim/slide_in_bottom"
+            app:popExitAnim="@anim/slide_out_top"/>
         <action
             android:id="@+id/action_addFriendFragment_to_addFriendByPhoneFragment"
-            app:destination="@id/addFriendByPhoneFragment" />
+            app:destination="@id/addFriendByPhoneFragment"
+            app:enterAnim="@anim/slide_in_top"
+            app:exitAnim="@anim/slide_out_bottom"
+            app:popEnterAnim="@anim/slide_in_bottom"
+            app:popExitAnim="@anim/slide_out_top"/>
         <action
             android:id="@+id/action_addFriendFragment_to_strangerProfileFragment2"
-            app:destination="@id/strangerProfileFragment2" />
+            app:destination="@id/strangerProfileFragment2"
+            app:enterAnim="@anim/slide_in_top"
+            app:exitAnim="@anim/slide_out_bottom"
+            app:popEnterAnim="@anim/slide_in_bottom"
+            app:popExitAnim="@anim/slide_out_top"/>
     </fragment>
     <fragment
         android:id="@+id/addFriendByPhoneFragment"
@@ -66,11 +94,19 @@
         <action
             android:id="@+id/action_addFriendByPhoneFragment_to_friendProfileFragment2"
             app:destination="@id/friendProfileFragment2"
-            app:popUpTo="@id/addFriendFragment2" />
+            app:popUpTo="@id/addFriendFragment2"
+            app:enterAnim="@anim/slide_in_top"
+            app:exitAnim="@anim/slide_out_bottom"
+            app:popEnterAnim="@anim/slide_in_bottom"
+            app:popExitAnim="@anim/slide_out_top"/>
         <action
             android:id="@+id/action_addFriendByPhoneFragment_to_strangerProfileFragment2"
             app:destination="@id/strangerProfileFragment2"
-            app:popUpTo="@id/addFriendFragment2" />
+            app:popUpTo="@id/addFriendFragment2"
+            app:enterAnim="@anim/slide_in_top"
+            app:exitAnim="@anim/slide_out_bottom"
+            app:popEnterAnim="@anim/slide_in_bottom"
+            app:popExitAnim="@anim/slide_out_top"/>
     </fragment>
     <fragment
         android:id="@+id/addFriendByUsernameFragment"
@@ -80,11 +116,19 @@
         <action
             android:id="@+id/action_addFriendByUsernameFragment_to_friendProfileFragment2"
             app:destination="@id/friendProfileFragment2"
-            app:popUpTo="@id/addFriendFragment" />
+            app:popUpTo="@id/addFriendFragment"
+            app:enterAnim="@anim/slide_in_top"
+            app:exitAnim="@anim/slide_out_bottom"
+            app:popEnterAnim="@anim/slide_in_bottom"
+            app:popExitAnim="@anim/slide_out_top"/>
         <action
             android:id="@+id/action_addFriendByUsernameFragment_to_strangerProfileFragment2"
             app:destination="@id/strangerProfileFragment2"
-            app:popUpTo="@id/addFriendFragment" />
+            app:popUpTo="@id/addFriendFragment"
+            app:enterAnim="@anim/slide_in_top"
+            app:exitAnim="@anim/slide_out_bottom"
+            app:popEnterAnim="@anim/slide_in_bottom"
+            app:popExitAnim="@anim/slide_out_top"/>
     </fragment>
     <fragment
         android:id="@+id/friendProfileFragment2"
@@ -94,11 +138,19 @@
         <action
             android:id="@+id/action_friendProfileFragment2_to_strangerProfileFragment2"
             app:destination="@id/strangerProfileFragment2"
-            app:popUpTo="@id/addFriendFragment2" />
+            app:popUpTo="@id/addFriendFragment2"
+            app:enterAnim="@anim/slide_in_top"
+            app:exitAnim="@anim/slide_out_bottom"
+            app:popEnterAnim="@anim/slide_in_bottom"
+            app:popExitAnim="@anim/slide_out_top"/>
         <action
             android:id="@+id/action_friendProfileFragment2_self"
             app:destination="@id/friendProfileFragment2"
-            app:popUpTo="@id/addFriendFragment2" />
+            app:popUpTo="@id/addFriendFragment2"
+            app:enterAnim="@anim/slide_in_top"
+            app:exitAnim="@anim/slide_out_bottom"
+            app:popEnterAnim="@anim/slide_in_bottom"
+            app:popExitAnim="@anim/slide_out_top"/>
     </fragment>
     <fragment
         android:id="@+id/strangerProfileFragment2"
@@ -108,10 +160,18 @@
         <action
             android:id="@+id/action_strangerProfileFragment2_to_friendProfileFragment2"
             app:destination="@id/friendProfileFragment2"
-            app:popUpTo="@id/addFriendFragment2" />
+            app:popUpTo="@id/addFriendFragment2"
+            app:enterAnim="@anim/slide_in_top"
+            app:exitAnim="@anim/slide_out_bottom"
+            app:popEnterAnim="@anim/slide_in_bottom"
+            app:popExitAnim="@anim/slide_out_top"/>
         <action
             android:id="@+id/action_strangerProfileFragment2_self"
             app:destination="@id/strangerProfileFragment2"
-            app:popUpTo="@id/addFriendFragment2" />
+            app:popUpTo="@id/addFriendFragment2"
+            app:enterAnim="@anim/slide_in_top"
+            app:exitAnim="@anim/slide_out_bottom"
+            app:popEnterAnim="@anim/slide_in_bottom"
+            app:popExitAnim="@anim/slide_out_top"/>
     </fragment>
 </navigation>

@@ -10,16 +10,17 @@
     android:layout_marginTop="8dp">
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/cardImage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:cardCornerRadius="20dp"
-        android:id="@+id/cardImage"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.13">
 
         <ImageView
-                android:id="@+id/avatar"
+            android:id="@+id/avatar"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:scaleType="centerCrop"
@@ -41,7 +42,8 @@
             android:id="@+id/messageText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="123123123123"
+            android:maxWidth="230sp"
+            android:text="123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123"
             android:textSize="17sp"/>
 
         <TextView

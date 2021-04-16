@@ -99,7 +99,7 @@ public class BlockedUserAdapter extends RecyclerView.Adapter<BlockedUserAdapter.
 
     @Override
     public int getItemCount() {
-        return 0;
+        return list.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{

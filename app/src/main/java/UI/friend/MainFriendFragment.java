@@ -235,7 +235,90 @@ public class MainFriendFragment extends Fragment implements FriendSuggestListAda
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            MainFriendFragment.this.onCreate(null);
+            friendSuggestViewModel.init(getActivity());
+            invitationViewModel.init(getActivity());
+            invitingViewModel.init(getActivity());
+            friendViewModel.init(requireActivity(), requireActivity());
+
+            Log.d(TAG, "Dang chay ne");
+
+            swiperefreshlayout = MainFriendFragment.this.getView().findViewById(R.id.swiperefresh);
+            swiperefreshlayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    friendSuggestViewModel.load();
+                    CountDownTimer countdown = new CountDownTimer(5000, 1000) {
+
+                        public void onTick(long millisUntilFinished) {
+                        }
+
+                        public void onFinish() {
+                            swiperefreshlayout.setRefreshing(false);
+                        }
+                    }.start();
+                }
+            });
+
+
+            RecentFriendListAdapter recentFriendAdapter = new RecentFriendListAdapter(requireActivity(), MainFriendFragment.this);
+            recentFriendRecyclerView.setAdapter(recentFriendAdapter);
+            recentFriendRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+            friendViewModel.getFriendsList().observe(getViewLifecycleOwner(), new Observer<List<User>>() {
+                @Override
+                public void onChanged(List<User> users) {
+                    recentFriendAdapter.setList((ArrayList<User>) users);
+//                    recentFriendAdapter.notifyDataSetChanged();
+                }
+            });
+
+            friendSuggestViewModel.getSuggestFriendList().observe(getViewLifecycleOwner(), new Observer<List<User>>() {
+                @Override
+                public void onChanged(List<User> users) {
+                    swiperefreshlayout.setRefreshing(false);
+                    adapter.setList((ArrayList<User>) users);
+//                    adapter.notifyDataSetChanged();
+                }
+            });
+
+
+            Log.d(TAG, "Dang chay ne2");
+            navController = Navigation.findNavController(requireActivity(), R.id.friend_nav_host_fragment);
+            friendListText = MainFriendFragment.this.getView().findViewById(R.id.friendSetting);
+            friendListText.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    HomeFragment fragment = (HomeFragment) getParentFragment().getParentFragment();
+                    assert fragment != null;
+                    fragment.setBottomSheetState(BottomSheetBehavior.STATE_EXPANDED);
+                    navController.navigate(R.id.action_addFriendFragment_to_searchFriendFragment);
+                    ((MainActivity) getActivity()).setFragmentTag(FragmentTag.FRIEND, null, navController);
+
+
+                }
+            });
+            friendRequestText = MainFriendFragment.this.getView().findViewById(R.id.friendRequest);
+            friendRequestText.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    HomeFragment fragment = (HomeFragment) getParentFragment().getParentFragment();
+                    assert fragment != null;
+                    fragment.setBottomSheetState(BottomSheetBehavior.STATE_EXPANDED);
+                    navController.navigate(R.id.action_addFriendFragment2_to_friendRequestFragment);
+                    ((MainActivity) getActivity()).setFragmentTag(FragmentTag.FRIEND, null, navController);
+                }
+            });
+            Button addFriendButton =  MainFriendFragment.this.getView().findViewById(R.id.button);
+            addFriendButton.setOnClickListener(v->{
+                HomeFragment fragment = (HomeFragment) getParentFragment().getParentFragment();
+                assert fragment != null;
+                fragment.setBottomSheetState(BottomSheetBehavior.STATE_EXPANDED);
+                navController.navigate(R.id.action_addFriendFragment2_to_addFriendFragment);
+                ((MainActivity) getActivity()).setFragmentTag(FragmentTag.FRIEND, null, navController);
+            });
+
+
+
         } else {
             String permissionDeniedExplanation = "We need your permission to run app";
             Snackbar.make(
