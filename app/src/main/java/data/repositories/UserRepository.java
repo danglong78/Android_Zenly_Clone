@@ -196,7 +196,7 @@ public class UserRepository {
         });
     }
 
-    public  Task <QuerySnapshot>  getUserWithPhone(String phone) {
+    public Task<QuerySnapshot> getUserWithPhone(String phone) {
         Query userRef = mDb.collection(USER_COLLECTION).whereEqualTo("phone", phone);
         return userRef.get();
     }

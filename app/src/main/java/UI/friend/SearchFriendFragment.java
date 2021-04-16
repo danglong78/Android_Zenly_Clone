@@ -137,7 +137,7 @@ public class SearchFriendFragment extends Fragment implements FriendInvitingList
     public void onFriendSettingClick(String UID, String userName) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("What about "+userName+" ?");
-        builder.setItems(new String[]{"Delete","Cancle"},new DialogInterface.OnClickListener() {
+        builder.setItems(new String[]{"Delete","Block","Cancle"},new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 switch (which) {
                     case 0:
@@ -147,6 +147,11 @@ public class SearchFriendFragment extends Fragment implements FriendInvitingList
                         break;
                     }
                     case 1:
+                    {
+                        friendViewModel.blockFriend(UID);
+                        break;
+                    }
+                    case 2:
                     {
                         dialog.dismiss();
                         break;

@@ -253,7 +253,7 @@ public class MapViewModel extends ViewModel {
                 if(userRefFriend != null)
                     if(userRefFriend.getFrozen()) {
                         mFriendViewModel.removeUserDirectionListener();
-
+                        showDirection(String.valueOf(userRefFriend.getFrozenLocation().getLatitude()), String.valueOf(userRefFriend.getFrozenLocation().getLongitude()), false);
                     }
                     else {
                         directionUser = mFriendViewModel.getUserDirection(FriendsRepository.toUID(userRefFriend.getRef().getPath()));

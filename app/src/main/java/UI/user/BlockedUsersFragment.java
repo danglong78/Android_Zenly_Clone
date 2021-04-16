@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,9 +49,10 @@ public class BlockedUsersFragment extends Fragment implements BlockedUserAdapter
         BlockedUserAdapter adapter = new BlockedUserAdapter(requireActivity(),this);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
         recyclerView.setAdapter(adapter);
-        friendViewModel.getFriendsPreciseList().observe(getViewLifecycleOwner(), new Observer<List<User>>() {
+        friendViewModel.getBlockList().observe(getViewLifecycleOwner(), new Observer<List<User>>() {
             @Override
             public void onChanged(List<User> users) {
+                Log.d("BlockedUsersFragment", "onChanged: " + users.size());
                 adapter.setListUsers((ArrayList<User>) users);
             }
         });

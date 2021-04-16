@@ -60,7 +60,8 @@ public class AddFriendByPhoneFragment extends Fragment {
                 showDialog("INVALID PHONE","Please input your phone correctly.");
             }
             else{
-                String phone =editTextCarrierNumber.getText().toString();
+                String phone = editTextCarrierNumber.getText().toString();
+                Log.d("AddFriendByPhoneFragment", "onViewCreated: " + phone);
                 phone = (phone.startsWith("0"))? phone.substring(1) : phone;
                 userViewmodel.getUserWithPhone(phone).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
