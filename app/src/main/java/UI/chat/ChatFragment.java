@@ -44,7 +44,7 @@ import viewModel.ChatViewModel;
 public class ChatFragment extends Fragment {
 
     private MainActivity activity;
-    private Button sendBtn,profileBtn;
+    private Button sendBtn,profileBtn,closeBtn;
     private EditText inputChat;
     private ChatViewModel mChatListViewModel;
     private ListenerRegistration listMessListener;
@@ -122,6 +122,10 @@ public class ChatFragment extends Fragment {
                     }
                 }
             });
+        });
+        closeBtn =view.findViewById(R.id.closeBtn);
+        closeBtn.setOnClickListener(v->{
+            requireActivity().onBackPressed();
         });
         profileBtn = view.findViewById(R.id.userProfileBtn);
         profileBtn.setOnClickListener(v->{
