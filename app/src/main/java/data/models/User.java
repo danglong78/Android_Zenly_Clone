@@ -145,4 +145,13 @@ public class User implements Parcelable {
         dest.writeStringList(conversation);
     }
 
+    public User(String UID){
+        this.UID = UID;
+        this.avatar = null;
+        this.name = null;
+        this.avatarURL = null;
+        this.dob = null;
+        this.phone = null;
+        this.conversation = null;
+    }
 }

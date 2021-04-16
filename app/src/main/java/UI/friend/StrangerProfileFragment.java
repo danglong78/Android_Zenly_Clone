@@ -125,10 +125,7 @@ public class StrangerProfileFragment extends Fragment implements ListFriendOfUse
 
     @Override
     public void onClickAdd(String UID) {
-        InvitationViewModel invitationViewModel = new ViewModelProvider(getActivity()).get(InvitationViewModel.class);
-        InvitingViewModel invitingViewModel = new ViewModelProvider(getActivity()).get(InvitingViewModel.class);
-        invitationViewModel.sendInvitation(UID);
-        invitingViewModel.addToMyInviting(UID);
+        friendViewModel.addFriend(UID);
     }
     @Override
     public void onPause() {

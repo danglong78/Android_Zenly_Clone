@@ -7,7 +7,7 @@ import java.util.List;
 import data.models.UserRef;
 
 public class BlockedByRepository extends ListUsersRepository<UserRef> {
-    private final String TAG = "BlockRepository";
+    private final String TAG = "BlockedByRepository";
     private final String USER_COLLECTION = "Users";
 
     private static BlockedByRepository mInstance;

@@ -197,9 +197,7 @@ public class MainFriendFragment extends Fragment implements FriendSuggestListAda
     @Override
     public void onAddButtonClick(String friendUID) {
         Log.d(TAG, "onAddButtonClick: ");
-        invitationViewModel.sendInvitation(friendUID);
-        friendSuggestViewModel.hideSuggest(friendUID);
-        invitingViewModel.addToMyInviting(friendUID);
+        friendViewModel.addFriend(friendUID);
     }
 
     @Override

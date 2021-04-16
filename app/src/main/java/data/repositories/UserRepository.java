@@ -221,7 +221,7 @@ public class UserRepository {
 
                     Log.d(TAG, "getUserWithName: " + userAdd.getName() );
 
-                    if(!user.getName().toUpperCase().contains(name.toUpperCase()))
+                    if(!user.getName().toUpperCase().contains(name.toUpperCase().trim()))
                         continue;
 
                     if(invitingInstance.getListUser().getValue().contains(user))

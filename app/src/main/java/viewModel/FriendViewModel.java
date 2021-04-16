@@ -26,10 +26,13 @@ import data.repositories.InvitingRepository;
 import data.repositories.SuggestFriendRepository;
 
 public class FriendViewModel extends ViewModel {
+
     private final String TAG = "FriendViewModel";
     private final String FRIENDS_COLLECTION = "Friends";
     private final String BLOCK_COLLECTION = "Block";
+    private final String BLOCKEDBY_COLLECTION = "BlockedBy";
     private final String SUGGESTIONS_COLLECTION = "Suggestions";
+    private final String INVITING_COLLECTION = "Inviting" ;
 
     FriendsRepository repository;
     private MutableLiveData<List<UserRefFriend>> friendsRefList;
@@ -40,7 +43,7 @@ public class FriendViewModel extends ViewModel {
     private MutableLiveData<List<User>> friendsFrozenList;
     private MutableLiveData<UserLocation> userDirection;
 
-        BlockRepository blockRepository;
+    BlockRepository blockRepository;
     private MutableLiveData<List<User>> blockList;
 
     BlockedByRepository blockedByRepository;
@@ -48,6 +51,10 @@ public class FriendViewModel extends ViewModel {
 
     SuggestFriendRepository suggestRepository;
     InvitingRepository invitingRepository;
+
+    InvitingViewModel invitingViewModel;
+    InvitationViewModel invitationViewModel;
+    FriendSuggestViewModel friendSuggestViewModel;
 
     private String hostUserUID;
 
@@ -105,13 +112,18 @@ public class FriendViewModel extends ViewModel {
             blockList = blockRepository.getListUser();
             blockRepository.getAll();
 
-            blockedByRepository = BlockedByRepository.getInstance(BLOCK_COLLECTION, hostUserUID);
+            blockedByRepository = BlockedByRepository.getInstance(BLOCKEDBY_COLLECTION, hostUserUID);
             blockedByList = blockedByRepository.getListUser();
             blockRepository.getAll();
 
             suggestRepository = SuggestFriendRepository.getInstance(SUGGESTIONS_COLLECTION, hostUserUID);
 
+
             userDirection = repository.getUserDirection("");
+
+            invitingViewModel = new ViewModelProvider((FragmentActivity) context).get(InvitingViewModel.class);
+            invitationViewModel = new ViewModelProvider((FragmentActivity) context).get(InvitationViewModel.class);
+            friendSuggestViewModel = new ViewModelProvider((FragmentActivity) context).get(FriendSuggestViewModel.class);
         }
     }
 
@@ -143,15 +155,34 @@ public class FriendViewModel extends ViewModel {
         return friendsFrozenList;
     }
 
+    public void addFriend(String friendUID){
+        invitationViewModel.sendInvitation(friendUID);
+        friendSuggestViewModel.hideSuggest(friendUID);
+        invitingViewModel.addToMyInviting(friendUID);
+    }
+
     public void acceptFriendRequest(String friendUID){
         repository.addToOtherRepository(friendUID);
         repository.addToMyRepository(friendUID);
+        invitationViewModel.removeMyInvitation(friendUID);
+        invitingViewModel.removeFriendInviting(friendUID);
+        invitingViewModel.removeMyInviting(friendUID);
+        friendSuggestViewModel.hideSuggest(friendUID);
+    }
 
+    public void deleteFriendRequest(String friendUID){
+        invitationViewModel.removeMyInvitation(friendUID);
+        invitingViewModel.removeFriendInviting(friendUID);
     }
 
     public void deleteFriend(String friendUID){
         repository.removeFromMyRepository(friendUID);
         repository.removeFromOtherRepository(friendUID);
+    }
+
+    public void deleteFriendInviting(String friendUID){
+        invitingViewModel.removeMyInviting(friendUID);
+        invitationViewModel.removeFriendInvitation(friendUID);
     }
 
     public void turnOnFrozen(String friendUID) {
@@ -209,5 +240,23 @@ public class FriendViewModel extends ViewModel {
 
     public void removeUserDirectionListener() {
         repository.removeUserDirectionListener();
+    }
+
+    public String checkUserTag(String userUID) {
+        User checkUser = new User(userUID);
+
+        if(friendsList.getValue().contains(checkUser))
+            return "FRIEND";
+
+        if(blockedByList.getValue().contains(checkUser))
+            return "BLOCKEDBY";
+
+        if(invitingViewModel.getInvitingList().getValue().contains(checkUser))
+            return "INVITED";
+
+        if(invitationViewModel.getInvitationsList().getValue().contains(checkUser))
+            return "PENDING";
+
+        return "STRANGER";
     }
 }

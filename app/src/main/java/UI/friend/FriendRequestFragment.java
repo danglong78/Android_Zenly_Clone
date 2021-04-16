@@ -78,10 +78,6 @@ public class FriendRequestFragment extends Fragment implements FriendRequestAdap
     public void onAddButtonClick(String friendUID) {
         //TODO ACCEPT FRIEND REQUEST FUNCTION
         friendViewModel.acceptFriendRequest(friendUID);
-        invitationViewModel.removeMyInvitation(friendUID);
-        invitingViewModel.removeFriendInviting(friendUID);
-        invitingViewModel.removeMyInviting(friendUID);
-        friendSuggestViewModel.hideSuggest(friendUID);
 
         //TODO CREATE A CONVERSATION WITH NEW FRIEND
         LiveData<String> convID = ConversationRepository.getInstance().createNewConv(FirebaseAuth.getInstance().getUid(),friendUID);
@@ -109,8 +105,7 @@ public class FriendRequestFragment extends Fragment implements FriendRequestAdap
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //TODO DELETE FRIEND REQUEST FUNCTION
-                invitationViewModel.removeMyInvitation(friendUID);
-                invitingViewModel.removeFriendInviting(friendUID);
+                friendViewModel.deleteFriendRequest(friendUID);
             }
         });
         builder.create().show();

@@ -32,6 +32,7 @@ import adapter.FriendSuggestListAdapter;
 import data.models.User;
 import ultis.FragmentTag;
 import viewModel.FriendSuggestViewModel;
+import viewModel.FriendViewModel;
 import viewModel.InvitationViewModel;
 import viewModel.InvitingViewModel;
 import viewModel.UserViewModel;
@@ -44,6 +45,9 @@ public class AddFriendFragment extends Fragment implements FriendSuggestListAdap
     private FriendSuggestViewModel friendSuggestViewModel;
     private InvitationViewModel invitationViewModel;
     private InvitingViewModel invitingViewModel;
+
+    private FriendViewModel friendViewModel;
+
     private NavController navController;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -62,7 +66,7 @@ public class AddFriendFragment extends Fragment implements FriendSuggestListAdap
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         friendSuggestRecyclerView.setLayoutManager(layoutManager);
 
-         navController = Navigation.findNavController(requireActivity(), R.id.friend_nav_host_fragment);
+        navController = Navigation.findNavController(requireActivity(), R.id.friend_nav_host_fragment);
 
         friendSuggestViewModel = new ViewModelProvider(requireActivity()).get(FriendSuggestViewModel.class);
         invitationViewModel = new ViewModelProvider(requireActivity()).get(InvitationViewModel.class);
@@ -87,14 +91,12 @@ public class AddFriendFragment extends Fragment implements FriendSuggestListAdap
             navController.navigate(R.id.action_addFriendFragment_to_addFriendByPhoneFragment);
         });
 
+        friendViewModel = new ViewModelProvider(requireActivity()).get(FriendViewModel.class);
     }
 
     @Override
     public void onAddButtonClick(String friendUID) {
-
-        invitationViewModel.sendInvitation(friendUID);
-        friendSuggestViewModel.hideSuggest(friendUID);
-        invitingViewModel.addToMyInviting(friendUID);
+        friendViewModel.addFriend(friendUID);
     }
 
     @Override

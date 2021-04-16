@@ -117,8 +117,7 @@ public class SearchFriendFragment extends Fragment implements FriendInvitingList
                     case 0:
                     {
                         //TODO: Delete Invited User Function
-                        invitingViewModel.removeMyInviting(uid);
-                        invitationViewModel.removeFriendInvitation(uid);
+                        friendViewModel.deleteFriendInviting(uid);
                         break;
                     }
                     case 1:
