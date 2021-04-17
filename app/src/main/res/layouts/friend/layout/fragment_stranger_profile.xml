@@ -36,12 +36,38 @@ tools:context="UI.friend.StrangerProfileFragment">
         app:cornerRadius="20dp"
         android:textColor="#5565a5"
         android:text="Add Friend"
+        android:textStyle="bold"
         app:icon="@drawable/ic_baseline_add_24"
         app:iconSize="30dp"
         app:iconTint="#5565a5"
         app:layout_constraintStart_toStartOf="@+id/userName"
+        app:layout_constraintTop_toBottomOf="@+id/userName"
+        />
+    <Button
+        android:id="@+id/acceptBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:backgroundTint="@color/cyan_900"
+        android:layout_marginTop="24dp"
+        app:cornerRadius="20dp"
+        android:textColor="@color/teal"
+        android:text="ACCEPT"
+        android:visibility="gone"
+        app:layout_constraintStart_toEndOf="@+id/addBtn"
         app:layout_constraintTop_toBottomOf="@+id/userName" />
-
+    <Button
+        android:id="@+id/deniedBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:backgroundTint="#f3f4f8"
+        android:layout_marginTop="24dp"
+        android:layout_marginStart="16dp"
+        app:cornerRadius="20dp"
+        android:textColor="#5565a5"
+        android:text="DENY"
+        android:visibility="gone"
+        app:layout_constraintStart_toEndOf="@+id/acceptBtn"
+        app:layout_constraintTop_toBottomOf="@+id/userName" />
 <TextView
     android:id="@+id/userName"
     android:layout_width="wrap_content"
@@ -82,9 +108,9 @@ tools:context="UI.friend.StrangerProfileFragment">
         android:textColor="@color/cyan_900"
         android:textSize="16sp"
         android:textStyle="bold"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="90dp"
         app:layout_constraintStart_toStartOf="@+id/userName"
-        app:layout_constraintTop_toBottomOf="@+id/addBtn" />
+        app:layout_constraintTop_toBottomOf="@+id/userName" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerview"

@@ -35,7 +35,7 @@
         <action
             android:id="@+id/action_addFriendFragment2_to_friendProfileFragment2"
             app:destination="@id/friendProfileFragment2"
-            app:popUpTo="@id/friendProfileFragment2"
+            app:popUpTo="@id/addFriendFragment2"
             app:enterAnim="@anim/slide_in_top"
             app:exitAnim="@anim/slide_out_bottom"
             app:popEnterAnim="@anim/slide_in_bottom"
@@ -81,6 +81,7 @@
         <action
             android:id="@+id/action_addFriendFragment_to_strangerProfileFragment2"
             app:destination="@id/strangerProfileFragment2"
+            app:popUpTo="@id/addFriendFragment2"
             app:enterAnim="@anim/slide_in_top"
             app:exitAnim="@anim/slide_out_bottom"
             app:popEnterAnim="@anim/slide_in_bottom"
@@ -116,7 +117,7 @@
         <action
             android:id="@+id/action_addFriendByUsernameFragment_to_friendProfileFragment2"
             app:destination="@id/friendProfileFragment2"
-            app:popUpTo="@id/addFriendFragment"
+            app:popUpTo="@id/addFriendFragment2"
             app:enterAnim="@anim/slide_in_top"
             app:exitAnim="@anim/slide_out_bottom"
             app:popEnterAnim="@anim/slide_in_bottom"
@@ -124,7 +125,7 @@
         <action
             android:id="@+id/action_addFriendByUsernameFragment_to_strangerProfileFragment2"
             app:destination="@id/strangerProfileFragment2"
-            app:popUpTo="@id/addFriendFragment"
+            app:popUpTo="@id/addFriendFragment2"
             app:enterAnim="@anim/slide_in_top"
             app:exitAnim="@anim/slide_out_bottom"
             app:popEnterAnim="@anim/slide_in_bottom"

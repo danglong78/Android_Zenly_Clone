@@ -220,10 +220,12 @@ public class MainFriendFragment extends Fragment implements FriendSuggestListAda
     @Override
     public void onClickVIew(User user) {
         Bundle bundle= new Bundle();
+        String type = friendViewModel.checkUserTag(user.getUID());
         bundle.putString("name",user.getName());
         bundle.putString("phone",user.getPhone());
         bundle.putString("uid",user.getUID());
         bundle.putString("avatar",user.getAvatarURL());
+        bundle.putString("type",type);
         HomeFragment fragment = (HomeFragment) getParentFragment().getParentFragment();
         assert fragment != null;
         fragment.setBottomSheetState(BottomSheetBehavior.STATE_EXPANDED);
@@ -365,12 +367,13 @@ public class MainFriendFragment extends Fragment implements FriendSuggestListAda
                     switch (which) {
                         case 0:
                         {
-
+                            String type = friendViewModel.checkUserTag(user.getUID());
                             Bundle bundle= new Bundle();
                             bundle.putString("name",user.getName());
                             bundle.putString("phone",user.getPhone());
                             bundle.putString("uid",user.getUID());
                             bundle.putString("avatar",user.getAvatarURL());
+                            bundle.putString("type",type);
                             HomeFragment fragment = (HomeFragment) getParentFragment().getParentFragment();
                             assert fragment != null;
                             fragment.setBottomSheetState(BottomSheetBehavior.STATE_EXPANDED);

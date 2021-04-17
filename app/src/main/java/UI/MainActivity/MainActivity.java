@@ -91,7 +91,8 @@ public class MainActivity extends AppCompatActivity implements MainCallBacks {
                             getCurrentFocus().getWindowToken(), 0);
                 }
                 navController.popBackStack();
-                tag = FragmentTag.MAINFRIEND;
+                if(navController.getCurrentDestination().getId()==R.id.addFriendFragment2)
+                    tag = FragmentTag.MAINFRIEND;
                 break;
             }
             case CREATECHAT: {
