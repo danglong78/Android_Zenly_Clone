@@ -160,8 +160,8 @@ public class UserRepository {
         return mDb.collection(USER_LOCATION_COLLECTION).document(UID);
     }
 
-    public void addConv(String uId, String convId) {
-        mDb.collection(USER_COLLECTION).document(uId).update("conversation", FieldValue.arrayUnion(convId));
+    public Task<Void> addConv(String uId, String convId) {
+        return mDb.collection(USER_COLLECTION).document(uId).update("conversation", FieldValue.arrayUnion(convId));
     }
 
     public Task<Void> setName(String UID, String name) {

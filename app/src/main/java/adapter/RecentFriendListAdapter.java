@@ -78,7 +78,7 @@ public class RecentFriendListAdapter extends RecyclerView.Adapter<RecentFriendLi
             public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
                 User x=list.get(oldItemPosition);
                 User y = newList.get(newItemPosition);
-                return x.equals(y);
+                return x.getUID().equals(y.getUID());
             }
 
             @Override
@@ -86,7 +86,7 @@ public class RecentFriendListAdapter extends RecyclerView.Adapter<RecentFriendLi
                 final User x = list.get(oldItemPosition);
                 final User y = newList.get(newItemPosition);
 
-                return x.getUID().equals(y.getUID());
+                return x.getName().equals(y.getName()) && x.getAvatarURL().equals(y.getAvatarURL());
             }
         };
         final DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffUtilCallback);

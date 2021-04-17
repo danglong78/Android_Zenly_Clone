@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -92,18 +93,23 @@ public class AddFriendByUsernameFragment extends Fragment implements ListFriendO
 
     @Override
     public void onClickUser(User user, boolean isYourFriend) {
-        Bundle bundle = new Bundle();
-        bundle.putString("name",user.getName());
-        bundle.putString("uid",user.getUID());
-        bundle.putString("avatar",user.getAvatarURL());
-        bundle.putString("phone",user.getPhone());
-        NavController navController = Navigation.findNavController(this.getView());
-        if(!isYourFriend)
-        {
-            navController.navigate(R.id.action_addFriendByUsernameFragment_to_strangerProfileFragment2,bundle);
-        }
-        else{
-            navController.navigate(R.id.action_addFriendByUsernameFragment_to_friendProfileFragment2,bundle);
+
+        FriendViewModel friendViewModel=new ViewModelProvider(getActivity()).get(FriendViewModel.class);
+        String type=friendViewModel.checkUserTag(user.getUID());
+        if(type.compareTo("BLOCKEDBY")!=0 && type.compareTo("BLOCK")!=0) {
+            Log.d("Search by phone", user.toString());
+            Bundle bundle = new Bundle();
+            bundle.putString("name", user.getName());
+            bundle.putString("phone", user.getPhone());
+            bundle.putString("uid", user.getUID());
+            bundle.putString("avatar", user.getAvatarURL());
+            bundle.putString("type", type);
+
+            NavController navController = Navigation.findNavController(getActivity(), R.id.friend_nav_host_fragment);
+            if(type.compareTo("FRIEND")==0)
+                navController.navigate(R.id.action_addFriendByUsernameFragment_to_friendProfileFragment2, bundle);
+            else
+                navController.navigate(R.id.action_addFriendByUsernameFragment_to_strangerProfileFragment2, bundle);
         }
 
     }

@@ -149,14 +149,15 @@ public class FriendProfileFragment extends Fragment implements ListFriendOfUserA
 
     @Override
     public void onClickUser(User user, boolean isYourFriend) {
+        String type =friendViewModel.checkUserTag(getArguments().getString("uid"));
         Bundle bundle = new Bundle();
         bundle.putString("name", user.getName());
         bundle.putString("uid", user.getUID());
         bundle.putString("avatar", user.getAvatarURL());
         bundle.putString("phone", user.getPhone());
-        bundle.putString("type", friendViewModel.checkUserTag(getArguments().getString("uid")));
+        bundle.putString("type",type );
         NavController navController = Navigation.findNavController(this.getView());
-        if (!isYourFriend) {
+        if (type.compareTo("FRIEND")==0) {
             navController.navigate(R.id.action_friendProfileFragment2_to_strangerProfileFragment2, bundle);
         } else {
             navController.navigate(R.id.action_friendProfileFragment2_self, bundle);

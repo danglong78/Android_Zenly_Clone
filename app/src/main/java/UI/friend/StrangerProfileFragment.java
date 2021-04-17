@@ -7,6 +7,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -22,7 +24,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.study.android_zenly.R;
@@ -32,9 +37,9 @@ import java.util.ArrayList;
 import adapter.ListFriendOfUserAdapter;
 import data.models.User;
 import data.models.UserFriendList;
+import data.repositories.ConversationRepository;
+import data.repositories.UserRepository;
 import viewModel.FriendViewModel;
-import viewModel.InvitationViewModel;
-import viewModel.InvitingViewModel;
 
 
 public class StrangerProfileFragment extends Fragment implements ListFriendOfUserAdapter.onClickUser {
@@ -105,30 +110,78 @@ public class StrangerProfileFragment extends Fragment implements ListFriendOfUse
             builder.create().show();
         });
 
+        Button acceptBtn = view.findViewById(R.id.acceptBtn);
+        Button deniedBtn = view.findViewById(R.id.deniedBtn);
         Button addBtn = view.findViewById(R.id.addBtn);
+
+        acceptBtn.setOnClickListener(v->{
+            friendViewModel.acceptFriendRequest(getArguments().getString("uid"));
+
+            //TODO CREATE A CONVERSATION WITH NEW FRIEND
+            LiveData<String> convID = ConversationRepository.getInstance().createNewConv(FirebaseAuth.getInstance().getUid(),getArguments().getString("uid"));
+            convID.observe(getViewLifecycleOwner(),new Observer<String>() {
+                @Override
+                public void onChanged(String convId) {
+                    if(convId!=null) {
+                        if (convId.compareTo("no") != 0) {
+                            UserRepository.getInstance().addConv(FirebaseAuth.getInstance().getUid(), convId).continueWith(new Continuation<Void, Void>() {
+                                @Override
+                                public Void then(@NonNull Task<Void> task) throws Exception {
+                                    return UserRepository.getInstance().addConv(getArguments().getString("uid"), convId).getResult();
+
+                                }
+                            }).addOnCompleteListener(task->{
+                                Bundle bundle = new Bundle(getArguments());
+                                bundle.putString("type", friendViewModel.checkUserTag(getArguments().getString("uid")));
+                                NavController navController = Navigation.findNavController(StrangerProfileFragment.this.getView());
+                                navController.navigate(R.id.action_strangerProfileFragment2_to_friendProfileFragment2, bundle);
+                            });
+                        }
+                    }
+                }
+            });
+
+            deniedBtn.setVisibility(View.GONE);
+            acceptBtn.setVisibility(View.GONE);
+            addBtn.setVisibility(View.VISIBLE);
+
+        });
+        deniedBtn.setOnClickListener(v->{
+            friendViewModel.deleteFriendRequest(getArguments().getString("uid"));
+            deniedBtn.setVisibility(View.GONE);
+            acceptBtn.setVisibility(View.GONE);
+            addBtn.setVisibility(View.VISIBLE);
+
+        });
+
         addBtn.setOnClickListener(v -> {
             friendViewModel.addFriend(getArguments().getString("uid"));
             addBtn.setText("INVITED");
-            addBtn.setActivated(false);
+            addBtn.setEnabled(false);
+            ((MaterialButton)addBtn).setIconResource(R.drawable.ic_baseline_check_24);
+
 
         });
-        if(getArguments().getString("type") == "INVITED")
+        if(getArguments().getString("type").compareTo("INVITED")==0)
         {
             addBtn.setText("INVITED");
             ((MaterialButton)addBtn).setIconResource(R.drawable.ic_baseline_check_24);
-            addBtn.setActivated(false);
+            addBtn.setEnabled(false);
         }
-        else if(getArguments().getString("type") == "PENDING")
-        {
-            addBtn.setText("PENDING");
-            ((MaterialButton)addBtn).setIconResource(R.drawable.ic_baseline_check_24);
 
-            addBtn.setActivated(false);
-        }
-        else if (getArguments().getString("type") == "ME"){
-            addBtn.setVisibility(View.GONE);
+        else if (getArguments().getString("type").compareTo("ME")==0 ){
+            addBtn.setText("ME");
+            ((MaterialButton)addBtn).setIconResource(R.drawable.ic_baseline_check_24);
+            addBtn.setEnabled(false);
+
             settingBtn.setVisibility(View.GONE);
         }
+        else if (getArguments().getString("type").compareTo("PENDING")==0 ){
+            addBtn.setVisibility(View.GONE);
+            deniedBtn.setVisibility(View.VISIBLE);
+            acceptBtn.setVisibility(View.VISIBLE);
+        }
+
 
 
 
@@ -137,14 +190,15 @@ public class StrangerProfileFragment extends Fragment implements ListFriendOfUse
 
     @Override
     public void onClickUser(User user, boolean isYourFriend) {
+        String type = friendViewModel.checkUserTag(user.getUID());
         Bundle bundle = new Bundle();
         bundle.putString("name",user.getName());
         bundle.putString("uid",user.getUID());
         bundle.putString("avatar",user.getAvatarURL());
         bundle.putString("phone",user.getPhone());
-        bundle.putString("type",friendViewModel.checkUserTag(user.getUID()));
+        bundle.putString("type",type);
         NavController navController = Navigation.findNavController(this.getView());
-        if(!isYourFriend)
+        if(type.compareTo("FRIEND")==0)
         {
             navController.navigate(R.id.action_strangerProfileFragment2_to_friendProfileFragment2,bundle);
         }

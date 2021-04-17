@@ -97,7 +97,7 @@ public class CreateChatAdapter extends RecyclerView.Adapter<CreateChatAdapter.Vi
             public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
                 User x=userListAll.get(oldItemPosition);
                 User y = newList.get(newItemPosition);
-                return x.equals(y);
+                return x.getUID().equals(y.getUID());
             }
 
             @Override
@@ -105,7 +105,7 @@ public class CreateChatAdapter extends RecyclerView.Adapter<CreateChatAdapter.Vi
                 final User x = userListAll.get(oldItemPosition);
                 final User y = newList.get(newItemPosition);
 
-                return x.getUID().equals(y.getUID());
+                return x.getName().equals(y.getName()) && x.getAvatarURL().equals(y.getAvatarURL());
             }
         };
         final DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffUtilCallback);

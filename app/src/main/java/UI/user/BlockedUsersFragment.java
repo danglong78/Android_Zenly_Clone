@@ -66,7 +66,7 @@ public class BlockedUsersFragment extends Fragment implements BlockedUserAdapter
     @Override
     public void onClick(String UID) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setItems(new String[]{"Unblock","Cancle"},new DialogInterface.OnClickListener() {
+        builder.setItems(new String[]{"Unblock","Cancel"},new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 switch (which) {
                     case 0:
