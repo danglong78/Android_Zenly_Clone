@@ -408,7 +408,9 @@ public class MainFriendFragment extends Fragment implements FriendSuggestListAda
                     HomeFragment fragment = (HomeFragment) getParentFragment().getParentFragment();
                     assert fragment != null;
                     fragment.setBottomSheetState(BottomSheetBehavior.STATE_COLLAPSED);
+                    /* Tat direction */
                     friendViewModel.offUserDirection();
+                    /**/
                     viewHolder.setDirectionMode(false);
                     dialog.dismiss();
                 }
