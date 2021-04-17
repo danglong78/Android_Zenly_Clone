@@ -203,7 +203,7 @@ public class ChatListAdapter  extends RecyclerView.Adapter<ChatListAdapter.ViewH
             public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
                 Conversation x=convListAll.get(oldItemPosition);
                 Conversation y = listConv.get(newItemPosition);
-                return x.equals(y);
+                return x.getID().equals(y.getID());
             }
 
             @Override
@@ -211,7 +211,7 @@ public class ChatListAdapter  extends RecyclerView.Adapter<ChatListAdapter.ViewH
                 final Conversation x = convListAll.get(oldItemPosition);
                 final Conversation y = listConv.get(newItemPosition);
 
-                return x.getID().equals(y.getID());
+                return x.getRecentMessage().equals(y.getRecentMessage());
             }
         };
         final DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffUtilCallback);
