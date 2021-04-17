@@ -237,12 +237,20 @@ public class FriendViewModel extends ViewModel {
         repository.offUserDirection();
     }
 
+    public void setUserDirectionNull(){
+        repository.setUserDirectionNull();
+    }
+
+    public void setUserDirectionRefNull(){
+        repository.setUserDirectionRefNull();
+    }
+
     public LiveData<UserRefFriend> getUserRefFriend(String friendUID){
         return repository.getUserRefFriend(friendUID);
     }
 
-    public void removeUserDirectionListener() {
-        repository.removeUserDirectionListener();
+    public boolean removeUserDirectionListener() {
+        return repository.removeUserDirectionListener();
     }
 
     public String checkUserTag(String userUID) {

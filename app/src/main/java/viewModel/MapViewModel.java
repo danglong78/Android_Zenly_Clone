@@ -77,6 +77,7 @@ public class MapViewModel extends ViewModel {
     private static final String API_key = "AIzaSyCN2uaHqAIiQrEtjz8simo7UintppEL9DQ";
 
     private List<Polyline> pathList;
+    private boolean isPathListAccessed;
     private RequestQueue mrequestQueue;
 
     MutableLiveData<UserLocation> mUserLocation = new MutableLiveData<UserLocation>();
@@ -118,10 +119,13 @@ public class MapViewModel extends ViewModel {
     }
 
     public void init(LifecycleOwner lifecycleOwner) {
+        isPathListAccessed = false;
 
         mUserLocation = UserRepository.getInstance().getHostUserLocation(activity);
 
         mFriendViewModel = new ViewModelProvider((FragmentActivity) activity).get(FriendViewModel.class);
+
+
 
         mUserLocation.observe(lifecycleOwner, new Observer<UserLocation>() {
             @Override
@@ -195,17 +199,8 @@ public class MapViewModel extends ViewModel {
                                 updateMarker(userLocation.getUserUID(), new LatLng(userLocation.getLocation().getLatitude(), userLocation.getLocation().getLongitude()));
 
                                 // Update direction real time
-                                Log.d(TAG, "direction: Friend redirect");
-                                if(userLocations != null && (directionUser.getValue() != null)){
-                                    Log.d(TAG, "direction: Friend redirect yes");
-                                    for (UserLocation u : userLocations) {
-                                        if (u.getUserUID().equals(directionUser.getValue().getUserUID())){
-                                            Log.d(TAG, "direction: Friend redirect match");
-                                            showDirection(String.valueOf(u.getLocation().getLatitude()), String.valueOf(u.getLocation().getLongitude()), false);
-                                            break;
-                                        }
-                                    }
-                                }
+                                //Log.d(TAG, "direction: Friend redirect");
+
                             }
                         }
                     });
@@ -241,9 +236,7 @@ public class MapViewModel extends ViewModel {
             public void onChanged(List<UserRefFriend> userRefFriends) {
                 if (!userRefFriends.contains(directionUserRef)){
                     Log.d(TAG, "direction: friend delete/block");
-                    for (Polyline p : pathList)  {
-                        p.setVisible(false);
-                    }
+                    clearPathList();
                 }
             }
         });
@@ -253,10 +246,21 @@ public class MapViewModel extends ViewModel {
             public void onChanged(UserRefFriend userRefFriend) {
                 if(userRefFriend != null)
                     if(userRefFriend.getFrozen()) {
-                        mFriendViewModel.removeUserDirectionListener();
-                        showDirection(String.valueOf(userRefFriend.getFrozenLocation().getLatitude()), String.valueOf(userRefFriend.getFrozenLocation().getLongitude()), false);
+                        Log.d(TAG, "direction: frozened");
+
+                        if(directionUser.getValue() == null) {
+                            Log.d(TAG, "direction: frozen direction updated");
+                            Log.d(TAG, "direction: directionUser " + directionUser.getValue());
+                            showDirection(String.valueOf(userRefFriend.getFrozenLocation().getLatitude()), String.valueOf(userRefFriend.getFrozenLocation().getLongitude()), true);
+                        }
+                        else {
+                            mFriendViewModel.setUserDirectionNull();
+                            showDirection(String.valueOf(userRefFriend.getFrozenLocation().getLatitude()), String.valueOf(userRefFriend.getFrozenLocation().getLongitude()), false);
+                        }
                     }
                     else {
+                        Log.d(TAG, "direction: precise");
+                        clearPathList();
                         directionUser = mFriendViewModel.getUserDirection(FriendsRepository.toUID(userRefFriend.getRef().getPath()));
                     }
             }
@@ -265,38 +269,43 @@ public class MapViewModel extends ViewModel {
         directionUser.observe(lifecycleOwner, new Observer<UserLocation>() {
             @Override
             public void onChanged(UserLocation userLocation) {
-                Log.d(TAG, "direction: redirect ");
                 if (userLocation != null) {
                     // request Direction
-                    Log.d(TAG, "direction: redirect if yes");
-                    showDirection(String.valueOf(userLocation.getLocation().getLatitude()), String.valueOf(userLocation.getLocation().getLongitude()), true);
+                    if (!directionUserRef.getValue().getFrozen()){
+                        Log.d(TAG, "direction: update");
+                        showDirection(String.valueOf(userLocation.getLocation().getLatitude()), String.valueOf(userLocation.getLocation().getLongitude()), true);
+                    }
+
                 }
                 else {
-                    Log.d(TAG, "direction: redirect if no");
-                    for (Polyline p : pathList)  {
-                        p.setVisible(false);
+
+                    if (directionUserRef.getValue() == null){
+                        Log.d(TAG, "direction: clear");
+                        clearPathList();
                     }
+
                 }
             }
         });
 
 
-//        mUserLocation.observe(lifecycleOwner, new Observer<UserLocation>() {
-//            @Override
-//            public void onChanged(UserLocation userLocation) {
-//                Log.d(TAG, "direction: Host");
-//                if (directionUser.getValue() != null){
-//                    Log.d(TAG, "direction: Host if yes");
-//                    showDirection(String.valueOf(directionUser.getValue().getLocation().getLatitude()), String.valueOf(directionUser.getValue().getLocation().getLongitude()), false);
-//                }
-//                else {
-//                    Log.d(TAG, "direction: Host if not");
-//                    for (Polyline p : pathList)  {
-//                        p.setVisible(false);
-//                    }
-//                }
-//            }
-//        });
+        mUserLocation.observe(lifecycleOwner, new Observer<UserLocation>() {
+            @Override
+            public void onChanged(UserLocation userLocation) {
+                Log.d(TAG, "direction: Host");
+                if((directionUser.getValue() != null)){
+                    //Log.d(TAG, "direction: Friend redirect yes");
+                    for (UserLocation u : mFriendLocationList.getValue()) {
+                        if (u.getUserUID().equals(directionUser.getValue().getUserUID())){
+                            Log.d(TAG, "direction: mUser location change");
+                            Log.d(TAG, "direction: lat " + mUserLocation.getValue().getLocation().getLatitude() +" long " + mUserLocation.getValue().getLocation().getLongitude());
+                            showDirection(String.valueOf(u.getLocation().getLatitude()), String.valueOf(u.getLocation().getLongitude()), false);
+                            break;
+                        }
+                    }
+                }
+            }
+        });
 
     }
 
@@ -526,10 +535,7 @@ public class MapViewModel extends ViewModel {
     }
 
     private void showDirection(String desLat, String desLng, boolean isChange) {
-        for (Polyline p : pathList) {
-            p.remove(); // reset the previous path
-        }
-        pathList.clear();
+        clearPathList();
 
         mrequestQueue = Volley.newRequestQueue(activity);
 
@@ -587,6 +593,19 @@ public class MapViewModel extends ViewModel {
         });
 
         mrequestQueue.add(jsonObjectRequest);
+    }
+
+
+    public void clearPathList() {
+        if (!isPathListAccessed) {
+            isPathListAccessed = true;
+            for (Polyline p : pathList) {
+                p.setVisible(false);
+                p.remove(); // reset the previous path
+            }
+            pathList.clear();
+            isPathListAccessed = false;
+        }
     }
 
     public void changeHostAvatar(Bitmap file) {

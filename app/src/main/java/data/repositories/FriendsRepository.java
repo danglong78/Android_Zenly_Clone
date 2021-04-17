@@ -456,12 +456,25 @@ public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
         return userDirectionRef;
     }
 
-    public void removeUserDirectionListener() {
-        if (userDirectionListener!=null)
+    public boolean removeUserDirectionListener() {
+        if (userDirectionListener!=null){
+            Log.d(TAG, "direction: removeUserDirectionListener success");
             userDirectionListener.remove();
+            return true;
+        }
+        return false;
     }
 
     public void offUserDirection(){
+        userDirectionRef.setValue(null);
         userDirection.setValue(null);
+    }
+
+    public void setUserDirectionNull(){
+        userDirection.setValue(null);
+    }
+
+    public void setUserDirectionRefNull(){
+        userDirectionRef.setValue(null);
     }
 }
