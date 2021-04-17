@@ -61,6 +61,10 @@ public class FriendSuggestViewModel extends ViewModel {
         repository.modify(suggestUID, true);
     }
 
+    public void hideSuggestFromOther(String otherUID) {
+        repository.modifyFromOther(otherUID, true);
+    }
+
     public void load() {
         repository.getPagination();
     }

@@ -121,6 +121,11 @@ public class SuggestFriendRepository extends ListUsersRepository<UserRefSuggest>
         Log.d(TAG, "modify: " + UID + " modify " + modifyUID + " " + hidden);
     }
 
+    public void modifyFromOther(String modifyUID, boolean hidden) {
+        mDb.collection(COLLECTION).document(modifyUID).collection(LIST_COLLECTION).document(UID).update("hidden", hidden);
+        Log.d(TAG, "modify: " + UID + " modify " + modifyUID + " " + hidden);
+    }
+
 
     protected void handleMODIFIED(List<UserRefSuggest> newRefList, MutableLiveData<List<User>> listUser, DocumentChange dc) {
         Log.d(TAG, "handleMODIFIED: " + COLLECTION + " " + UserRef.toUserRef(dc));

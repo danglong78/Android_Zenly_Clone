@@ -159,6 +159,7 @@ public class FriendViewModel extends ViewModel {
         invitationViewModel.sendInvitation(friendUID);
         friendSuggestViewModel.hideSuggest(friendUID);
         invitingViewModel.addToMyInviting(friendUID);
+        friendSuggestViewModel.hideSuggestFromOther(friendUID);
     }
 
     public void acceptFriendRequest(String friendUID){
