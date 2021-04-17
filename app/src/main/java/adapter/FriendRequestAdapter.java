@@ -112,6 +112,7 @@ public class FriendRequestAdapter extends RecyclerView.Adapter<FriendRequestAdap
         list.clear();
         list.addAll(newList);
         diffResult.dispatchUpdatesTo(this);
+        notifyDataSetChanged();
     }
 
     @Override

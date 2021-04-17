@@ -140,6 +140,7 @@ public class FriendSuggestListAdapter  extends RecyclerView.Adapter<FriendSugges
         list.clear();
         list.addAll(newList);
         diffResult.dispatchUpdatesTo(this);
+        notifyDataSetChanged();
     }
     public void addItems(ArrayList<User> postItems) {
         list.addAll(postItems);

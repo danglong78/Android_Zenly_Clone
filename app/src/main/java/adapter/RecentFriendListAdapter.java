@@ -1,12 +1,15 @@
 package adapter;
 
 import android.content.Context;
+import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -17,6 +20,7 @@ import com.google.firebase.storage.StorageReference;
 import com.study.android_zenly.R;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import data.models.User;
 
@@ -30,6 +34,7 @@ public class RecentFriendListAdapter extends RecyclerView.Adapter<RecentFriendLi
         this.callback=callback;
 
     }
+
     @NonNull
     @Override
     public RecentFriendListAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -39,8 +44,10 @@ public class RecentFriendListAdapter extends RecyclerView.Adapter<RecentFriendLi
         return new RecentFriendListAdapter.ViewHolder(view);
     }
 
+
     @Override
     public void onBindViewHolder(@NonNull RecentFriendListAdapter.ViewHolder holder, int position) {
+        Log.d("RecentAdapter",list.get(position).getName());
         StorageReference ref = FirebaseStorage.getInstance().getReference().child("avatars").child(list.get(position).getAvatarURL());
         if(ref!=null) {
             ref.getDownloadUrl().addOnSuccessListener(uri -> {
@@ -64,6 +71,8 @@ public class RecentFriendListAdapter extends RecyclerView.Adapter<RecentFriendLi
     }
     public void setList(ArrayList<User>newList){
         DiffUtil.Callback diffUtilCallback= new DiffUtil.Callback() {
+
+
             @Override
             public int getOldListSize() {
                 return list.size();
@@ -94,6 +103,14 @@ public class RecentFriendListAdapter extends RecyclerView.Adapter<RecentFriendLi
         list.clear();
         list.addAll(newList);
         diffResult.dispatchUpdatesTo(this);
+        notifyDataSetChanged();
+
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position, @NonNull List<Object> payloads) {
+        Log.d("RecentAdapter","change");
+        super.onBindViewHolder(holder, position, payloads);
     }
 
     @Override

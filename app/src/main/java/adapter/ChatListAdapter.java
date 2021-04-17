@@ -220,6 +220,7 @@ public class ChatListAdapter  extends RecyclerView.Adapter<ChatListAdapter.ViewH
         convList.addAll(listConv);
         convListAll= new ArrayList<>(convList);
         diffResult.dispatchUpdatesTo(this);
+        notifyDataSetChanged();
 
     }
 

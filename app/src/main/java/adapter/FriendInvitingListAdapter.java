@@ -78,6 +78,7 @@ public class FriendInvitingListAdapter extends RecyclerView.Adapter<FriendInviti
         list.addAll(newList);
         listAll=new ArrayList<>(newList);
         diffResult.dispatchUpdatesTo(this);
+        notifyDataSetChanged();
     }
     @NonNull
     @Override

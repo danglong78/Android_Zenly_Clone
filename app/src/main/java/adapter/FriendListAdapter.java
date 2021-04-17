@@ -112,6 +112,7 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Vi
         list.addAll(newList);
         listAll=new ArrayList<>(newList);
         diffResult.dispatchUpdatesTo(this);
+        notifyDataSetChanged();
     }
 
     @Override

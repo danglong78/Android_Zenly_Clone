@@ -116,6 +116,7 @@ public class CreateChatAdapter extends RecyclerView.Adapter<CreateChatAdapter.Vi
         userList.addAll(newList);
         checkList= new ArrayList<>();
         diffResult.dispatchUpdatesTo(this);
+        notifyDataSetChanged();
     }
 
     public List<User> getCheckList(){

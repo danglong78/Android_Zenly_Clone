@@ -95,6 +95,7 @@ public class BlockedUserAdapter extends RecyclerView.Adapter<BlockedUserAdapter.
         list.clear();
         list.addAll(newList);
         diffResult.dispatchUpdatesTo(this);
+        notifyDataSetChanged();
     }
 
     @Override
