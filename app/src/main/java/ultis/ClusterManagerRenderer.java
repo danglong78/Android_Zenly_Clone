@@ -92,6 +92,13 @@ public class ClusterManagerRenderer extends DefaultClusterRenderer<ClusterMarker
 
     }
 
+    public void changeHostAvatar(Bitmap file, ClusterMarker clusterMarker) {
+        imageView.setImageBitmap(file);
+        Bitmap icon = iconGenerator.makeIcon();
+        Marker marker = getMarker(clusterMarker);
+        marker.setIcon(BitmapDescriptorFactory.fromBitmap(icon));
+    }
+
     @Override
     protected boolean shouldRenderAsCluster(Cluster cluster) {
         return false;

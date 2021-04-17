@@ -25,6 +25,7 @@ import androidx.annotation.Nullable;
 import androidx.constraintlayout.motion.widget.MotionLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -48,6 +49,7 @@ import data.models.User;
 import ultis.DateFormatter;
 import ultis.FragmentTag;
 import viewModel.FriendViewModel;
+import viewModel.MapViewModel;
 import viewModel.UserViewModel;
 
 import static android.app.Activity.RESULT_OK;
@@ -320,6 +322,7 @@ public class UserFragment extends Fragment implements UserSettingApdater.UserSet
                         //TODO UPDATE DATABASE
                         userViewModel.setAvatarURL(imageBitmap);
                         avatar.setImageBitmap(imageBitmap);
+                        new ViewModelProvider((FragmentActivity) getActivity()).get(MapViewModel.class).changeHostAvatar(imageBitmap);
                     }
 
                     break;
