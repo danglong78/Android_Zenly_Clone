@@ -25,5 +25,13 @@
             android:layout_width="match_parent"
             motion:layout_constraintTop_toTopOf="parent"
             motion:layout_constraintStart_toStartOf="parent" />
+        <Constraint
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            motion:layout_constraintBottom_toBottomOf="parent"
+            motion:layout_constraintTop_toBottomOf="@id/guideline"
+            motion:layout_constraintStart_toStartOf="parent"
+            android:id="@+id/friend_nav_host_fragment"
+            android:layout_marginTop="16dp" />
     </ConstraintSet>
 </MotionScene>
