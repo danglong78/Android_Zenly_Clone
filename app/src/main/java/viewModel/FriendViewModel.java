@@ -156,10 +156,12 @@ public class FriendViewModel extends ViewModel {
     }
 
     public void addFriend(String friendUID){
-        invitationViewModel.sendInvitation(friendUID);
-        friendSuggestViewModel.hideSuggest(friendUID);
-        invitingViewModel.addToMyInviting(friendUID);
-        friendSuggestViewModel.hideSuggestFromOther(friendUID);
+        if (!checkUserTag(friendUID).equals("FRIEND")){
+            invitationViewModel.sendInvitation(friendUID);
+            friendSuggestViewModel.hideSuggest(friendUID);
+            invitingViewModel.addToMyInviting(friendUID);
+            friendSuggestViewModel.hideSuggestFromOther(friendUID);
+        }
     }
 
     public void acceptFriendRequest(String friendUID){

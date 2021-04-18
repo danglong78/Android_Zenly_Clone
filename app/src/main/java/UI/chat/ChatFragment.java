@@ -102,7 +102,12 @@ public class ChatFragment extends Fragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if(s.length()==0)
+                String temp = s.toString();
+                if(temp.length()>=1 && temp.charAt(0)=='\n'){
+                    inputChat.setText("");
+                    temp = "";
+                }
+                if(temp.length()==0)
                 {
                     sendBtn.setEnabled(false);
                 }
@@ -115,6 +120,7 @@ public class ChatFragment extends Fragment {
         sendBtn.setEnabled(false);
         sendBtn.setOnClickListener(v->{
             String message = inputChat.getText().toString();
+            message = validMess(message);
 //            adapter.addToStart(tin nhan moi,false);
             Log.d("send Mess",message);
             MutableLiveData<Boolean> res = mChatListViewModel.SendMess(message,getActivity(),getViewLifecycleOwner());
@@ -198,5 +204,29 @@ public class ChatFragment extends Fragment {
             profileBtn.setVisibility(View.GONE);
         }
 
+    }
+
+    public String validMess(String mess){
+        String res = "";
+        int count1 = 0;
+        for(int i=0;i<mess.length();i++){
+            if(mess.charAt(i)=='\n' || mess.charAt(i)==' '){
+                count1++;
+            }else{
+                break;
+            }
+        }
+        int count2 = 0;
+        for(int i=mess.length()-1;i>=0;i--){
+            if(mess.charAt(i)=='\n' || mess.charAt(i)==' '){
+                count2++;
+            }else{
+                break;
+            }
+        }
+        for(int i=count1;i<mess.length()-count2;i++){
+            res+=mess.charAt(i);
+        }
+        return res;
     }
 }
