@@ -114,7 +114,7 @@ public class FriendViewModel extends ViewModel {
 
             blockedByRepository = BlockedByRepository.getInstance(BLOCKEDBY_COLLECTION, hostUserUID);
             blockedByList = blockedByRepository.getListUser();
-            blockRepository.getAll();
+            blockedByRepository.getAll();
 
             suggestRepository = SuggestFriendRepository.getInstance(SUGGESTIONS_COLLECTION, hostUserUID);
 
@@ -262,12 +262,11 @@ public class FriendViewModel extends ViewModel {
         if(friendsList.getValue().contains(checkUser))
             return "FRIEND";
 
-        // Mình bị block bởi người ta
-        if(blockedByList.getValue().contains(checkUser))
-            return "BLOCKEDBY";
-        // Mình block người ta
-        else if (blockList.getValue().contains(checkUser))
+        if (blockList.getValue().contains(checkUser))
             return "BLOCK";
+
+        if (blockedByList.getValue().contains(checkUser))
+            return "BLOCKEDBY";
 
         if(invitingViewModel.getInvitingList().getValue().contains(checkUser))
             return "INVITED";

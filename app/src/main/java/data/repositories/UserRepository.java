@@ -42,6 +42,7 @@ public class UserRepository {
     private final String USER_LOCATION_COLLECTION = "UserLocations";
     private final String FRIENDS_COLLECTION = "Friends";
     private final String BLOCK_COLLECTION = "Block";
+    private final String BLOCKEDBY_COLLECTION = "BlockedBy";
     private final String INVITING_COLLECTION = "Inviting";
     private final String INVITATIONS_COLLECTION = "Invitations";
 
@@ -49,6 +50,7 @@ public class UserRepository {
     private static BlockRepository blockInstance;
     private static InvitingRepository invitingInstance;
     private static InvitationsRepository invitationInstance;
+    private static BlockedByRepository blockedByInstance;
 
     private FirebaseFirestore mDb;
 
@@ -205,6 +207,7 @@ public class UserRepository {
         blockInstance = BlockRepository.getInstance(BLOCK_COLLECTION, myUID);
         invitingInstance = InvitingRepository.getInstance(INVITING_COLLECTION, myUID);
         invitationInstance = InvitationsRepository.getInstance(INVITATIONS_COLLECTION, myUID);
+        blockedByInstance = BlockedByRepository.getInstance(BLOCKEDBY_COLLECTION, myUID);
 
         mDb.collection(USER_COLLECTION).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -235,7 +238,9 @@ public class UserRepository {
                     if(user.getUID().compareTo(myUID)==0)
                         user.setTag("YOU");
 
-                    if(!blockInstance.getListUser().getValue().contains(user)){
+                    Log.d(TAG, "getUserWithName: " + blockedByInstance.getListUser().getValue().size());
+
+                    if(!blockInstance.getListUser().getValue().contains(user) && !blockedByInstance.getListUser().getValue().contains(user)){
                         Log.d(TAG, "searchList: added " +  userAdd.getUID());
                         searchList.getValue().add(user);
                         searchList.postValue(searchList.getValue());
