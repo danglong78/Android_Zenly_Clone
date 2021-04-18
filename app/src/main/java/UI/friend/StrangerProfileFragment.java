@@ -124,26 +124,19 @@ public class StrangerProfileFragment extends Fragment implements ListFriendOfUse
                 public void onChanged(String convId) {
                     if(convId!=null) {
                         if (convId.compareTo("no") != 0) {
-                            UserRepository.getInstance().addConv(FirebaseAuth.getInstance().getUid(), convId).continueWith(new Continuation<Void, Void>() {
-                                @Override
-                                public Void then(@NonNull Task<Void> task) throws Exception {
-                                    return UserRepository.getInstance().addConv(getArguments().getString("uid"), convId).getResult();
-
-                                }
-                            }).addOnCompleteListener(task->{
-                                Bundle bundle = new Bundle(getArguments());
-                                bundle.putString("type", friendViewModel.checkUserTag(getArguments().getString("uid")));
-                                NavController navController = Navigation.findNavController(StrangerProfileFragment.this.getView());
-                                navController.navigate(R.id.action_strangerProfileFragment2_to_friendProfileFragment2, bundle);
-                            });
+                            UserRepository.getInstance().addConv(FirebaseAuth.getInstance().getUid(), convId);
+                            UserRepository.getInstance().addConv(getArguments().getString("uid"), convId).getResult();
                         }
                     }
                 }
             });
 
-            deniedBtn.setVisibility(View.GONE);
-            acceptBtn.setVisibility(View.GONE);
-            addBtn.setVisibility(View.VISIBLE);
+            deniedBtn.setEnabled(false);
+            acceptBtn.setEnabled(false);
+            Bundle bundle = new Bundle(getArguments());
+            bundle.putString("type", friendViewModel.checkUserTag(getArguments().getString("uid")));
+            NavController navController = Navigation.findNavController(StrangerProfileFragment.this.getView());
+            navController.navigate(R.id.action_strangerProfileFragment2_to_friendProfileFragment2, bundle);
 
         });
         deniedBtn.setOnClickListener(v->{
