@@ -8,6 +8,7 @@ import android.os.Bundle;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -54,6 +55,8 @@ public class ChatFragment extends Fragment {
     private ChatViewModel mChatListViewModel;
     private ListenerRegistration listMessListener;
     private NavController navController;
+    private LiveData<List<User>> blockList;
+    private LiveData<List<User>> blockedByList;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -142,15 +145,56 @@ public class ChatFragment extends Fragment {
 
         // check block and blocked:
         FriendViewModel mFriendViewModel = new ViewModelProvider(requireActivity()).get(FriendViewModel.class);
-        Boolean check = false;
-        for(User temp : listUser){
-            String aTag = mFriendViewModel.checkUserTag(temp.getUID());
-            if(aTag.equals("BLOCK") || aTag.equals("BLOCKEDBY")){
-                inputChat.setText("This person is unavailable on chat");
-                inputChat.setEnabled(false);
-                sendBtn.setEnabled(false);
+        blockList = mFriendViewModel.getBlockList();
+        blockedByList = mFriendViewModel.getBlockedByList();
+        blockList.observe(getViewLifecycleOwner(),new Observer<List<User>>(){
+            @Override
+            public void onChanged(List<User> users) {
+                inputChat.setText("");
+                inputChat.setEnabled(true);
+                sendBtn.setEnabled(true);
+                for(User auser : users){
+                    Boolean check = false;
+                    for(User temp : listUser){
+                        if(temp.getUID().equals(auser.getUID())){
+                            inputChat.setText("This person is unavailable on chat");
+                            inputChat.setEnabled(false);
+                            sendBtn.setEnabled(false);
+                            check=true;
+                            break;
+                        }
+                    }
+                    if(check){
+                        break;
+                    }
+                }
             }
-        }
+        });
+
+        blockedByList.observe(getViewLifecycleOwner(),new Observer<List<User>>(){
+            @Override
+            public void onChanged(List<User> users) {
+                inputChat.setText("");
+                inputChat.setEnabled(true);
+                sendBtn.setEnabled(true);
+                for(User auser : users){
+                    Boolean check = false;
+                    for(User temp : listUser){
+                        if(temp.getUID().equals(auser.getUID())){
+                            inputChat.setText("This person is unavailable on chat");
+                            inputChat.setEnabled(false);
+                            sendBtn.setEnabled(false);
+                            check=true;
+                            break;
+                        }
+                    }
+                    if(check){
+                        break;
+                    }
+                }
+            }
+        });
+
         profileBtn = view.findViewById(R.id.userProfileBtn);
         profileBtn.setOnClickListener(v->{
             if(listUser.size()==2)
@@ -228,5 +272,12 @@ public class ChatFragment extends Fragment {
             res+=mess.charAt(i);
         }
         return res;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        blockList.removeObservers(getViewLifecycleOwner());
+        blockedByList.removeObservers(getViewLifecycleOwner());
     }
 }
