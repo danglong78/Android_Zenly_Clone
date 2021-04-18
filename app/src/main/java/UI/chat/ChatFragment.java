@@ -104,14 +104,15 @@ public class ChatFragment extends Fragment {
             public void afterTextChanged(Editable s) {
                 if(s.length()==0)
                 {
-                    sendBtn.setActivated(false);
+                    sendBtn.setEnabled(false);
                 }
                 else{
-                    sendBtn.setActivated(true);
+                    sendBtn.setEnabled(true);
                 }
             }
         });
         sendBtn= view.findViewById(R.id.sendBtn);
+        sendBtn.setEnabled(false);
         sendBtn.setOnClickListener(v->{
             String message = inputChat.getText().toString();
 //            adapter.addToStart(tin nhan moi,false);
@@ -132,6 +133,18 @@ public class ChatFragment extends Fragment {
         closeBtn.setOnClickListener(v->{
             requireActivity().onBackPressed();
         });
+
+        // check block and blocked:
+        FriendViewModel mFriendViewModel = new ViewModelProvider(requireActivity()).get(FriendViewModel.class);
+        Boolean check = false;
+        for(User temp : listUser){
+            String aTag = mFriendViewModel.checkUserTag(temp.getUID());
+            if(aTag.equals("BLOCK") || aTag.equals("BLOCKEDBY")){
+                sendBtn.setEnabled(false);
+                inputChat.setText("This person is unavailable on chat");
+                inputChat.setEnabled(false);
+            }
+        }
         profileBtn = view.findViewById(R.id.userProfileBtn);
         profileBtn.setOnClickListener(v->{
             if(listUser.size()==2)
