@@ -263,10 +263,10 @@ public class FriendViewModel extends ViewModel {
             return "FRIEND";
 
         // Mình bị block bởi người ta
-        if(blockedByList.getValue().contains(checkUser))
-            return "BLOCKEDBY";
+//        if(blockedByList.getValue().contains(checkUser))
+//            return "BLOCKEDBY";
         // Mình block người ta
-        else if (blockList.getValue().contains(checkUser))
+        if (blockList.getValue().contains(checkUser))
             return "BLOCK";
 
         if(invitingViewModel.getInvitingList().getValue().contains(checkUser))

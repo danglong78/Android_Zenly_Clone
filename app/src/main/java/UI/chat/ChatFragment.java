@@ -104,14 +104,15 @@ public class ChatFragment extends Fragment {
             public void afterTextChanged(Editable s) {
                 if(s.length()==0)
                 {
-                    sendBtn.setActivated(false);
+                    sendBtn.setEnabled(false);
                 }
                 else{
-                    sendBtn.setActivated(true);
+                    sendBtn.setEnabled(true);
                 }
             }
         });
         sendBtn= view.findViewById(R.id.sendBtn);
+        sendBtn.setEnabled(false);
         sendBtn.setOnClickListener(v->{
             String message = inputChat.getText().toString();
 //            adapter.addToStart(tin nhan moi,false);

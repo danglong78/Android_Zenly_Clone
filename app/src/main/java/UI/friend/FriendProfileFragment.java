@@ -150,17 +150,21 @@ public class FriendProfileFragment extends Fragment implements ListFriendOfUserA
     @Override
     public void onClickUser(User user, boolean isYourFriend) {
         String type =friendViewModel.checkUserTag(getArguments().getString("uid"));
-        Bundle bundle = new Bundle();
-        bundle.putString("name", user.getName());
-        bundle.putString("uid", user.getUID());
-        bundle.putString("avatar", user.getAvatarURL());
-        bundle.putString("phone", user.getPhone());
-        bundle.putString("type",type );
-        NavController navController = Navigation.findNavController(this.getView());
-        if (type.compareTo("FRIEND")==0) {
-            navController.navigate(R.id.action_friendProfileFragment2_to_strangerProfileFragment2, bundle);
-        } else {
-            navController.navigate(R.id.action_friendProfileFragment2_self, bundle);
+        if (type.compareTo("BLOCKEDBY")!=0 && type.compareTo("BLOCK")!=0) {
+            {
+                Bundle bundle = new Bundle();
+                bundle.putString("name", user.getName());
+                bundle.putString("uid", user.getUID());
+                bundle.putString("avatar", user.getAvatarURL());
+                bundle.putString("phone", user.getPhone());
+                bundle.putString("type", type);
+                NavController navController = Navigation.findNavController(this.getView());
+                if (type.compareTo("FRIEND") == 0) {
+                    navController.navigate(R.id.action_friendProfileFragment2_to_strangerProfileFragment2, bundle);
+                } else {
+                    navController.navigate(R.id.action_friendProfileFragment2_self, bundle);
+                }
+            }
         }
     }
 
