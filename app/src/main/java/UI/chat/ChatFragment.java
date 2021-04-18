@@ -146,9 +146,9 @@ public class ChatFragment extends Fragment {
         for(User temp : listUser){
             String aTag = mFriendViewModel.checkUserTag(temp.getUID());
             if(aTag.equals("BLOCK") || aTag.equals("BLOCKEDBY")){
-                sendBtn.setEnabled(false);
                 inputChat.setText("This person is unavailable on chat");
                 inputChat.setEnabled(false);
+                sendBtn.setEnabled(false);
             }
         }
         profileBtn = view.findViewById(R.id.userProfileBtn);
