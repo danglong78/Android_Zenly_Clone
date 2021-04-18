@@ -57,6 +57,8 @@ public class ChatFragment extends Fragment {
     private NavController navController;
     private LiveData<List<User>> blockList;
     private LiveData<List<User>> blockedByList;
+    private MutableLiveData<Boolean> isBlocked;
+    private MutableLiveData<Boolean> Block;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -68,6 +70,8 @@ public class ChatFragment extends Fragment {
     }
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        Block.postValue(false);
+        isBlocked.postValue(false);
         navController= Navigation.findNavController(view);
         RecyclerView recyclerView= view.findViewById(R.id.message_list_recyclerview);
         String id = getArguments().getString("id");
@@ -150,16 +154,13 @@ public class ChatFragment extends Fragment {
         blockList.observe(getViewLifecycleOwner(),new Observer<List<User>>(){
             @Override
             public void onChanged(List<User> users) {
-                inputChat.setText("");
-                inputChat.setEnabled(true);
-                sendBtn.setEnabled(true);
+                Boolean aBool = true;
                 for(User auser : users){
                     Boolean check = false;
                     for(User temp : listUser){
                         if(temp.getUID().equals(auser.getUID())){
-                            inputChat.setText("This person is unavailable on chat");
-                            inputChat.setEnabled(false);
-                            sendBtn.setEnabled(false);
+                            Block.postValue(true);
+                            aBool=false;
                             check=true;
                             break;
                         }
@@ -168,29 +169,62 @@ public class ChatFragment extends Fragment {
                         break;
                     }
                 }
+                if(aBool){
+                    Block.postValue(false);
+                }
             }
         });
 
         blockedByList.observe(getViewLifecycleOwner(),new Observer<List<User>>(){
             @Override
             public void onChanged(List<User> users) {
-                inputChat.setText("");
-                inputChat.setEnabled(true);
-                sendBtn.setEnabled(true);
+                Boolean aBool = true;
                 for(User auser : users){
                     Boolean check = false;
                     for(User temp : listUser){
                         if(temp.getUID().equals(auser.getUID())){
-                            inputChat.setText("This person is unavailable on chat");
-                            inputChat.setEnabled(false);
-                            sendBtn.setEnabled(false);
                             check=true;
+                            isBlocked.postValue(true);
+                            aBool = false;
                             break;
                         }
                     }
                     if(check){
                         break;
                     }
+                }
+                if(aBool){
+                    isBlocked.postValue(false);
+                }
+            }
+        });
+
+        Block.observe(getViewLifecycleOwner(),new Observer<Boolean>(){
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                if(aBoolean || isBlocked.getValue()){
+                    inputChat.setText("This person is unavailable on chat");
+                    inputChat.setEnabled(false);
+                    sendBtn.setEnabled(false);
+                }else{
+                    inputChat.setText("");
+                    inputChat.setEnabled(true);
+                    sendBtn.setEnabled(true);
+                }
+            }
+        });
+
+        isBlocked.observe(getViewLifecycleOwner(),new Observer<Boolean>(){
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                if(aBoolean || Block.getValue()){
+                    inputChat.setText("This person is unavailable on chat");
+                    inputChat.setEnabled(false);
+                    sendBtn.setEnabled(false);
+                }else{
+                    inputChat.setText("");
+                    inputChat.setEnabled(true);
+                    sendBtn.setEnabled(true);
                 }
             }
         });
@@ -279,5 +313,7 @@ public class ChatFragment extends Fragment {
         super.onDestroyView();
         blockList.removeObservers(getViewLifecycleOwner());
         blockedByList.removeObservers(getViewLifecycleOwner());
+        Block.removeObservers(getViewLifecycleOwner());
+        isBlocked.removeObservers(getViewLifecycleOwner());
     }
 }
