@@ -311,6 +311,34 @@ public class FriendsRepository extends ListUsersRepository<UserRefFriend> {
         }
     }
 
+    protected void handleREMOVED(List<UserRefFriend> newRefList, MutableLiveData<List<User>> listUser, DocumentChange dc) {
+        Log.d(TAG, "handleREMOVED: " + COLLECTION + " " + UserRef.toUserRef(dc));
+        UserRef removeUserRef = UserRef.toUserRef(dc);
+
+        if (newRefList != null)
+            newRefList.remove(removeUserRef);
+
+        removeList(toUID(removeUserRef.getRef().getPath()), listUser);
+
+        removeList(toUID(removeUserRef.getRef().getPath()), userFrozenList);
+        removeList(toUID(removeUserRef.getRef().getPath()), userPreciseList);
+
+        if (userFrozenList.getValue().contains(removeUserRef)){
+            userFrozenList.getValue().remove(removeUserRef);
+            userFrozenList.postValue(userFrozenList.getValue());
+        }
+
+
+        if(listUserRef.getValue()!=null){
+            String x = "size() = " + listUserRef.getValue().size();
+            for(UserRef u : listUserRef.getValue()){
+                x += u.getRef().getPath() +" ";
+            }
+            Log.d(TAG, "listRefChange: " + COLLECTION + " " + x);
+        }
+    }
+
+
     public void toggleFrozen(String hostUserUID, String friendUID, boolean flag) {
         DocumentReference hostOfFriend = mDb.collection(FRIEND_COLLECTION).document(friendUID).collection("List").document(hostUserUID);
         DocumentReference friendOfHost = mDb.collection(FRIEND_COLLECTION).document(hostUserUID).collection("List").document(friendUID);
