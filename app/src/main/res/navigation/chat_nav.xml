@@ -75,7 +75,8 @@
         <action
             android:id="@+id/action_friendProfileFragment2_to_strangerProfileFragment2"
             app:destination="@id/strangerProfileFragment"
-            app:popUpTo="@id/chatFragment"/>
+            app:popUpTo="@id/friendProfileFragment"
+            app:popUpToInclusive="true"/>
     </fragment>
     <fragment
         android:id="@+id/strangerProfileFragment"
@@ -89,6 +90,7 @@
         <action
             android:id="@+id/action_strangerProfileFragment2_to_friendProfileFragment2"
             app:destination="@id/friendProfileFragment"
-            app:popUpTo="@id/chatFragment"/>
+            app:popUpTo="@id/strangerProfileFragment"
+            app:popUpToInclusive="true"/>
     </fragment>
 </navigation>

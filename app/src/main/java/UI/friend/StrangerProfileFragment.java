@@ -11,6 +11,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
+import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -127,16 +128,17 @@ public class StrangerProfileFragment extends Fragment implements ListFriendOfUse
                             UserRepository.getInstance().addConv(FirebaseAuth.getInstance().getUid(), convId);
                             UserRepository.getInstance().addConv(getArguments().getString("uid"), convId).getResult();
                         }
+                        Bundle bundle = new Bundle(getArguments());
+                        bundle.putString("type", friendViewModel.checkUserTag(getArguments().getString("uid")));
+                        NavController navController = Navigation.findNavController(StrangerProfileFragment.this.getView());
+                        navController.navigate(R.id.action_strangerProfileFragment2_to_friendProfileFragment2, bundle);
                     }
                 }
             });
 
             deniedBtn.setEnabled(false);
             acceptBtn.setEnabled(false);
-            Bundle bundle = new Bundle(getArguments());
-            bundle.putString("type", friendViewModel.checkUserTag(getArguments().getString("uid")));
-            NavController navController = Navigation.findNavController(StrangerProfileFragment.this.getView());
-            navController.navigate(R.id.action_strangerProfileFragment2_to_friendProfileFragment2, bundle);
+
 
         });
         deniedBtn.setOnClickListener(v->{
