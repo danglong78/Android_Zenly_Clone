@@ -115,7 +115,7 @@ public class DobFragment extends Fragment implements LoginFragmentInterface {
 
     @Override
     public void loadInformation() {
-        SharedPreferences prefs = requireActivity().getSharedPreferences("user_infor", Context.MODE_PRIVATE);
+        SharedPreferences prefs = getActivity().getSharedPreferences("user_infor", Context.MODE_PRIVATE);
         if ( (prefs != null) && prefs.contains("day")&& prefs.contains("month")&& prefs.contains("year") ) {
             int day = prefs.getInt("day",1);
             int month = prefs.getInt("month",1);
@@ -124,7 +124,6 @@ public class DobFragment extends Fragment implements LoginFragmentInterface {
         }
         if ( (prefs != null) && prefs.contains("name") ) {
             String name = prefs.getString("name","");
-            if(getArguments()!=null)
                 dobTextView.setText("HEY "+name.toUpperCase()+", WHEN IS YOUR BIRTHDAY ?");
         }
     }
