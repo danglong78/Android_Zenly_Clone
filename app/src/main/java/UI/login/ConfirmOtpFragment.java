@@ -22,6 +22,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
@@ -34,6 +36,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.GeoPoint;
 import com.study.android_zenly.R;
 
@@ -170,25 +173,51 @@ public class ConfirmOtpFragment extends Fragment {
                                             newUser.setUID(FirebaseAuth.getInstance().getUid());
                                             newUser.setAvatarURL("0e974d50-8978-11eb-8dcd-0242ac130003.png");
                                             newUser.setPhone(prefs.getString("codePhone", "")+prefs.getString("phone", ""));
-                                            newUser.setNewUserConv(ConversationRepository.getInstance().creteServerConv());
+                                            MutableLiveData<Boolean> check = new MutableLiveData<>();
                                             DocumentReference newUserRef = UserRepository.getInstance().getUserReference(FirebaseAuth.getInstance().getUid());
-
-                                            newUserRef.set(newUser).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            newUserRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>(){
                                                 @Override
-                                                public void onComplete(@NonNull Task<Void> task) {
-                                                    if (task.isSuccessful()) {
-                                                        Log.d(TAG, "onComplete: newUserRef: success");
-                                                        navController.navigate(R.id.action_global_splashFragment);
+                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                    if(task.isSuccessful()){
+                                                        User temp = task.getResult().toObject(User.class);
+                                                        if(temp!=null && temp.getConversation()!=null && temp.getConversation().size()>=1){
+                                                            newUser.setConversation(temp.getConversation());
+                                                            check.postValue(true);
+                                                        }else{
+                                                            newUser.setNewUserConv(ConversationRepository.getInstance().creteServerConv());
+                                                            check.postValue(true);
+                                                        }
+                                                    }else{
+                                                        newUser.setNewUserConv(ConversationRepository.getInstance().creteServerConv());
+                                                        check.postValue(true);
                                                     }
-                                                    else {
-                                                        Log.d(TAG, "onComplete: newUserRef failed " + task.getException());
-                                                    }
-                                                    codeInput.setText("");
-                                                    progressBar.setVisibility(View.INVISIBLE);
-                                                    btn.setVisibility(View.VISIBLE);
                                                 }
                                             });
 
+
+                                            check.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+                                                @Override
+                                                public void onChanged(Boolean aBoolean) {
+                                                    if(aBoolean!=null && aBoolean){
+                                                        newUserRef.set(newUser).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task<Void> task) {
+                                                                if (task.isSuccessful()) {
+                                                                    Log.d(TAG, "onComplete: newUserRef: success");
+                                                                    navController.navigate(R.id.action_global_splashFragment);
+                                                                }
+                                                                else {
+                                                                    Log.d(TAG, "onComplete: newUserRef failed " + task.getException());
+                                                                }
+                                                                codeInput.setText("");
+                                                                progressBar.setVisibility(View.INVISIBLE);
+                                                                btn.setVisibility(View.VISIBLE);
+                                                            }
+                                                        });
+                                                        check.removeObserver(this);
+                                                    }
+                                                }
+                                            });
                                         } else {
                                             Toast.makeText(getActivity(), "Your verify code wrong!!!", Toast.LENGTH_SHORT).show();
                                         }
