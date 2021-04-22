@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -27,6 +30,7 @@ import com.google.firebase.storage.StorageReference;
 import com.study.android_zenly.R;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import adapter.ListFriendOfUserAdapter;
 import data.models.User;
@@ -36,6 +40,8 @@ import viewModel.FriendViewModel;
 
 public class FriendProfileFragment extends Fragment implements ListFriendOfUserAdapter.onClickUser {
     FriendViewModel friendViewModel;
+    ListFriendOfUserAdapter adapter;
+    LiveData<List<UserFriendList>> u;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -62,14 +68,22 @@ public class FriendProfileFragment extends Fragment implements ListFriendOfUserA
         }
         RecyclerView friendListRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
 
-        ListFriendOfUserAdapter adapter = new ListFriendOfUserAdapter(this, requireActivity());
+        adapter = new ListFriendOfUserAdapter(this, requireActivity());
         friendListRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         friendListRecyclerView.setAdapter(adapter);
         friendViewModel = new ViewModelProvider(getActivity()).get(FriendViewModel.class);
-        friendViewModel.getFriendListOfFriends(getArguments().getString("uid")).observe(getViewLifecycleOwner(), userFriendLists -> {
-            adapter.setList((ArrayList<UserFriendList>) userFriendLists);
 
+        u = friendViewModel.getFriendListOfFriends(getArguments().getString("uid"));
+        u.observe(getViewLifecycleOwner(), new Observer<List<UserFriendList>>() {
+            @Override
+            public void onChanged(List<UserFriendList> userFriendLists) {
+                Log.d("StrangerProfileFragment", "callback: " + userFriendLists.size());
+                friendViewModel.setFriendListOfFriends((ArrayList<UserFriendList>) userFriendLists);
+                adapter.setList((ArrayList<UserFriendList>) userFriendLists);
+                Log.d("TB", String.valueOf(userFriendLists.size()));
+            }
         });
+
         Button settingBtn = view.findViewById(R.id.userSettingBtn);
         settingBtn.setOnClickListener(v -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -176,6 +190,15 @@ public class FriendProfileFragment extends Fragment implements ListFriendOfUserA
     @Override
     public void onPause() {
         super.onPause();
+        u.removeObservers(getViewLifecycleOwner());
         friendViewModel.resetListFriendOfFriends();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d("StrangerProfileFragment", "onResume: chay roi " + friendViewModel.getFriendListOfFriends().size());
+        adapter.setList(friendViewModel.getFriendListOfFriends());
+        adapter.notifyDataSetChanged();
     }
 }

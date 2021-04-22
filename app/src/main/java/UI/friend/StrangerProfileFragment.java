@@ -34,6 +34,7 @@ import com.google.firebase.storage.StorageReference;
 import com.study.android_zenly.R;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import adapter.ListFriendOfUserAdapter;
 import data.models.User;
@@ -45,7 +46,8 @@ import viewModel.FriendViewModel;
 
 public class StrangerProfileFragment extends Fragment implements ListFriendOfUserAdapter.onClickUser {
     FriendViewModel friendViewModel;
-
+    ListFriendOfUserAdapter adapter;
+    LiveData<List<UserFriendList>> u;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -57,13 +59,13 @@ public class StrangerProfileFragment extends Fragment implements ListFriendOfUse
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        TextView userName= view.findViewById(R.id.userName);
+        TextView userName = view.findViewById(R.id.userName);
         userName.setText(getArguments().getString("name"));
         ImageView avatar = view.findViewById(R.id.avatar);
-        StorageReference ref= FirebaseStorage.getInstance().getReference().child("avatars").child(getArguments().getString("avatar"));
-        if(ref!=null) {
-            ref.getDownloadUrl().addOnSuccessListener(uri->{
-                String imageURL= uri.toString();
+        StorageReference ref = FirebaseStorage.getInstance().getReference().child("avatars").child(getArguments().getString("avatar"));
+        if (ref != null) {
+            ref.getDownloadUrl().addOnSuccessListener(uri -> {
+                String imageURL = uri.toString();
                 Glide.with(requireContext())
                         .load(imageURL)
                         .into(avatar);
@@ -72,27 +74,31 @@ public class StrangerProfileFragment extends Fragment implements ListFriendOfUse
 
 
         friendViewModel = new ViewModelProvider(getActivity()).get(FriendViewModel.class);
-        ListFriendOfUserAdapter adapter= new ListFriendOfUserAdapter(this,getActivity());
+        adapter = new ListFriendOfUserAdapter(this, getActivity());
         RecyclerView friendListRecyclerView = view.findViewById(R.id.recyclerview);
         friendListRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         friendListRecyclerView.setAdapter(adapter);
-        friendViewModel.getFriendListOfFriends(getArguments().getString("uid")).observe(getViewLifecycleOwner(),userFriendLists -> {
-            Log.d("StrangerProfileFragment", "callback: " + userFriendLists.size());
 
-            adapter.setList((ArrayList<UserFriendList>) userFriendLists);
-            Log.d("TB",String.valueOf(userFriendLists.size()));
+        u = friendViewModel.getFriendListOfFriends(getArguments().getString("uid"));
+        u.observe(getViewLifecycleOwner(), new Observer<List<UserFriendList>>() {
+            @Override
+            public void onChanged(List<UserFriendList> userFriendLists) {
+                Log.d("StrangerProfileFragment", "callback: " + userFriendLists.size());
+                friendViewModel.setFriendListOfFriends((ArrayList<UserFriendList>) userFriendLists);
+                adapter.setList((ArrayList<UserFriendList>) userFriendLists);
+                Log.d("TB", String.valueOf(userFriendLists.size()));
+            }
         });
 
 
         Button settingBtn = view.findViewById(R.id.userSettingBtn);
-        settingBtn.setOnClickListener(v->{
+        settingBtn.setOnClickListener(v -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setTitle(getArguments().getString("name"));
-            builder.setItems(new String[]{"Block user","Cancel"},new DialogInterface.OnClickListener() {
+            builder.setItems(new String[]{"Block user", "Cancel"}, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
                     switch (which) {
-                        case 0:
-                        {
+                        case 0: {
 
                             //TODO: Block Friend Function
                             friendViewModel.blockFriend(getArguments().getString("uid"));
@@ -100,8 +106,7 @@ public class StrangerProfileFragment extends Fragment implements ListFriendOfUse
                             dialog.dismiss();
                             break;
                         }
-                        case 1:
-                        {
+                        case 1: {
                             dialog.dismiss();
                             break;
                         }
@@ -115,15 +120,15 @@ public class StrangerProfileFragment extends Fragment implements ListFriendOfUse
         Button deniedBtn = view.findViewById(R.id.deniedBtn);
         Button addBtn = view.findViewById(R.id.addBtn);
 
-        acceptBtn.setOnClickListener(v->{
+        acceptBtn.setOnClickListener(v -> {
             friendViewModel.acceptFriendRequest(getArguments().getString("uid"));
 
             //TODO CREATE A CONVERSATION WITH NEW FRIEND
-            LiveData<String> convID = ConversationRepository.getInstance().createNewConv(FirebaseAuth.getInstance().getUid(),getArguments().getString("uid"));
-            convID.observe(getViewLifecycleOwner(),new Observer<String>() {
+            LiveData<String> convID = ConversationRepository.getInstance().createNewConv(FirebaseAuth.getInstance().getUid(), getArguments().getString("uid"));
+            convID.observe(getViewLifecycleOwner(), new Observer<String>() {
                 @Override
                 public void onChanged(String convId) {
-                    if(convId!=null) {
+                    if (convId != null) {
                         if (convId.compareTo("no") != 0) {
                             UserRepository.getInstance().addConv(FirebaseAuth.getInstance().getUid(), convId);
                             UserRepository.getInstance().addConv(getArguments().getString("uid"), convId).getResult();
@@ -141,7 +146,7 @@ public class StrangerProfileFragment extends Fragment implements ListFriendOfUse
 
 
         });
-        deniedBtn.setOnClickListener(v->{
+        deniedBtn.setOnClickListener(v -> {
             friendViewModel.deleteFriendRequest(getArguments().getString("uid"));
             deniedBtn.setVisibility(View.GONE);
             acceptBtn.setVisibility(View.GONE);
@@ -153,32 +158,25 @@ public class StrangerProfileFragment extends Fragment implements ListFriendOfUse
             friendViewModel.addFriend(getArguments().getString("uid"));
             addBtn.setText("INVITED");
             addBtn.setEnabled(false);
-            ((MaterialButton)addBtn).setIconResource(R.drawable.ic_baseline_check_24);
+            ((MaterialButton) addBtn).setIconResource(R.drawable.ic_baseline_check_24);
 
 
         });
-        if(getArguments().getString("type").compareTo("INVITED")==0)
-        {
+        if (getArguments().getString("type").compareTo("INVITED") == 0) {
             addBtn.setText("INVITED");
-            ((MaterialButton)addBtn).setIconResource(R.drawable.ic_baseline_check_24);
+            ((MaterialButton) addBtn).setIconResource(R.drawable.ic_baseline_check_24);
             addBtn.setEnabled(false);
-        }
-
-        else if (getArguments().getString("type").compareTo("ME")==0 ){
+        } else if (getArguments().getString("type").compareTo("ME") == 0) {
             addBtn.setText("ME");
-            ((MaterialButton)addBtn).setIconResource(R.drawable.ic_baseline_check_24);
+            ((MaterialButton) addBtn).setIconResource(R.drawable.ic_baseline_check_24);
             addBtn.setEnabled(false);
 
             settingBtn.setVisibility(View.GONE);
-        }
-        else if (getArguments().getString("type").compareTo("PENDING")==0 ){
+        } else if (getArguments().getString("type").compareTo("PENDING") == 0) {
             addBtn.setVisibility(View.GONE);
             deniedBtn.setVisibility(View.VISIBLE);
             acceptBtn.setVisibility(View.VISIBLE);
         }
-
-
-
 
 
     }
@@ -186,7 +184,7 @@ public class StrangerProfileFragment extends Fragment implements ListFriendOfUse
     @Override
     public void onClickUser(User user, boolean isYourFriend) {
         String type = friendViewModel.checkUserTag(user.getUID());
-        if (type.compareTo("BLOCKEDBY")!=0 && type.compareTo("BLOCK")!=0) {
+        if (type.compareTo("BLOCKEDBY") != 0 && type.compareTo("BLOCK") != 0) {
             Bundle bundle = new Bundle();
             bundle.putString("name", user.getName());
             bundle.putString("uid", user.getUID());
@@ -207,9 +205,40 @@ public class StrangerProfileFragment extends Fragment implements ListFriendOfUse
     public void onClickAdd(String UID) {
         friendViewModel.addFriend(UID);
     }
+
     @Override
     public void onPause() {
         super.onPause();
+        u.removeObservers(getViewLifecycleOwner());
         friendViewModel.resetListFriendOfFriends();
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d("StrangerProfileFragment", "onResume: chay roi " + friendViewModel.getFriendListOfFriends().size());
+        adapter.setList(friendViewModel.getFriendListOfFriends());
+        adapter.notifyDataSetChanged();
+    }
+
+//    @Override
+//    public void onSaveInstanceState(@NonNull Bundle outState) {
+//        super.onSaveInstanceState(outState);
+//        outState.putParcelableArrayList("FriendListOfFriend",this.userFriendLists);
+//        Log.d("Cac", "onSaveInstanceState: " + userFriendLists.size());
+//    }
+//
+//    @Override
+//    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+//        super.onViewStateRestored(savedInstanceState);
+//        Log.d("Cac", "onViewStateRestored: chay roi");
+//        if (savedInstanceState != null){
+//            this.userFriendLists = savedInstanceState.getParcelableArrayList("FriendListOfFriend");
+//            adapter.setList(userFriendLists);
+//            adapter.notifyDataSetChanged();
+//            Log.d("Cac", "onViewStateRestored: " + userFriendLists.size());
+//        }
+//
+//
+//    }
 }

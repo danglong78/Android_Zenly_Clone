@@ -56,6 +56,8 @@ public class FriendViewModel extends ViewModel {
     InvitationViewModel invitationViewModel;
     FriendSuggestViewModel friendSuggestViewModel;
 
+    ArrayList<UserFriendList> userFriendLists;
+
     private String hostUserUID;
 
 
@@ -225,6 +227,16 @@ public class FriendViewModel extends ViewModel {
 
     public LiveData<List<UserFriendList>> getFriendListOfFriends(String friendUID){
         return repository.getFriendListOfFriends(friendUID);
+    }
+
+    public void setFriendListOfFriends(ArrayList<UserFriendList> arr){
+        this.userFriendLists = (ArrayList<UserFriendList>) arr.clone();
+        Log.d(TAG, "setFriendListOfFriends: " + this.userFriendLists.size());
+    }
+
+    public ArrayList<UserFriendList> getFriendListOfFriends(){
+        Log.d(TAG, "getFriendListOfFriends: " + this.userFriendLists.size());
+        return this.userFriendLists;
     }
 
     public void resetListFriendOfFriends(){
